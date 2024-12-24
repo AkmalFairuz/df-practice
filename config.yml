@@ -1,0 +1,13 @@
+server:
+  name: Practice
+  listen_address: 0.0.0.0:19132
+  max_players: 1000
+
+database:
+  hostname: 127.0.0.1
+  port: 3306
+  username: root
+  password: user
+  name: practice
+
+view_distance: 12
