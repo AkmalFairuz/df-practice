@@ -4,7 +4,6 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/user"
-	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -115,8 +114,8 @@ func (l *Lobby) sendLobbyItems(p *player.Player) {
 	u := user.Get(p)
 
 	_ = p.Inventory().SetItem(0, item.NewStack(item.Sword{Tier: item.ToolTierDiamond}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.play.ffa.name")).WithValue(lobbyItemIndexKey, 0))
-	_ = p.Inventory().SetItem(1, item.NewStack(item.Sword{Tier: item.ToolTierIron}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.play.duels.name")).WithValue(lobbyItemIndexKey, 1))
-	_ = p.Inventory().SetItem(8, item.NewStack(block.Skull{Type: block.PlayerHead()}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.profile.name")).WithValue(lobbyItemIndexKey, 8))
+	//_ = p.Inventory().SetItem(1, item.NewStack(item.Sword{Tier: item.ToolTierIron}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.play.duels.name")).WithValue(lobbyItemIndexKey, 1))
+	//_ = p.Inventory().SetItem(8, item.NewStack(block.Skull{Type: block.PlayerHead()}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.profile.name")).WithValue(lobbyItemIndexKey, 8))
 }
 
 func (l *Lobby) Spawn(p *player.Player) {

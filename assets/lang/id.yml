@@ -31,3 +31,6 @@ error.command.whisper.missing.message: "<red>tidak ada pesan yang ditentukan.</r
 
 whisper.received: "<diamond>Pesan pribadi dari <white>%s</white>:</diamond> <white>%s</white>"
 whisper.sent: "<diamond>Pesan pribadi ke <white>%s</white>:</diamond> <white>%s</white>"
+
+form.ffa.selector.title: "Free for All"
+form.ffa.selector.classic: "Klasik"

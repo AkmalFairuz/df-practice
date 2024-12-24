@@ -19,6 +19,8 @@ type Participant struct {
 	kills      atomic.Int32
 	killStreak atomic.Int32
 	deaths     atomic.Int32
+
+	lastSpawn time.Time
 }
 
 func (par *Participant) StoreLastAttackedBy(xuid string) {

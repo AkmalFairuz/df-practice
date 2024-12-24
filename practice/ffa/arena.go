@@ -129,7 +129,7 @@ func (a *Arena) Join(p *player.Player, tx *world.Tx) error {
 		a.mu.RUnlock()
 		return errors.New("user already in this arena, this should not happen after u.CurrentFFAArena() check before")
 	}
-	par := &Participant{u: u}
+	par := &Participant{u: u, lastSpawn: time.Now()}
 	a.u[u.XUID()] = par
 	a.mu.RUnlock()
 
@@ -168,6 +168,7 @@ func (a *Arena) Respawn(p *player.Player, tx *world.Tx) error {
 	selectedSpawn.TeleportPlayer(p)
 	par.combatTimer.Store(0)
 	par.lastAttackedAt = time.Unix(0, 0)
+	par.lastSpawn = time.Now()
 	helper.UpdatePlayerNameTagWithHealth(p, 0)
 	_ = a.sendKit(p)
 	return nil
@@ -209,6 +210,11 @@ func (a *Arena) BroadcastMessaget(translationName string, args ...any) {
 func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, immunity *time.Duration, src world.DamageSource) {
 	par, ok := a.u[ctx.Val().XUID()]
 	if !ok {
+		return
+	}
+
+	if time.Since(par.lastSpawn) < 4*time.Second {
+		ctx.Cancel()
 		return
 	}
 

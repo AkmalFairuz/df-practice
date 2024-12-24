@@ -2,6 +2,7 @@ package practice
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/ffa"
+	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/block/cube"
@@ -215,9 +216,8 @@ func (ph *playerHandler) HandleLecternPageTurn(ctx *player.Context, pos cube.Pos
 }
 
 func (ph *playerHandler) HandleItemDamage(ctx *player.Context, i item.Stack, damage int) {
-	if lobby.Instance().IsInLobby(ctx.Val()) {
+	if helper.IsItemUnbreakable(i) {
 		ctx.Cancel()
-		return
 	}
 }
 

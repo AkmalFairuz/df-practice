@@ -31,3 +31,6 @@ error.command.whisper.missing.message: "<red>no message specified.</red>"
 
 whisper.received: "<diamond>Private message from <white>%s</white>:</diamond> <white>%s</white>"
 whisper.sent: "<diamond>Private message to <white>%s</white>:</diamond> <white>%s</white>"
+
+form.ffa.selector.title: "Free for All"
+form.ffa.selector.classic: "Classic"
