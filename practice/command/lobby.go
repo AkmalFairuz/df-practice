@@ -11,6 +11,7 @@ import (
 )
 
 type Lobby struct {
+	onlyPlayer
 }
 
 func (l Lobby) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
@@ -28,8 +29,4 @@ func (l Lobby) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 	}
 
 	lobby.Instance().Spawn(s.(*player.Player))
-}
-
-func (l Lobby) Allow(s cmd.Source) bool {
-	return isPlayer(s)
 }

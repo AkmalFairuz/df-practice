@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/model"
+	"github.com/df-mc/atomic"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/scoreboard"
 	"github.com/df-mc/dragonfly/server/session"
@@ -14,7 +15,6 @@ import (
 	"golang.org/x/text/language"
 	"strings"
 	"sync"
-	"sync/atomic"
 )
 
 type User struct {
@@ -33,6 +33,8 @@ type User struct {
 
 	currentFFAArena   any
 	currentFFAArenaMu sync.Mutex
+
+	lastWhisperFromXUID atomic.Value[string]
 }
 
 func New(p *player.Player) *User {
@@ -53,6 +55,8 @@ func New(p *player.Player) *User {
 		conn: conn,
 		lang: locale,
 	}
+
+	u.lastWhisperFromXUID.Store("")
 	return u
 }
 
@@ -110,7 +114,7 @@ func (u *User) Closed() bool {
 }
 
 func (u *User) Close() error {
-	if u.closed.CompareAndSwap(false, true) {
+	if u.closed.CAS(false, true) {
 		RemoveByXUID(u.xuid)
 		_ = u.conn.Close()
 	}
@@ -183,9 +187,15 @@ func (u *User) EntityRuntimeID() uint64 {
 }
 
 func (u *User) OnReceiveWhisper(sender *User, message string) {
+	u.lastWhisperFromXUID.Store(sender.XUID())
+
 	u.Messaget("whisper.received", sender.Name(), message)
 }
 
 func (u *User) OnSendWhisper(target *User, message string) {
 	u.Messaget("whisper.sent", target.Name(), message)
+}
+
+func (u *User) ReplyWhisperToXUID() string {
+	return u.lastWhisperFromXUID.Load()
 }

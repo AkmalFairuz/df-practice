@@ -26,6 +26,7 @@ func main() {
 	}
 
 	cmd.Register(cmd.New("whisper", "", []string{"w", "msg"}, command.Whisper{}))
+	cmd.Register(cmd.New("reply", "", []string{"r"}, command.Reply{}))
 	cmd.Register(cmd.New("lobby", "", []string{"hub"}, command.Lobby{}))
 
 	pr := practice.New(log, serverConfig.New())

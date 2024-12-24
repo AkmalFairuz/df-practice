@@ -36,3 +36,6 @@ form.ffa.selector.title: "Free for All"
 form.ffa.selector.classic: "Classic"
 
 error.lobby.in.combat: "<red>You can't go to the lobby while in combat. Please wait until the combat timer expires.</red>"
+
+error.command.reply.no.target: "<red>No one to reply to.</red>"
+error.command.reply.target.offline: "<red>The player you're trying to reply to is offline.</red>"

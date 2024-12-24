@@ -8,6 +8,8 @@ import (
 )
 
 type Whisper struct {
+	onlyPlayer
+
 	Target  []cmd.Target `cmd:"target"`
 	Message cmd.Varargs  `cmd:"message"`
 }
@@ -28,8 +30,4 @@ func (w Whisper) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 	target := user.Get(w.Target[0].(*player.Player))
 	u.OnSendWhisper(target, string(w.Message))
 	target.OnReceiveWhisper(u, string(w.Message))
-}
-
-func (w Whisper) Allow(s cmd.Source) bool {
-	return isPlayer(s)
 }

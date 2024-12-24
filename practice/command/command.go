@@ -22,3 +22,9 @@ func isPlayer(s cmd.Source) bool {
 	_, ok := s.(*player.Player)
 	return ok
 }
+
+type onlyPlayer struct{}
+
+func (onlyPlayer) Allow(s cmd.Source) bool {
+	return isPlayer(s)
+}

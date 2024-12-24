@@ -21,14 +21,14 @@ var noDebuffArena *Arena
 func InitArenas(log *slog.Logger) {
 	classicArena = New(initWorldConfig(log, "worlds/sumo").New())
 	classicArena.spawns = []helper.Location{
-		{X: 0.5, Y: -61, Z: 0.5},
-		{X: 10.5, Y: -61, Z: 0.5},
-		{X: 0.5, Y: -61, Z: 10.5},
-		{X: 10.5, Y: -61, Z: 10.5},
+		{X: 0.5, Y: -59, Z: 0.5},
+		{X: 10.5, Y: -59, Z: 0.5},
+		{X: 0.5, Y: -59, Z: 10.5},
+		{X: 10.5, Y: -59, Z: 10.5},
 	}
 	classicArena.icon = "textures/items/iron_sword.png"
 	classicArena.onSendKit = func(p *player.Player) error {
-		_, _ = p.Inventory().AddItem(helper.SetItemAsUnbreakable(item.NewStack(item.Sword{Tier: item.ToolTierStone}, 1)))
+		_, _ = p.Inventory().AddItem(helper.SetItemAsUnbreakable(item.NewStack(item.Sword{Tier: item.ToolTierIron}, 1)))
 		_, _ = p.Inventory().AddItem(helper.SetItemAsUnbreakable(item.NewStack(item.Bow{}, 1)))
 		_, _ = p.Inventory().AddItem(item.NewStack(item.GoldenApple{}, 16))
 		_, _ = p.Inventory().AddItem(item.NewStack(item.Potion{Type: potion.Healing()}, 5))

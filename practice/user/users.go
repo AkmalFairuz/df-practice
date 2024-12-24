@@ -23,6 +23,16 @@ func Get(p *player.Player) *User {
 	return ret
 }
 
+func GetByXUID(xuid string) *User {
+	usersMu.RLock()
+	defer usersMu.RUnlock()
+	ret, ok := users[xuid]
+	if !ok {
+		return nil
+	}
+	return ret
+}
+
 func Remove(p *player.Player) {
 	usersMu.Lock()
 	defer usersMu.Unlock()
