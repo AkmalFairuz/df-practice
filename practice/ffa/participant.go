@@ -42,3 +42,11 @@ func (par *Participant) LastAttackedByWithMaxDuration(maxDuration time.Duration)
 func (par *Participant) LastAttackedBy() string {
 	return par.LastAttackedByWithMaxDuration(8 * time.Second)
 }
+
+func (par *Participant) InCombat() bool {
+	return par.combatTimer.Load() > 0
+}
+
+func (par *Participant) Combat() int {
+	return int(par.combatTimer.Load())
+}

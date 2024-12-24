@@ -34,3 +34,5 @@ whisper.sent: "<diamond>Pesan pribadi ke <white>%s</white>:</diamond> <white>%s<
 
 form.ffa.selector.title: "Free for All"
 form.ffa.selector.classic: "Klasik"
+
+error.lobby.in.combat: "<red>Anda tidak dapat pergi ke lobby saat dalam pertempuran. Harap tunggu hingga timer pertempuran berakhir.</red>"

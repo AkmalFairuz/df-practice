@@ -18,7 +18,13 @@ func (l Lobby) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 
 	ffaArena := u.CurrentFFAArena()
 	if ffaArena != nil {
-		helper.LogErrors(ffaArena.(*ffa.Arena).Quit(s.(*player.Player)))
+		a := ffaArena.(*ffa.Arena)
+		par, _ := a.ParticipantByXUID(u.XUID())
+		if par.InCombat() {
+			o.Error(u.Translatef("error.lobby.in.combat"))
+			return
+		}
+		helper.LogErrors(a.Quit(s.(*player.Player)))
 	}
 
 	lobby.Instance().Spawn(s.(*player.Player))

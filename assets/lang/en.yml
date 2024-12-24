@@ -34,3 +34,5 @@ whisper.sent: "<diamond>Private message to <white>%s</white>:</diamond> <white>%
 
 form.ffa.selector.title: "Free for All"
 form.ffa.selector.classic: "Classic"
+
+error.lobby.in.combat: "<red>You can't go to the lobby while in combat. Please wait until the combat timer expires.</red>"
