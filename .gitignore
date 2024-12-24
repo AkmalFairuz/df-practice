@@ -1,3 +1,5 @@
 worlds/
 world/
 resources/
+.idea
+vendor/
