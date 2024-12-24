@@ -2,6 +2,7 @@ package command
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/ffa"
+	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/cmd"
@@ -17,7 +18,7 @@ func (l Lobby) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 
 	ffaArena := u.CurrentFFAArena()
 	if ffaArena != nil {
-		_ = ffaArena.(*ffa.Arena).Quit(s.(*player.Player))
+		helper.LogErrors(ffaArena.(*ffa.Arena).Quit(s.(*player.Player)))
 	}
 
 	lobby.Instance().Spawn(s.(*player.Player))

@@ -2,6 +2,7 @@ package lobby
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/ffa"
+	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -18,7 +19,7 @@ func sendFFAForm(p *player.Player) {
 				Text:  u.Translatef("form.ffa.selector.classic"),
 				Image: ffa.ClassicArena().Icon(),
 				Submit: func(tx *world.Tx) {
-					_ = ffa.ClassicArena().Join(p, tx)
+					helper.LogErrors(ffa.ClassicArena().Join(p, tx))
 				},
 			},
 			//{

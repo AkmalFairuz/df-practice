@@ -263,7 +263,7 @@ func (ph *playerHandler) HandleQuit(p *player.Player) {
 	_ = ph.u.SynchronizeLastSeen()
 
 	if ffaArena := ph.ffaArena(p); ffaArena != nil {
-		_ = ffaArena.Quit(p)
+		helper.LogErrors(ffaArena.Quit(p))
 	}
 
 	user.BroadcastMessaget("player.quit.message", p.Name())

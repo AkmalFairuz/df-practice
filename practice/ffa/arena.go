@@ -183,16 +183,20 @@ func (a *Arena) sendKit(p *player.Player) error {
 
 // Quit removes a player from the arena. Caller should teleport the player to lobby.
 func (a *Arena) Quit(p *player.Player) error {
-	a.mu.Lock()
-	defer a.mu.Unlock()
 
 	u := user.Get(p)
 
-	if _, ok := a.u[u.XUID()]; ok {
+	a.mu.RLock()
+	_, ok := a.u[u.XUID()]
+	a.mu.RUnlock()
+	if !ok {
 		return errors.New("user is not in this arena")
 	}
 
+	a.mu.Lock()
 	delete(a.u, u.XUID())
+	a.mu.Unlock()
+
 	u.SetCurrentFFAArena(nil)
 	return nil
 }
@@ -302,7 +306,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		par.deaths.Add(1)
 		par.killStreak.Store(0)
 
-		_ = a.Respawn(ctx.Val(), ctx.Val().Tx())
+		helper.LogErrors(a.Respawn(ctx.Val(), ctx.Val().Tx()))
 	} else {
 		par.lastAttackedAt = time.Now()
 		par.combatTimer.Store(11)
