@@ -7,6 +7,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/cmd"
+	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/skin"
@@ -91,6 +92,10 @@ func (ph *playerHandler) HandleHeal(ctx *player.Context, health *float64, src wo
 }
 
 func (ph *playerHandler) HandleHurt(ctx *player.Context, damage *float64, immune bool, attackImmunity *time.Duration, src world.DamageSource) {
+	if _, ok := src.(entity.AttackDamageSource); ok {
+		*attackImmunity = (time.Millisecond * 50) * 8
+	}
+
 	if *damage > ctx.Val().Health() {
 		ctx.Cancel()
 	}

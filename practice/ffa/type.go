@@ -33,10 +33,10 @@ func InitArenas(log *slog.Logger) {
 		_, _ = p.Inventory().AddItem(item.NewStack(item.Potion{Type: potion.Healing()}, 5))
 		_, _ = p.Inventory().AddItem(item.NewStack(item.Arrow{}, 16))
 
-		p.Armour().SetHelmet(helper.SetItemAsUnbreakable(item.NewStack(item.Helmet{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 5))))
-		p.Armour().SetChestplate(helper.SetItemAsUnbreakable(item.NewStack(item.Chestplate{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 5))))
-		p.Armour().SetLeggings(helper.SetItemAsUnbreakable(item.NewStack(item.Leggings{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 5))))
-		p.Armour().SetBoots(helper.SetItemAsUnbreakable(item.NewStack(item.Boots{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 5))))
+		p.Armour().SetHelmet(helper.SetItemAsUnbreakable(item.NewStack(item.Helmet{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 3))))
+		p.Armour().SetChestplate(helper.SetItemAsUnbreakable(item.NewStack(item.Chestplate{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 3))))
+		p.Armour().SetLeggings(helper.SetItemAsUnbreakable(item.NewStack(item.Leggings{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 3))))
+		p.Armour().SetBoots(helper.SetItemAsUnbreakable(item.NewStack(item.Boots{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 3))))
 		return nil
 	}
 	if err := classicArena.Init(); err != nil {
