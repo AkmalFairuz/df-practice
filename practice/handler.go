@@ -93,7 +93,7 @@ func (ph *playerHandler) HandleHeal(ctx *player.Context, health *float64, src wo
 
 func (ph *playerHandler) HandleHurt(ctx *player.Context, damage *float64, immune bool, attackImmunity *time.Duration, src world.DamageSource) {
 	if _, ok := src.(entity.AttackDamageSource); ok {
-		*attackImmunity = (time.Millisecond * 50) * 8
+		*attackImmunity = (time.Millisecond * 50) * 9
 	}
 
 	if *damage > ctx.Val().Health() {

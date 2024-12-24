@@ -310,7 +310,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 	} else {
 		par.lastAttackedAt = time.Now()
 		par.combatTimer.Store(11)
-		helper.UpdatePlayerNameTagWithHealth(ctx.Val(), *damage)
+		helper.UpdatePlayerNameTagWithHealth(ctx.Val(), 0-*damage)
 	}
 }
 
