@@ -87,7 +87,7 @@ func (a *Arena) startTicking() {
 }
 
 func (a *Arena) handleTick(currentTick int64) {
-	<-a.w.Exec(func(tx *world.Tx) {
+	a.w.Exec(func(tx *world.Tx) {
 		for _, par := range a.Participants() {
 			if currentTick%20 == 0 {
 				par.combatTimer.Store(max(0, par.combatTimer.Load()-1))
@@ -231,7 +231,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 	handledDeathMessage := false
 
 	switch cause := src.(type) {
-	case *entity.AttackDamageSource:
+	case entity.AttackDamageSource:
 		attacker, ok := cause.Attacker.(*player.Player)
 		if !ok {
 			// TODO: support non-player attacker
@@ -257,7 +257,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		} else {
 			par.StoreLastAttackedBy(user.Get(attacker).XUID())
 		}
-	case *entity.ProjectileDamageSource:
+	case entity.ProjectileDamageSource:
 		owner, ok := cause.Owner.(*player.Player)
 		if !ok {
 			ctx.Cancel()
@@ -282,7 +282,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		} else {
 			par.StoreLastAttackedBy(user.Get(owner).XUID())
 		}
-	case *entity.VoidDamageSource:
+	case entity.VoidDamageSource:
 		if death {
 			if lastAttackedBy := par.LastAttackedBy(); lastAttackedBy != "" {
 				attacker, ok := a.u[lastAttackedBy]

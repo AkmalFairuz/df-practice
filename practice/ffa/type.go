@@ -5,6 +5,7 @@ import (
 	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/df-mc/dragonfly/server/item"
+	"github.com/df-mc/dragonfly/server/item/enchantment"
 	"github.com/df-mc/dragonfly/server/item/potion"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -26,17 +27,20 @@ func InitArenas(log *slog.Logger) {
 		{X: 10.5, Y: -60, Z: 10.5},
 	}
 	classicArena.onSendKit = func(p *player.Player) error {
-		_, _ = p.Inventory().AddItem(helper.SetItemAsUnbreakable(item.NewStack(item.Sword{Tier: item.ToolTierIron}, 1)))
+		_, _ = p.Inventory().AddItem(helper.SetItemAsUnbreakable(item.NewStack(item.Sword{Tier: item.ToolTierStone}, 1)))
 		_, _ = p.Inventory().AddItem(helper.SetItemAsUnbreakable(item.NewStack(item.Bow{}, 1)))
 		_, _ = p.Inventory().AddItem(item.NewStack(item.GoldenApple{}, 16))
 		_, _ = p.Inventory().AddItem(item.NewStack(item.Potion{Type: potion.Healing()}, 5))
 		_, _ = p.Inventory().AddItem(item.NewStack(item.Arrow{}, 16))
 
-		p.Armour().SetHelmet(helper.SetItemAsUnbreakable(item.NewStack(item.Helmet{Tier: item.ArmourTierChain{}}, 1)))
-		p.Armour().SetChestplate(helper.SetItemAsUnbreakable(item.NewStack(item.Chestplate{Tier: item.ArmourTierChain{}}, 1)))
-		p.Armour().SetLeggings(helper.SetItemAsUnbreakable(item.NewStack(item.Leggings{Tier: item.ArmourTierChain{}}, 1)))
-		p.Armour().SetBoots(helper.SetItemAsUnbreakable(item.NewStack(item.Boots{Tier: item.ArmourTierChain{}}, 1)))
+		p.Armour().SetHelmet(helper.SetItemAsUnbreakable(item.NewStack(item.Helmet{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 5))))
+		p.Armour().SetChestplate(helper.SetItemAsUnbreakable(item.NewStack(item.Chestplate{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 5))))
+		p.Armour().SetLeggings(helper.SetItemAsUnbreakable(item.NewStack(item.Leggings{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 5))))
+		p.Armour().SetBoots(helper.SetItemAsUnbreakable(item.NewStack(item.Boots{Tier: item.ArmourTierChain{}}, 1).WithEnchantments(item.NewEnchantment(enchantment.Protection, 5))))
 		return nil
+	}
+	if err := classicArena.Init(); err != nil {
+		panic(err)
 	}
 }
 
