@@ -1,6 +1,7 @@
 package duels
 
 import (
+	"github.com/akmalfairuz/df-practice/practice/game/gamedefaults"
 	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/df-mc/dragonfly/server/block/cube"
@@ -23,12 +24,14 @@ type Duels struct {
 
 	spawns   []*spawnInfo
 	spawnsMu sync.Mutex
+
+	onSendKit func(p *player.Player) error
 }
 
 func (d *Duels) Create(g igame.IGame) {
 	d.spawns = []*spawnInfo{
-		{loc: helper.Location{X: 0, Y: 68.2, Z: 14}},
-		{loc: helper.Location{X: 0, Y: 68.2, Z: -14}},
+		{loc: helper.Location{X: 0 + 0.5, Y: 68.2, Z: 14 + 0.5, Yaw: -180, Pitch: 0}},
+		{loc: helper.Location{X: 0 + 0.5, Y: 68.2, Z: -14 + 0.5, Yaw: 0, Pitch: 0}},
 	}
 
 	d.g = g
@@ -39,7 +42,7 @@ func (d *Duels) PlayingTime() int {
 }
 
 func (d *Duels) WaitingTime() int {
-	return 6
+	return 8
 }
 
 func (d *Duels) EndingTime() int {
@@ -67,7 +70,7 @@ func (d *Duels) OnJoined(par igame.IParticipant, p *player.Player) {
 	defer d.spawnsMu.Unlock()
 
 	for i, spawn := range d.spawns {
-		if spawn.usedBy != "" {
+		if spawn.usedBy == "" {
 			d.spawns[i].usedBy = par.User().XUID()
 			d.spawns[i].loc.TeleportPlayer(p)
 			break
@@ -100,6 +103,8 @@ func (d *Duels) OnStart() {
 		for _, p := range d.g.Players(tx) {
 			p.SetMobile()
 			p.SetGameMode(world.GameModeSurvival)
+
+			helper.LogErrors((d.onSendKit)(p))
 		}
 	})
 }
@@ -143,8 +148,9 @@ func (d *Duels) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 	death := *damage >= ctx.Val().Health()
 	if death {
 		ctx.Cancel()
+
+		gamedefaults.HandleKillMessage(d.g, ctx.Val(), src)
 	}
-	// TODO: Handle death message
 	if death {
 		d.g.SetSpectator(ctx.Val())
 	}
@@ -169,6 +175,10 @@ func (d *Duels) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b world.Bloc
 
 func (d *Duels) Game() igame.IGame {
 	return d.g
+}
+
+func (d *Duels) SetKit(kit func(p *player.Player) error) {
+	d.onSendKit = kit
 }
 
 // Compile-time check to ensure that Duels implements game.Impl.

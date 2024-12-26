@@ -25,14 +25,19 @@ func (loc Location) ToMgl32Vec3() mgl32.Vec3 {
 }
 
 func (loc Location) TeleportPlayer(p *player.Player) {
-	p.Teleport(loc.ToMgl64Vec3())
 	u := user.Get(p)
-	_ = u.Conn().WritePacket(&packet.MovePlayer{
+	LogErrors(u.Conn().WritePacket(&packet.MovePlayer{
 		EntityRuntimeID: u.EntityRuntimeID(),
 		Position:        mgl32.Vec3{float32(p.Position().X()), float32(p.Position().Y() + 1.62), float32(p.Position().Z())},
 		Yaw:             loc.Yaw,
 		HeadYaw:         loc.Yaw,
 		Pitch:           loc.Pitch,
+		OnGround:        p.OnGround(),
 		Mode:            packet.MoveModeTeleport,
-	})
+	}))
+	p.Teleport(loc.ToMgl64Vec3())
+}
+
+func Mgl64Vec3ToMgl32Vec3(v mgl64.Vec3) mgl32.Vec3 {
+	return mgl32.Vec3{float32(v.X()), float32(v.Y()), float32(v.Z())}
 }

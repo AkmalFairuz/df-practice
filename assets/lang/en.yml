@@ -11,6 +11,7 @@ scoreboard.title: "<diamond><bold>PRACTICE</bold></diamond>"
 lobby.scoreboard.players.online.count: "<diamond>Online:</diamond> <white>%d</white>"
 scoreboard.footer: "<diamond>pr.venitymc.com</diamond>"
 scoreboard.your.ping: "<diamond>Your Ping:</diamond> <white>%dms</white>"
+scoreboard.their.ping: "<diamond>Their Ping:</diamond> <white>%dms</white>"
 
 death.message.format: "<red>%s</red> <white>died</white>"
 killed.message.format: "<red>%s</red> <white>was killed by</white> <red>%s</red>"
@@ -55,3 +56,9 @@ gamemode.command.success: "<green>Successfully changed %s's gamemode to %s.</gre
 
 form.duels.selector.title: "Duels"
 form.duels.selector.classic: "Classic"
+
+game.waiting.starting.message: "<diamond>The game is starting in <white>%d</white> seconds.</diamond>"
+game.started.message: "<diamond>The game has started!</diamond>"
+game.ended.message: "<diamond>The game has ended!</diamond>"
+
+game.you.died.title: "<red>YOU DIED!</red>"

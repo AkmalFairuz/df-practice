@@ -111,6 +111,9 @@ func (l *Lobby) users(tx *world.Tx) []*user.User {
 
 func (l *Lobby) sendLobbyItems(p *player.Player) {
 	u := user.Get(p)
+	if u == nil {
+		return
+	}
 
 	_ = p.Inventory().SetItem(0, item.NewStack(item.Sword{Tier: item.ToolTierDiamond}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.play.ffa.name")).WithValue(lobbyItemIndexKey, 0))
 	_ = p.Inventory().SetItem(1, item.NewStack(item.Sword{Tier: item.ToolTierIron}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.play.duels.name")).WithValue(lobbyItemIndexKey, 1))
@@ -131,7 +134,10 @@ func (l *Lobby) Spawn(p *player.Player) {
 			newP := tx.AddEntity(p.H()).(*player.Player)
 			helper.ResetPlayer(newP)
 			l.sendLobbyItems(newP)
-			l.sendUserScoreboard(user.Get(newP), tx)
+			u := user.Get(newP)
+			if u != nil {
+				l.sendUserScoreboard(u, tx)
+			}
 			newP.SetGameMode(world.GameModeAdventure)
 			newP.Teleport(l.w.Spawn().Vec3())
 		})

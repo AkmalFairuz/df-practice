@@ -49,7 +49,7 @@ func sendDuelsForm(p *player.Player) {
 				Submit: func(tx *world.Tx) {
 					for ent := range tx.Entities() {
 						if p2, ok := ent.(*player.Player); ok && p2.XUID() == p.XUID() {
-							helper.LogErrors(duelsmanager.Default.Join(p2))
+							helper.LogErrors(duelsmanager.Classic.Join(p2))
 							return
 						}
 					}

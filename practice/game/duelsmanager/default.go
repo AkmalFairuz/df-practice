@@ -5,11 +5,13 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/game/duels"
 	"github.com/akmalfairuz/df-practice/practice/game/gamemanager"
 	"github.com/akmalfairuz/df-practice/practice/game/igame"
+	"github.com/akmalfairuz/df-practice/practice/kit"
 	"log/slog"
 )
 
-var Default = gamemanager.New(func() igame.Impl {
+var Classic = gamemanager.New(func() igame.Impl {
 	d := &duels.Duels{}
+	d.SetKit(kit.Classic)
 
 	gConf := game.Config{
 		Log:     slog.Default(),

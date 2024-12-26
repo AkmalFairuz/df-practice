@@ -38,4 +38,6 @@ type IGame interface {
 	HandlePlace(ctx *inventory.Context, slot int, stack item.Stack)
 	HandleTake(ctx *inventory.Context, slot int, stack item.Stack)
 	Load() error
+	Messaget(translationName string, args ...any)
+	Sound(name string)
 }

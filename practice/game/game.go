@@ -12,8 +12,10 @@ import (
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/item/inventory"
 	"github.com/df-mc/dragonfly/server/player"
+	"github.com/df-mc/dragonfly/server/player/title"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
+	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 	"log/slog"
 	"math/rand"
 	"os"
@@ -105,7 +107,6 @@ func (g *Game) handleTick() {
 	for {
 		select {
 		case <-g.tickQueue:
-			g.currentTick.Add(1)
 			g.OnTick()
 		case <-g.closing:
 			return
@@ -138,13 +139,19 @@ func (g *Game) OnTick() {
 
 				u.SendScoreboard(lines)
 			}
+
+			remaining := g.impl.WaitingTime() - int(g.currentTick.Load()/20)
+			if remaining <= 5 && remaining > 0 {
+				g.Messaget("game.waiting.starting.message", remaining)
+				g.Sound("random.click")
+			}
 		}
 
-		if g.currentTick.Load() >= uint64(g.impl.WaitingTime())*20 {
+		if g.CurrentTick() >= uint64(g.impl.WaitingTime())*20 {
 			g.Start()
 		}
 	case StatePlaying:
-		if g.currentTick.Load() >= uint64(g.impl.PlayingTime())*20 {
+		if g.CurrentTick() >= uint64(g.impl.PlayingTime())*20 {
 			g.End()
 			return
 		}
@@ -168,6 +175,9 @@ func (g *Game) OnTick() {
 
 func (g *Game) Start() {
 	g.state.Store(StatePlaying)
+	g.currentTick.Store(0)
+	g.Sound("mob.blaze.shoot")
+	g.Messaget("game.started.message")
 	g.w.Exec(func(tx *world.Tx) {
 		for ent := range tx.Entities() {
 			p, ok := ent.(*player.Player)
@@ -187,8 +197,13 @@ func (g *Game) Start() {
 }
 
 func (g *Game) End() {
+	if g.IsEnding() {
+		return
+	}
+	g.currentTick.Store(0)
 	g.state.Store(StateEnding)
-
+	g.Sound("random.explode")
+	g.Messaget("game.ended.message")
 	g.w.Exec(func(tx *world.Tx) {
 		for ent := range tx.Entities() {
 			p, ok := ent.(*player.Player)
@@ -196,13 +211,15 @@ func (g *Game) End() {
 				continue
 			}
 
-			_, ok = g.ParticipantByXUID(p.XUID())
+			par, ok := g.ParticipantByXUID(p.XUID())
 			if !ok {
 				continue
 			}
 
 			helper.ResetPlayer(p)
-			p.SetGameMode(world.GameModeAdventure)
+			if par.IsPlaying() {
+				p.SetGameMode(world.GameModeAdventure)
+			}
 			_ = p.Inventory().SetItem(8, quitItem(p))
 			_ = p.SetHeldSlot(0)
 		}
@@ -334,7 +351,9 @@ func (g *Game) Quit(p *player.Player) error {
 	}
 	g.pMu.RUnlock()
 
-	g.Messaget("game.waiting.quit.message", user.Get(p).Name(), len(g.p)-1, g.impl.MaxParticipants())
+	if g.IsWaiting() {
+		g.Messaget("game.waiting.left.message", user.Get(p).Name(), len(g.p)-1, g.impl.MaxParticipants())
+	}
 	g.impl.OnQuit(p)
 	helper.ResetPlayer(p)
 	p.SetGameMode(world.GameModeAdventure)
@@ -406,6 +425,24 @@ func (g *Game) Messaget(translationName string, args ...any) {
 			u.Messaget(translationName, args...)
 		}
 	}
+}
+
+func (g *Game) Sound(name string) {
+	g.w.Exec(func(tx *world.Tx) {
+		for _, p := range g.Participants() {
+			ent, ok := p.User().EntityHandle().Entity(tx)
+			if !ok {
+				continue
+			}
+			playSound := &packet.PlaySound{
+				SoundName: name,
+				Position:  helper.Mgl64Vec3ToMgl32Vec3(ent.Position()),
+				Volume:    0.5,
+				Pitch:     1,
+			}
+			_ = p.User().Conn().WritePacket(playSound)
+		}
+	})
 }
 
 func (g *Game) World() *world.World {
@@ -516,6 +553,8 @@ func (g *Game) SetSpectator(p *player.Player) {
 	p.SetGameMode(world.GameModeSpectator)
 	_ = p.Inventory().SetItem(8, quitItem(p))
 	_ = p.SetHeldSlot(0)
+
+	p.SendTitle(title.New(lang.Translatef(user.Lang(p), "game.you.died.title")))
 
 	g.impl.CheckEnd()
 }
