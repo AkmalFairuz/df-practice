@@ -1,7 +1,9 @@
 package practice
 
 import (
+	"github.com/akmalfairuz/df-practice/practice/game"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
+	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/item/inventory"
 	"github.com/df-mc/dragonfly/server/player"
@@ -28,11 +30,19 @@ func (p *playerInvHandler) HandleTake(ctx *inventory.Context, slot int, stack it
 	if lobby.Instance().IsInLobby(p.player(ctx)) {
 		ctx.Cancel()
 	}
+
+	if g := p.game(ctx); g != nil {
+		g.HandleTake(ctx, slot, stack)
+	}
 }
 
 func (p *playerInvHandler) HandlePlace(ctx *inventory.Context, slot int, stack item.Stack) {
 	if lobby.Instance().IsInLobby(p.player(ctx)) {
 		ctx.Cancel()
+	}
+
+	if g := p.game(ctx); g != nil {
+		g.HandlePlace(ctx, slot, stack)
 	}
 }
 
@@ -40,4 +50,16 @@ func (p *playerInvHandler) HandleDrop(ctx *inventory.Context, slot int, stack it
 	if lobby.Instance().IsInLobby(p.player(ctx)) {
 		ctx.Cancel()
 	}
+
+	if g := p.game(ctx); g != nil {
+		g.HandleDrop(ctx, slot, stack)
+	}
+}
+
+func (p *playerInvHandler) game(ctx *inventory.Context) *game.Game {
+	g := user.Get(p.player(ctx)).CurrentGame()
+	if g == nil {
+		return nil
+	}
+	return g.(*game.Game)
 }

@@ -16,7 +16,7 @@ func (p packetHandler) HandleClientPacket(ctx *event.Context[*player.Player], pk
 func (p packetHandler) HandleServerPacket(ctx *event.Context[*player.Player], pk packet.Packet) {
 	switch pk := pk.(type) {
 	case *packet.LevelSoundEvent:
-		if pk.SoundType == packet.SoundEventAttackStrong || pk.SoundType == packet.SoundEventAttackNoDamage {
+		if pk.SoundType == packet.SoundEventAttackStrong || pk.SoundType == packet.SoundEventAttackNoDamage || pk.SoundType == packet.SoundEventAttack {
 			ctx.Cancel() // disable hit sound
 		}
 	}

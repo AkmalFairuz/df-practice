@@ -39,3 +39,14 @@ error.lobby.in.combat: "<red>You can't go to the lobby while in combat. Please w
 
 error.command.reply.no.target: "<red>No one to reply to.</red>"
 error.command.reply.target.offline: "<red>The player you're trying to reply to is offline.</red>"
+
+game.waiting.join.message: "<grey>%s joined the game (%d/%d)</grey>"
+game.waiting.left.message: "<grey>%s left the game (%d/%d)</grey>"
+
+game.waiting.scoreboard.players: "<diamond>Players:</diamond> <white>%d/%d</white>"
+game.waiting.scoreboard.starting.in: "<diamond>Starting in:</diamond> <white>%ds</white>"
+game.waiting.scoreboard.waiting.for.players: "<diamond>Waiting for players...</diamond>"
+
+game.ending.scoreboard.stopping.in: "<diamond>Stopping in:</diamond> <white>%ds</white>"
+
+game.scoreboard.time.left: "<diamond>Time Left:</diamond> <white>%ds</white>"

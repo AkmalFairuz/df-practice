@@ -2,6 +2,7 @@ package command
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/ffa"
+	"github.com/akmalfairuz/df-practice/practice/game"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
@@ -26,6 +27,11 @@ func (l Lobby) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 			return
 		}
 		helper.LogErrors(a.Quit(s.(*player.Player)))
+	}
+
+	g := u.CurrentGame()
+	if g != nil {
+		helper.LogErrors(g.(*game.Game).Quit(s.(*player.Player)))
 	}
 
 	lobby.Instance().Spawn(s.(*player.Player))

@@ -4,6 +4,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice"
 	"github.com/akmalfairuz/df-practice/practice/command"
 	"github.com/akmalfairuz/df-practice/practice/config"
+	"github.com/akmalfairuz/df-practice/practice/game"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"log/slog"
@@ -28,6 +29,10 @@ func main() {
 	cmd.Register(cmd.New("whisper", "", []string{"w", "msg"}, command.Whisper{}))
 	cmd.Register(cmd.New("reply", "", []string{"r"}, command.Reply{}))
 	cmd.Register(cmd.New("lobby", "", []string{"hub"}, command.Lobby{}))
+
+	if err := game.Init(); err != nil {
+		panic(err)
+	}
 
 	pr := practice.New(log, serverConfig.New())
 	pr.Run()

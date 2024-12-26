@@ -14,7 +14,6 @@ import (
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 	"golang.org/x/text/language"
 	"strings"
-	"sync"
 )
 
 type User struct {
@@ -31,13 +30,14 @@ type User struct {
 
 	closed atomic.Bool
 
-	currentFFAArena   any
-	currentFFAArenaMu sync.Mutex
+	currentFFAArena atomic.Value[any]
+	currentGame     atomic.Value[any]
 
 	lastWhisperFromXUID atomic.Value[string]
 }
 
 func New(p *player.Player) *User {
+
 	s := playerSession(p)
 	conn := sessionConn(s)
 
@@ -129,7 +129,19 @@ func (u *User) Messaget(translationName string, args ...any) {
 	u.s.SendMessage(lang.Translatef(u.lang, translationName, args...))
 }
 
-func (u *User) SendScoreboard(title string, lines []string) {
+func (u *User) SendScoreboard(lines []string) {
+	lines2 := make([]string, 0, len(lines))
+	lines2 = append(lines2, "")
+	for _, line := range lines {
+		lines2 = append(lines2, line)
+	}
+	lines2 = append(lines2, "")
+	lines2 = append(lines2, u.Translatef("scoreboard.footer"))
+
+	u.SendScoreboardRaw(u.Translatef("scoreboard.title"), lines2)
+}
+
+func (u *User) SendScoreboardRaw(title string, lines []string) {
 	sb := scoreboard.New(title)
 	blankLinesCount := 0
 	for _, line := range lines {
@@ -163,15 +175,11 @@ func (u *User) Name() string {
 }
 
 func (u *User) CurrentFFAArena() any {
-	u.currentFFAArenaMu.Lock()
-	defer u.currentFFAArenaMu.Unlock()
-	return u.currentFFAArena
+	return u.currentFFAArena.Load()
 }
 
 func (u *User) SetCurrentFFAArena(a any) {
-	u.currentFFAArenaMu.Lock()
-	defer u.currentFFAArenaMu.Unlock()
-	u.currentFFAArena = a
+	u.currentFFAArena.Store(a)
 }
 
 func (u *User) EntityHandle() *world.EntityHandle {
@@ -198,4 +206,16 @@ func (u *User) OnSendWhisper(target *User, message string) {
 
 func (u *User) ReplyWhisperToXUID() string {
 	return u.lastWhisperFromXUID.Load()
+}
+
+func (u *User) CurrentGame() any {
+	return u.currentGame.Load()
+}
+
+func (u *User) SetCurrentGame(g any) {
+	u.currentGame.Store(g)
+}
+
+func (u *User) Ping() int {
+	return int(u.s.Latency().Milliseconds())
 }

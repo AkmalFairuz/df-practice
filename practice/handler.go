@@ -2,6 +2,7 @@ package practice
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/ffa"
+	"github.com/akmalfairuz/df-practice/practice/game"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
@@ -43,7 +44,9 @@ func newPlayerHandler(pr *Practice, u *user.User) *playerHandler {
 }
 
 func (ph *playerHandler) HandleMove(ctx *player.Context, newPos mgl64.Vec3, newRot cube.Rotation) {
-
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleMove(ctx, newPos, newRot)
+	}
 }
 
 func (ph *playerHandler) HandleJump(p *player.Player) {
@@ -83,11 +86,27 @@ func (ph *playerHandler) HandleFoodLoss(ctx *player.Context, from int, to *int) 
 		ctx.Cancel()
 		return
 	}
+
+	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
+		ffaArena.HandleFoodLoss(ctx, from, to)
+	}
+
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleFoodLoss(ctx, from, to)
+	}
 }
 
 func (ph *playerHandler) HandleHeal(ctx *player.Context, health *float64, src world.HealingSource) {
+	if _, ok := src.(helper.SetHealthSource); !ok {
+		return
+	}
+
 	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
 		ffaArena.HandleHeal(ctx, health, src)
+	}
+
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleHeal(ctx, health, src)
 	}
 }
 
@@ -107,6 +126,10 @@ func (ph *playerHandler) HandleHurt(ctx *player.Context, damage *float64, immune
 
 	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
 		ffaArena.HandleHurt(ctx, damage, immune, attackImmunity, src)
+	}
+
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleHurt(ctx, damage, immune, attackImmunity, src)
 	}
 }
 
@@ -146,6 +169,10 @@ func (ph *playerHandler) HandleBlockBreak(ctx *player.Context, pos cube.Pos, dro
 	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
 		ffaArena.HandleBlockBreak(ctx, pos, drops, xp)
 	}
+
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleBlockBreak(ctx, pos, drops, xp)
+	}
 }
 
 func (ph *playerHandler) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b world.Block) {
@@ -157,6 +184,10 @@ func (ph *playerHandler) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b w
 	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
 		ffaArena.HandleBlockPlace(ctx, pos, b)
 	}
+
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleBlockPlace(ctx, pos, b)
+	}
 }
 
 func (ph *playerHandler) HandleBlockPick(ctx *player.Context, pos cube.Pos, b world.Block) {
@@ -165,6 +196,10 @@ func (ph *playerHandler) HandleBlockPick(ctx *player.Context, pos cube.Pos, b wo
 
 func (ph *playerHandler) HandleItemUse(ctx *player.Context) {
 	ph.l.HandleItemUse(ctx)
+
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleItemUse(ctx)
+	}
 }
 
 func (ph *playerHandler) HandleItemUseOnBlock(ctx *player.Context, pos cube.Pos, face cube.Face, clickPos mgl64.Vec3) {
@@ -175,7 +210,9 @@ func (ph *playerHandler) HandleItemUseOnBlock(ctx *player.Context, pos cube.Pos,
 }
 
 func (ph *playerHandler) HandleItemUseOnEntity(ctx *player.Context, e world.Entity) {
-
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleItemUseOnEntity(ctx, e)
+	}
 }
 
 func (ph *playerHandler) HandleItemRelease(ctx *player.Context, item item.Stack, dur time.Duration) {
@@ -201,6 +238,10 @@ func (ph *playerHandler) HandleAttackEntity(ctx *player.Context, e world.Entity,
 				ctx.Cancel()
 			}
 		}
+	}
+
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleAttackEntity(ctx, e, force, height, critical)
 	}
 }
 
@@ -244,10 +285,7 @@ func (ph *playerHandler) HandleItemDrop(ctx *player.Context, s item.Stack) {
 	}
 
 	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
-		if !ffaArena.DropAllowed() {
-			ctx.Cancel()
-			return
-		}
+		ffaArena.HandleItemDrop(ctx, s)
 	}
 }
 
@@ -271,6 +309,10 @@ func (ph *playerHandler) HandleQuit(p *player.Player) {
 		helper.LogErrors(ffaArena.Quit(p))
 	}
 
+	if g := ph.game(p); g != nil {
+		helper.LogErrors(g.Quit(p))
+	}
+
 	user.BroadcastMessaget("player.quit.message", p.Name())
 
 	_ = ph.u.Close()
@@ -286,6 +328,14 @@ func (ph *playerHandler) ffaArena(p *player.Player) *ffa.Arena {
 		return nil
 	}
 	return ret.(*ffa.Arena)
+}
+
+func (ph *playerHandler) game(p *player.Player) *game.Game {
+	ret := ph.u.CurrentGame()
+	if ret == nil {
+		return nil
+	}
+	return ret.(*game.Game)
 }
 
 // Compile-time check to ensure that playerHandler implements player.Handler.

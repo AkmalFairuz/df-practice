@@ -22,8 +22,9 @@ type Arena struct {
 
 	spawns []helper.Location
 
-	dropAllowed bool
-	onSendKit   func(*player.Player) error
+	dropAllowed    bool
+	hungerDisabled bool
+	onSendKit      func(*player.Player) error
 
 	icon string
 
@@ -103,8 +104,7 @@ func (a *Arena) sendUserScoreboard(p *Participant, tx *world.Tx) {
 		combatInfo = p.u.Translatef("ffa.scoreboard.combat.timer", p.combatTimer.Load())
 	}
 
-	p.u.SendScoreboard(p.u.Translatef("scoreboard.title"), []string{
-		"",
+	p.u.SendScoreboard([]string{
 		p.u.Translatef("ffa.scoreboard.your.kills", p.kills.Load()),
 		p.u.Translatef("ffa.scoreboard.your.deaths", p.deaths.Load()),
 		p.u.Translatef("ffa.scoreboard.your.streak", p.killStreak.Load()),
@@ -112,8 +112,6 @@ func (a *Arena) sendUserScoreboard(p *Participant, tx *world.Tx) {
 		p.u.Translatef("ffa.scoreboard.players", len(a.u)),
 		p.u.Translatef("scoreboard.your.ping", p.u.Session().Latency().Milliseconds()),
 		combatInfo,
-		"",
-		p.u.Translatef("scoreboard.footer"),
 	})
 }
 
@@ -353,4 +351,16 @@ func (a *Arena) HandleHeal(ctx *player.Context, health *float64, src world.Heali
 		return
 	}
 	helper.UpdatePlayerNameTagWithHealth(ctx.Val(), *health)
+}
+
+func (a *Arena) HandleFoodLoss(ctx *player.Context, from int, to *int) {
+	if a.hungerDisabled {
+		ctx.Cancel()
+	}
+}
+
+func (a *Arena) HandleItemDrop(ctx *player.Context, s item.Stack) {
+	if !a.dropAllowed {
+		ctx.Cancel()
+	}
 }

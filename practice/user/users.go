@@ -4,6 +4,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/database"
 	"github.com/akmalfairuz/df-practice/practice/repository"
 	"github.com/df-mc/dragonfly/server/player"
+	"golang.org/x/text/language"
 	"sync"
 )
 
@@ -69,4 +70,11 @@ func BulkMessaget(users []*User, translationName string, args ...any) {
 	for _, u := range users {
 		u.Messaget(translationName, args...)
 	}
+}
+
+func Lang(p *player.Player) language.Tag {
+	if u := Get(p); u != nil {
+		return u.Lang()
+	}
+	return language.English
 }
