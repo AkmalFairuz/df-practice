@@ -1,6 +1,7 @@
 package lobby
 
 import (
+	"fmt"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/user"
@@ -121,6 +122,12 @@ func (l *Lobby) sendLobbyItems(p *player.Player) {
 }
 
 func (l *Lobby) Spawn(p *player.Player) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("panic recovered when spawning player to lobby: %v\n", r)
+		}
+	}()
+
 	if p.Tx().World() == l.w {
 		p.Teleport(l.w.Spawn().Vec3())
 		helper.ResetPlayer(p)
@@ -128,14 +135,15 @@ func (l *Lobby) Spawn(p *player.Player) {
 		l.sendUserScoreboard(user.Get(p), p.Tx())
 	} else {
 		ent, _ := p.H().Entity(p.Tx())
+
 		p.Tx().RemoveEntity(ent)
 
 		l.w.Exec(func(tx *world.Tx) {
 			newP := tx.AddEntity(p.H()).(*player.Player)
 			helper.ResetPlayer(newP)
-			l.sendLobbyItems(newP)
 			u := user.Get(newP)
 			if u != nil {
+				l.sendLobbyItems(newP)
 				l.sendUserScoreboard(u, tx)
 			}
 			newP.SetGameMode(world.GameModeAdventure)
