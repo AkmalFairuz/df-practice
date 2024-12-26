@@ -2,6 +2,7 @@ package game
 
 import (
 	"errors"
+	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/df-mc/dragonfly/server/world"
@@ -12,27 +13,28 @@ import (
 
 const (
 	gameWorldsPath = "game_worlds"
+	gameMapsPath   = "game_maps"
 )
 
 type Config struct {
 	Log *slog.Logger
 
-	MapDir string
+	MapName string
 
-	Impl            Impl
-	ParticipantImpl ParticipantImpl
+	Impl            igame.Impl
+	ParticipantImpl igame.IParticipant
 }
 
 func (c Config) New() (*Game, error) {
-	if c.MapDir == "" {
-		return nil, errors.New("game: map directory is required")
+	if c.MapName == "" {
+		return nil, errors.New("game: map name is required")
 	}
 
 	id := generateID()
 
 	gameWorldPath := path.Join(gameWorldsPath, id)
 
-	if err := helper.CopyDir(c.MapDir, gameWorldPath); err != nil {
+	if err := helper.CopyDir(path.Join(gameMapsPath, c.MapName), gameWorldPath); err != nil {
 		return nil, err
 	}
 
@@ -61,5 +63,6 @@ func (c Config) New() (*Game, error) {
 		wDir:  gameWorldPath,
 		impl:  c.Impl,
 		pImpl: c.ParticipantImpl,
+		p:     make(map[string]igame.IParticipant),
 	}, nil
 }

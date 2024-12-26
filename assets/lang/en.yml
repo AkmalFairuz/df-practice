@@ -9,7 +9,7 @@ lobby.item.profile.name: "<yellow>Profile</yellow>"
 error.skin.change.not.allowed: "<red>You can't change your skin while in a game. Try rejoining the server to change your skin.</red>"
 scoreboard.title: "<diamond><bold>PRACTICE</bold></diamond>"
 lobby.scoreboard.players.online.count: "<diamond>Online:</diamond> <white>%d</white>"
-scoreboard.footer: "<diamond>practice.com</diamond>"
+scoreboard.footer: "<diamond>pr.venitymc.com</diamond>"
 scoreboard.your.ping: "<diamond>Your Ping:</diamond> <white>%dms</white>"
 
 death.message.format: "<red>%s</red> <white>died</white>"
@@ -52,3 +52,6 @@ game.ending.scoreboard.stopping.in: "<diamond>Stopping in:</diamond> <white>%ds<
 game.scoreboard.time.left: "<diamond>Time Left:</diamond> <white>%ds</white>"
 
 gamemode.command.success: "<green>Successfully changed %s's gamemode to %s.</green>"
+
+form.duels.selector.title: "Duels"
+form.duels.selector.classic: "Classic"

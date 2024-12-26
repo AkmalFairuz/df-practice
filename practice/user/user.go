@@ -160,6 +160,7 @@ func (u *User) SendScoreboardRaw(title string, lines []string) {
 		}
 		_, _ = sb.WriteString(line)
 	}
+	u.s.RemoveScoreboard()
 	u.s.SendScoreboard(sb)
 }
 

@@ -2,6 +2,7 @@ package practice
 
 import (
 	"fmt"
+	"github.com/akmalfairuz/df-practice/internal/meta"
 	"github.com/akmalfairuz/df-practice/practice/ffa"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
@@ -22,6 +23,8 @@ type Practice struct {
 func New(log *slog.Logger, srv *server.Server) *Practice {
 	l := lobby.New(srv.World())
 	ffa.InitArenas(log)
+
+	meta.Set("lobby", lobby.Instance())
 
 	return &Practice{
 		log: log,

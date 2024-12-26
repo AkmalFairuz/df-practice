@@ -19,13 +19,16 @@ var classicArena *Arena
 var noDebuffArena *Arena
 
 func InitArenas(log *slog.Logger) {
-	classicArena = New(initWorldConfig(log, "worlds/sumo").New())
+	classicArena = New(initWorldConfig(log, "worlds/classic").New())
+	// TODO: do not hardcode
 	classicArena.spawns = []helper.Location{
-		{X: 0.5, Y: -59, Z: 0.5},
-		{X: 10.5, Y: -59, Z: 0.5},
-		{X: 0.5, Y: -59, Z: 10.5},
-		{X: 10.5, Y: -59, Z: 10.5},
+		{X: -14.5, Y: 100.2, Z: -25.5, Yaw: -32, Pitch: 0},
+		{X: -9.5, Y: 100.2, Z: -28.5, Yaw: -25, Pitch: 0},
+		{X: 2.5, Y: 100.2, Z: -30.5, Yaw: 0, Pitch: 0},
+		{X: 14.5, Y: 100.2, Z: -28.5, Yaw: 25, Pitch: 0},
+		{X: 9.5, Y: 100.2, Z: 25.5, Yaw: 32, Pitch: 0},
 	}
+	classicArena.voidY = 80
 	classicArena.icon = "textures/items/iron_sword.png"
 	classicArena.onSendKit = func(p *player.Player) error {
 		_, _ = p.Inventory().AddItem(helper.SetItemAsUnbreakable(item.NewStack(item.Sword{Tier: item.ToolTierIron}, 1)))

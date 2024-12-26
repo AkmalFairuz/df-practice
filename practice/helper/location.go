@@ -29,11 +29,10 @@ func (loc Location) TeleportPlayer(p *player.Player) {
 	u := user.Get(p)
 	_ = u.Conn().WritePacket(&packet.MovePlayer{
 		EntityRuntimeID: u.EntityRuntimeID(),
-		Position:        loc.ToMgl32Vec3(),
+		Position:        mgl32.Vec3{float32(p.Position().X()), float32(p.Position().Y() + 1.62), float32(p.Position().Z())},
 		Yaw:             loc.Yaw,
 		HeadYaw:         loc.Yaw,
 		Pitch:           loc.Pitch,
-		Mode:            packet.MoveModeNormal,
-		OnGround:        p.OnGround(),
+		Mode:            packet.MoveModeTeleport,
 	})
 }

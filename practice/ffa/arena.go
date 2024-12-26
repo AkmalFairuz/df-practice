@@ -9,6 +9,7 @@ import (
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
+	"github.com/go-gl/mathgl/mgl64"
 	"math/rand"
 	"sync"
 	"time"
@@ -21,6 +22,7 @@ type Arena struct {
 	mu sync.RWMutex
 
 	spawns []helper.Location
+	voidY  int
 
 	dropAllowed    bool
 	hungerDisabled bool
@@ -362,5 +364,11 @@ func (a *Arena) HandleFoodLoss(ctx *player.Context, from int, to *int) {
 func (a *Arena) HandleItemDrop(ctx *player.Context, s item.Stack) {
 	if !a.dropAllowed {
 		ctx.Cancel()
+	}
+}
+
+func (a *Arena) HandleMove(ctx *player.Context, pos mgl64.Vec3, rot cube.Rotation) {
+	if pos.Y() < float64(a.voidY) {
+		ctx.Val().Hurt(1000, entity.VoidDamageSource{})
 	}
 }

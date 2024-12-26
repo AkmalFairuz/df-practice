@@ -1,7 +1,7 @@
 package practice
 
 import (
-	"github.com/akmalfairuz/df-practice/practice/game"
+	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/item"
@@ -56,10 +56,10 @@ func (p *playerInvHandler) HandleDrop(ctx *inventory.Context, slot int, stack it
 	}
 }
 
-func (p *playerInvHandler) game(ctx *inventory.Context) *game.Game {
+func (p *playerInvHandler) game(ctx *inventory.Context) igame.IGame {
 	g := user.Get(p.player(ctx)).CurrentGame()
 	if g == nil {
 		return nil
 	}
-	return g.(*game.Game)
+	return g.(igame.IGame)
 }

@@ -1,6 +1,8 @@
 package game
 
-import "github.com/akmalfairuz/df-practice/practice/user"
+import (
+	"github.com/akmalfairuz/df-practice/practice/user"
+)
 
 type Participant struct {
 	xuid  string

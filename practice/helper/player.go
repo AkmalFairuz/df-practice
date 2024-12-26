@@ -31,7 +31,7 @@ func ResetPlayerAttributes(p *player.Player) {
 }
 
 func ResetPlayer(p *player.Player) {
-	p.RemoveScoreboard()
+	//p.RemoveScoreboard()
 	ClearAllPlayerInv(p)
 	ResetPlayerExp(p)
 	ResetPlayerAttributes(p)

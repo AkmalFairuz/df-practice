@@ -2,9 +2,10 @@ package game
 
 import (
 	"errors"
+	"github.com/akmalfairuz/df-practice/internal/meta"
+	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lang"
-	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/atomic"
 	"github.com/df-mc/dragonfly/server/block/cube"
@@ -24,13 +25,15 @@ func quitItem(p *player.Player) item.Stack {
 	return item.NewStack(item.DragonBreath{}, 1).WithCustomName(lang.Translatef(user.Lang(p), "game.item.quit.name")).WithValue("game_item", "quit")
 }
 
-func Init() error {
+func init() {
 	if err := helper.RemoveDir(gameWorldsPath); err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
-			return err
+			panic(err)
 		}
 	}
-	return os.Mkdir(gameWorldsPath, 0755)
+	if err := os.Mkdir(gameWorldsPath, 0755); err != nil {
+		panic(err)
+	}
 }
 
 type Game struct {
@@ -39,20 +42,22 @@ type Game struct {
 	id string
 
 	pMu sync.RWMutex
-	p   map[string]*Participant
+	p   map[string]igame.IParticipant
 
 	currentTick atomic.Uint64
 
 	state atomic.Value[State]
 
-	impl  Impl
-	pImpl ParticipantImpl
+	impl  igame.Impl
+	pImpl igame.IParticipant
 
 	w    *world.World
 	wDir string
 
 	closed atomic.Bool
 	once   sync.Once
+
+	closeHook func()
 
 	tickQueue chan struct{}
 	closing   chan struct{}
@@ -70,6 +75,8 @@ func generateID() string {
 
 func (g *Game) Load() error {
 	g.closed.Store(false)
+	g.tickQueue = make(chan struct{})
+	g.closing = make(chan struct{})
 
 	g.impl.OnInit()
 
@@ -161,7 +168,7 @@ func (g *Game) OnTick() {
 
 func (g *Game) Start() {
 	g.state.Store(StatePlaying)
-	<-g.w.Exec(func(tx *world.Tx) {
+	g.w.Exec(func(tx *world.Tx) {
 		for ent := range tx.Entities() {
 			p, ok := ent.(*player.Player)
 			if !ok {
@@ -182,7 +189,7 @@ func (g *Game) Start() {
 func (g *Game) End() {
 	g.state.Store(StateEnding)
 
-	<-g.w.Exec(func(tx *world.Tx) {
+	g.w.Exec(func(tx *world.Tx) {
 		for ent := range tx.Entities() {
 			p, ok := ent.(*player.Player)
 			if !ok {
@@ -226,6 +233,10 @@ func (g *Game) Stop() {
 
 		helper.LogErrors(g.w.Close())
 		helper.LogErrors(helper.RemoveDir(g.wDir))
+
+		if g.closeHook != nil {
+			(g.closeHook)()
+		}
 	})
 }
 
@@ -233,17 +244,17 @@ func (g *Game) ID() string {
 	return g.id
 }
 
-func (g *Game) Participants() map[string]*Participant {
+func (g *Game) Participants() map[string]igame.IParticipant {
 	g.pMu.RLock()
 	defer g.pMu.RUnlock()
 	return g.p
 }
 
-func (g *Game) PlayingParticipants() map[string]*Participant {
+func (g *Game) PlayingParticipants() map[string]igame.IParticipant {
 	g.pMu.RLock()
 	defer g.pMu.RUnlock()
 
-	par := make(map[string]*Participant)
+	par := make(map[string]igame.IParticipant)
 	for xuid, p := range g.p {
 		if !p.IsSpectating() {
 			par[xuid] = p
@@ -252,11 +263,11 @@ func (g *Game) PlayingParticipants() map[string]*Participant {
 	return par
 }
 
-func (g *Game) SpectatingParticipants() map[string]*Participant {
+func (g *Game) SpectatingParticipants() map[string]igame.IParticipant {
 	g.pMu.RLock()
 	defer g.pMu.RUnlock()
 
-	par := make(map[string]*Participant)
+	par := make(map[string]igame.IParticipant)
 	for xuid, p := range g.p {
 		if p.IsSpectating() {
 			par[xuid] = p
@@ -265,7 +276,7 @@ func (g *Game) SpectatingParticipants() map[string]*Participant {
 	return par
 }
 
-func (g *Game) ParticipantByXUID(xuid string) (*Participant, bool) {
+func (g *Game) ParticipantByXUID(xuid string) (igame.IParticipant, bool) {
 	g.pMu.RLock()
 	defer g.pMu.RUnlock()
 	p, ok := g.p[xuid]
@@ -298,6 +309,8 @@ func (g *Game) Join(p *player.Player) error {
 	g.p[p.XUID()] = par
 	g.pMu.Unlock()
 
+	user.Get(p).SetCurrentGame(g)
+
 	p.Tx().RemoveEntity(p)
 	<-g.w.Exec(func(tx *world.Tx) {
 		newP := tx.AddEntity(p.H()).(*player.Player)
@@ -314,12 +327,12 @@ func (g *Game) Join(p *player.Player) error {
 }
 
 func (g *Game) Quit(p *player.Player) error {
-	g.pMu.Lock()
-	defer g.pMu.Unlock()
-
+	g.pMu.RLock()
 	if _, ok := g.p[p.XUID()]; !ok {
+		g.pMu.RUnlock()
 		return errors.New("not joined")
 	}
+	g.pMu.RUnlock()
 
 	g.Messaget("game.waiting.quit.message", user.Get(p).Name(), len(g.p)-1, g.impl.MaxParticipants())
 	g.impl.OnQuit(p)
@@ -327,14 +340,20 @@ func (g *Game) Quit(p *player.Player) error {
 	p.SetGameMode(world.GameModeAdventure)
 	p.SetMobile()
 
+	g.pMu.Lock()
 	delete(g.p, p.XUID())
+	g.pMu.Unlock()
 
 	if g.IsPlaying() {
 		g.impl.CheckEnd()
 	}
 
-	p.Tx().RemoveEntity(p)
-	lobby.Instance().Spawn(p)
+	user.Get(p).SetCurrentGame(nil)
+
+	//p.Tx().RemoveEntity(p)
+	meta.Get("lobby").(interface {
+		Spawn(p *player.Player)
+	}).Spawn(p)
 	return nil
 }
 
@@ -382,7 +401,7 @@ func (g *Game) HandleItemUse(ctx *player.Context) {
 
 func (g *Game) Messaget(translationName string, args ...any) {
 	for _, p := range g.Participants() {
-		u := user.GetByXUID(p.xuid)
+		u := user.GetByXUID(p.XUID())
 		if u != nil {
 			u.Messaget(translationName, args...)
 		}
@@ -491,7 +510,7 @@ func (g *Game) SetSpectator(p *player.Player) {
 		return
 	}
 
-	par.state = ParticipantStateSpectating
+	par.(*Participant).state = ParticipantStateSpectating
 	helper.ResetPlayer(p)
 	p.SetMobile()
 	p.SetGameMode(world.GameModeSpectator)
@@ -503,4 +522,19 @@ func (g *Game) SetSpectator(p *player.Player) {
 
 func (g *Game) CurrentTick() uint64 {
 	return g.currentTick.Load()
+}
+
+func (g *Game) Players(tx *world.Tx) []*player.Player {
+	players := make([]*player.Player, 0)
+	for ent := range tx.Entities() {
+		p, ok := ent.(*player.Player)
+		if ok {
+			players = append(players, p)
+		}
+	}
+	return players
+}
+
+func (g *Game) SetCloseHook(hook func()) {
+	g.closeHook = hook
 }

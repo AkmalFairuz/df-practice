@@ -2,7 +2,7 @@ package practice
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/ffa"
-	"github.com/akmalfairuz/df-practice/practice/game"
+	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
@@ -44,6 +44,10 @@ func newPlayerHandler(pr *Practice, u *user.User) *playerHandler {
 }
 
 func (ph *playerHandler) HandleMove(ctx *player.Context, newPos mgl64.Vec3, newRot cube.Rotation) {
+	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
+		ffaArena.HandleMove(ctx, newPos, newRot)
+	}
+
 	if g := ph.game(ctx.Val()); g != nil {
 		g.HandleMove(ctx, newPos, newRot)
 	}
@@ -330,12 +334,12 @@ func (ph *playerHandler) ffaArena(p *player.Player) *ffa.Arena {
 	return ret.(*ffa.Arena)
 }
 
-func (ph *playerHandler) game(p *player.Player) *game.Game {
+func (ph *playerHandler) game(p *player.Player) igame.IGame {
 	ret := ph.u.CurrentGame()
 	if ret == nil {
 		return nil
 	}
-	return ret.(*game.Game)
+	return ret.(igame.IGame)
 }
 
 // Compile-time check to ensure that playerHandler implements player.Handler.

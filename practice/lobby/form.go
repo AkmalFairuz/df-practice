@@ -2,6 +2,7 @@ package lobby
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/ffa"
+	"github.com/akmalfairuz/df-practice/practice/game/duelsmanager"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/player"
@@ -33,6 +34,27 @@ func sendFFAForm(p *player.Player) {
 			//	Submit: func(tx *world.Tx) {
 			//	},
 			//},
+		},
+	})
+}
+
+func sendDuelsForm(p *player.Player) {
+	u := user.Get(p)
+
+	p.SendForm(&form.Menu{
+		Title: u.Translatef("form.duels.selector.title"),
+		Buttons: []form.Button{
+			{
+				Text: u.Translatef("form.duels.selector.classic"),
+				Submit: func(tx *world.Tx) {
+					for ent := range tx.Entities() {
+						if p2, ok := ent.(*player.Player); ok && p2.XUID() == p.XUID() {
+							helper.LogErrors(duelsmanager.Default.Join(p2))
+							return
+						}
+					}
+				},
+			},
 		},
 	})
 }

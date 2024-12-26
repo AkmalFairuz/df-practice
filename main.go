@@ -1,10 +1,10 @@
 package main
 
 import (
+	"github.com/akmalfairuz/df-practice/internal/meta"
 	"github.com/akmalfairuz/df-practice/practice"
 	"github.com/akmalfairuz/df-practice/practice/command"
 	"github.com/akmalfairuz/df-practice/practice/config"
-	"github.com/akmalfairuz/df-practice/practice/game"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"log/slog"
@@ -26,15 +26,15 @@ func main() {
 		panic(err)
 	}
 
+	srv := serverConfig.New()
+
+	meta.Set("server", srv)
+
 	cmd.Register(cmd.New("whisper", "", []string{"w", "msg"}, command.Whisper{}))
 	cmd.Register(cmd.New("reply", "", []string{"r"}, command.Reply{}))
 	cmd.Register(cmd.New("lobby", "", []string{"hub"}, command.Lobby{}))
 	cmd.Register(cmd.New("gamemode", "", []string{"gm"}, command.GameMode{}))
 
-	if err := game.Init(); err != nil {
-		panic(err)
-	}
-
-	pr := practice.New(log, serverConfig.New())
+	pr := practice.New(log, srv)
 	pr.Run()
 }

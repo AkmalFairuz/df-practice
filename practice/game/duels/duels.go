@@ -1,37 +1,37 @@
 package duels
 
 import (
-	"github.com/akmalfairuz/df-practice/practice/game"
-	"github.com/akmalfairuz/df-practice/practice/game/nop"
+	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/helper"
+	"github.com/df-mc/dragonfly/server/block/cube"
+	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
-	"log/slog"
+	"sync"
 	"time"
 )
 
-type Duels struct {
-	nop.Game
-
-	g *game.Game
+type spawnInfo struct {
+	usedBy string
+	loc    helper.Location
 }
 
-func New(log *slog.Logger, mapDir string) *Duels {
-	impl := &Duels{}
+type Duels struct {
+	igame.Nop
 
-	gConf := game.Config{
-		Log:    log,
-		MapDir: mapDir,
-		Impl:   impl,
+	g igame.IGame
+
+	spawns   []*spawnInfo
+	spawnsMu sync.Mutex
+}
+
+func (d *Duels) Create(g igame.IGame) {
+	d.spawns = []*spawnInfo{
+		{loc: helper.Location{X: 0, Y: 68.2, Z: 14}},
+		{loc: helper.Location{X: 0, Y: 68.2, Z: -14}},
 	}
 
-	g, err := gConf.New()
-	if err != nil {
-		panic(err)
-	}
-
-	impl.g = g
-	return impl
+	d.g = g
 }
 
 func (d *Duels) PlayingTime() int {
@@ -62,12 +62,33 @@ func (d *Duels) OnJoin(p *player.Player) error {
 	return nil
 }
 
-func (d *Duels) OnJoined(par *game.Participant, p *player.Player) {
+func (d *Duels) OnJoined(par igame.IParticipant, p *player.Player) {
+	d.spawnsMu.Lock()
+	defer d.spawnsMu.Unlock()
 
+	for i, spawn := range d.spawns {
+		if spawn.usedBy != "" {
+			d.spawns[i].usedBy = par.User().XUID()
+			d.spawns[i].loc.TeleportPlayer(p)
+			break
+		}
+	}
+
+	p.SetImmobile()
 }
 
 func (d *Duels) OnQuit(p *player.Player) {
+	if d.g.IsWaiting() {
+		d.spawnsMu.Lock()
+		defer d.spawnsMu.Unlock()
 
+		for i, spawn := range d.spawns {
+			if spawn.usedBy == p.XUID() {
+				d.spawns[i].usedBy = ""
+				break
+			}
+		}
+	}
 }
 
 func (d *Duels) OnInit() {
@@ -75,7 +96,12 @@ func (d *Duels) OnInit() {
 }
 
 func (d *Duels) OnStart() {
-
+	<-d.g.World().Exec(func(tx *world.Tx) {
+		for _, p := range d.g.Players(tx) {
+			p.SetMobile()
+			p.SetGameMode(world.GameModeSurvival)
+		}
+	})
 }
 
 func (d *Duels) OnEnd() {
@@ -124,7 +150,7 @@ func (d *Duels) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 	}
 }
 
-func (d *Duels) opponent(p *game.Participant) (*game.Participant, bool) {
+func (d *Duels) opponent(p igame.IParticipant) (igame.IParticipant, bool) {
 	for _, par := range d.g.Participants() {
 		if par != p {
 			return par, true
@@ -133,5 +159,17 @@ func (d *Duels) opponent(p *game.Participant) (*game.Participant, bool) {
 	return nil, false
 }
 
+func (d *Duels) HandleBlockBreak(ctx *player.Context, pos cube.Pos, drops *[]item.Stack, xp *int) {
+	ctx.Cancel()
+}
+
+func (d *Duels) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b world.Block) {
+	ctx.Cancel()
+}
+
+func (d *Duels) Game() igame.IGame {
+	return d.g
+}
+
 // Compile-time check to ensure that Duels implements game.Impl.
-var _ game.Impl = &Duels{}
+var _ igame.Impl = &Duels{}
