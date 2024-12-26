@@ -26,6 +26,9 @@ type User struct {
 	xuid string
 	name string
 
+	rankName      string
+	rankExpiredAt int64
+
 	lang language.Tag
 
 	closed atomic.Bool
@@ -70,6 +73,8 @@ func (u *User) Load() error {
 		return fmt.Errorf("failed to load user data: %w", err)
 	}
 	u.id = userData.ID
+	u.rankName = userData.RankName
+	u.rankExpiredAt = userData.RankExpireAt
 
 	_ = u.SynchronizeLastSeen()
 	return nil
@@ -218,4 +223,8 @@ func (u *User) SetCurrentGame(g any) {
 
 func (u *User) Ping() int {
 	return int(u.s.Latency().Milliseconds())
+}
+
+func (u *User) RankName() string {
+	return u.rankName
 }

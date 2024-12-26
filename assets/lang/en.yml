@@ -50,3 +50,5 @@ game.waiting.scoreboard.waiting.for.players: "<diamond>Waiting for players...</d
 game.ending.scoreboard.stopping.in: "<diamond>Stopping in:</diamond> <white>%ds</white>"
 
 game.scoreboard.time.left: "<diamond>Time Left:</diamond> <white>%ds</white>"
+
+gamemode.command.success: "<green>Successfully changed %s's gamemode to %s.</green>"

@@ -29,6 +29,7 @@ func main() {
 	cmd.Register(cmd.New("whisper", "", []string{"w", "msg"}, command.Whisper{}))
 	cmd.Register(cmd.New("reply", "", []string{"r"}, command.Reply{}))
 	cmd.Register(cmd.New("lobby", "", []string{"hub"}, command.Lobby{}))
+	cmd.Register(cmd.New("gamemode", "", []string{"gm"}, command.GameMode{}))
 
 	if err := game.Init(); err != nil {
 		panic(err)
