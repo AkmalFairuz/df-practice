@@ -8,6 +8,7 @@ github.com/bedrock-gophers/intercept v0.2.1-0.20241127002705-553929b05d82 h1:nRc
 github.com/bedrock-gophers/intercept v0.2.1-0.20241127002705-553929b05d82/go.mod h1:PNgi8qpd8Z9IGHNP7+WKBwYnfsMhd+vp+35qf4KoLUw=
 github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9 h1:/G0ghZwrhou0Wq21qc1vXXMm/t/aKWkALWwITptKbE0=
 github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9/go.mod h1:TOk10ahXejq9wkEaym3KPRNeuR/h5Jx+s8QRWIa2oTM=
+github.com/cespare/xxhash v1.1.0 h1:a6HrQnmkObjyL+Gs60czilIUGqrzKutQD6XZog3p+ko=
 github.com/cespare/xxhash/v2 v2.3.0 h1:UL815xU9SqsFlibzuggzjXhog7bL6oX9BbNZnL2UFvs=
 github.com/cespare/xxhash/v2 v2.3.0/go.mod h1:VGX0DQ3Q6kWi7AoAeZDth3/j3BFtOZR5XLFGgcrjCOs=
 github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
@@ -19,6 +20,8 @@ github.com/df-mc/dragonfly v0.9.20-0.20241223005020-94b0aae2f256 h1:NsPqdGNukUzH
 github.com/df-mc/dragonfly v0.9.20-0.20241223005020-94b0aae2f256/go.mod h1:jcn87QTYUn1TdXlSlC82M6bWvR2L3YMJ77cT4hDU144=
 github.com/df-mc/dragonfly v0.9.20-0.20241224033510-345fa18ea1dd h1:n1Rtpau4ukWgTLZkKsgjRx/eftmFaMuolTreLDys40E=
 github.com/df-mc/dragonfly v0.9.20-0.20241224033510-345fa18ea1dd/go.mod h1:jcn87QTYUn1TdXlSlC82M6bWvR2L3YMJ77cT4hDU144=
+github.com/df-mc/dragonfly v0.9.20-0.20241224203752-918a90491313 h1:QZOLDSkShPj08FmU4WjhPBEfCYmpfvdTgcfkfo85+O8=
+github.com/df-mc/dragonfly v0.9.20-0.20241224203752-918a90491313/go.mod h1:jcn87QTYUn1TdXlSlC82M6bWvR2L3YMJ77cT4hDU144=
 github.com/df-mc/goleveldb v1.1.9 h1:ihdosZyy5jkQKrxucTQmN90jq/2lUwQnJZjIYIC/9YU=
 github.com/df-mc/goleveldb v1.1.9/go.mod h1:+NHCup03Sci5q84APIA21z3iPZCuk6m6ABtg4nANCSk=
 github.com/df-mc/worldupgrader v1.0.18 h1:Q34X9ID/hGuDyj9oiq+dpyjOaJdNxhVmVUepf/EPYDA=

@@ -57,7 +57,7 @@ func (ph *playerHandler) HandleTeleport(ctx *player.Context, pos mgl64.Vec3) {
 
 }
 
-func (ph *playerHandler) HandleChangeWorld(before, after *world.World) {
+func (ph *playerHandler) HandleChangeWorld(p *player.Player, before, after *world.World) {
 
 }
 
