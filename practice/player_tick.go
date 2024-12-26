@@ -1,10 +1,7 @@
 package practice
 
 import (
-	"fmt"
 	"github.com/akmalfairuz/df-practice/practice/user"
-	"github.com/df-mc/dragonfly/server/player"
-	"github.com/df-mc/dragonfly/server/world"
 	"time"
 )
 
@@ -28,8 +25,8 @@ func startPlayerTick(u *user.User) {
 
 func handlePlayerTick(u *user.User, currentTick int64) {
 	if currentTick%20 == 0 {
-		u.EntityHandle().ExecWorld(func(tx *world.Tx, e world.Entity) {
-			e.(*player.Player).SendTip(fmt.Sprintf("X: %.1f Y: %.1f Z: %.1f YAW: %.0f PIT: %.0f", e.Position().X(), e.Position().Y(), e.Position().Z(), e.Rotation().Yaw(), e.Rotation().Pitch()))
-		})
+		//u.EntityHandle().ExecWorld(func(tx *world.Tx, e world.Entity) {
+		//	e.(*player.Player).SendTip(fmt.Sprintf("X: %.1f Y: %.1f Z: %.1f YAW: %.0f PIT: %.0f", e.Position().X(), e.Position().Y(), e.Position().Z(), e.Rotation().Yaw(), e.Rotation().Pitch()))
+		//})
 	}
 }
