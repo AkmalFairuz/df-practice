@@ -17,6 +17,7 @@ killed.message.format: "<red>%s</red> <white>dibunuh oleh</white> <red>%s</red>"
 killed.shot.message.format: "<red>%s</red> <white>ditembak oleh</white> <red>%s</red>"
 death.void.message.format: "<red>%s</red> <white>jatuh ke jurang</white>"
 killed.void.knocked.message.format: "<red>%s</red> <white>didorong ke jurang oleh</white> <red>%s</red>"
+killed.void.message.format: "<red>%s</red> <white>dibunuh ke jurang oleh</white> <red>%s</red>"
 
 ffa.scoreboard.your.kills: "<diamond>Pembunuhan Anda:</diamond> <white>%d</white>"
 ffa.scoreboard.your.deaths: "<diamond>Kematian Anda:</diamond> <white>%d</white>"

@@ -18,6 +18,7 @@ killed.message.format: "<red>%s</red> <white>was killed by</white> <red>%s</red>
 killed.shot.message.format: "<red>%s</red> <white>was shot by</white> <red>%s</red>"
 death.void.message.format: "<red>%s</red> <white>fell into the void</white>"
 killed.void.knocked.message.format: "<red>%s</red> <white>was knocked into the void by</white> <red>%s</red>"
+killed.void.message.format: "<red>%s</red> <white>was killed into the void by</white> <red>%s</red>"
 
 ffa.scoreboard.your.kills: "<diamond>Your Kills:</diamond> <white>%d</white>"
 ffa.scoreboard.your.deaths: "<diamond>Your Deaths:</diamond> <white>%d</white>"
