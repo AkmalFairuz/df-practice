@@ -67,6 +67,8 @@ type Game struct {
 
 	tickQueue chan struct{}
 	closing   chan struct{}
+
+	playAgainHook func(p *player.Player) error
 }
 
 const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -349,6 +351,18 @@ func (g *Game) Join(p *player.Player) error {
 }
 
 func (g *Game) Quit(p *player.Player) error {
+	if err := g.doQuit(p); err != nil {
+		return err
+	}
+
+	//p.Tx().RemoveEntity(p)
+	meta.Get("lobby").(interface {
+		Spawn(p *player.Player)
+	}).Spawn(p)
+	return nil
+}
+
+func (g *Game) doQuit(p *player.Player) error {
 	g.pMu.RLock()
 	if _, ok := g.p[p.XUID()]; !ok {
 		g.pMu.RUnlock()
@@ -418,10 +432,8 @@ func (g *Game) HandleItemUse(ctx *player.Context) {
 				return
 			case "play_again":
 				helper.LogErrors(g.Quit(ctx.Val()))
-				if hasPlayAgain, ok := g.impl.(interface{ PlayAgain(p *player.Player) error }); ok {
-					ctx.Val().H().ExecWorld(func(tx *world.Tx, e world.Entity) {
-						helper.LogErrors(hasPlayAgain.PlayAgain(e.(*player.Player)))
-					})
+				if err := g.doQuit(ctx.Val()); err != nil {
+					_ = g.playAgain(ctx.Val())
 				}
 				return
 			}
@@ -604,4 +616,15 @@ func (g *Game) HandleItemPickup(ctx *player.Context, i *item.Stack) {
 			return
 		}
 	}
+}
+
+func (g *Game) SetPlayAgainHook(hook func(p *player.Player) error) {
+	g.playAgainHook = hook
+}
+
+func (g *Game) playAgain(p *player.Player) error {
+	if g.playAgainHook != nil {
+		return g.playAgainHook(p)
+	}
+	return nil
 }

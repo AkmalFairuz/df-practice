@@ -186,16 +186,5 @@ func (d *Duels) SetKit(kit kit.Kit) {
 	d.k = kit
 }
 
-func (d *Duels) SetPlayAgainHook(hook func(p *player.Player) error) {
-	d.playAgain = hook
-}
-
-func (d *Duels) PlayAgain(p *player.Player) error {
-	if d.playAgain != nil {
-		return d.playAgain(p)
-	}
-	return nil
-}
-
 // Compile-time check to ensure that Duels implements game.Impl.
 var _ igame.Impl = &Duels{}

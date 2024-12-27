@@ -23,7 +23,7 @@ var Classic = gamemanager.New(func(mgr *gamemanager.Manager) igame.Impl {
 		panic(err)
 	}
 	d.Create(g)
-	d.SetPlayAgainHook(mgr.Join)
+	d.Game().SetPlayAgainHook(mgr.Join)
 	return d
 })
 
@@ -41,6 +41,6 @@ var NoDebuff = gamemanager.New(func(mgr *gamemanager.Manager) igame.Impl {
 		panic(err)
 	}
 	d.Create(g)
-	d.SetPlayAgainHook(mgr.Join)
+	d.Game().SetPlayAgainHook(mgr.Join)
 	return d
 })

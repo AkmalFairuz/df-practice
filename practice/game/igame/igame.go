@@ -41,4 +41,5 @@ type IGame interface {
 	Messaget(translationName string, args ...any)
 	Sound(name string)
 	HandleItemPickup(ctx *player.Context, i *item.Stack)
+	SetPlayAgainHook(hook func(p *player.Player) error)
 }
