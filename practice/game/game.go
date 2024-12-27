@@ -426,7 +426,7 @@ func (g *Game) HandleItemUse(ctx *player.Context) {
 				helper.LogErrors(g.Quit(ctx.Val()))
 				return
 			case "play_again":
-				if err := g.doQuit(ctx.Val()); err != nil {
+				if err := g.doQuit(ctx.Val()); err == nil {
 					_ = g.playAgain(ctx.Val())
 				}
 				return
