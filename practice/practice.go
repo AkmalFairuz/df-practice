@@ -9,6 +9,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/bedrock-gophers/intercept/intercept"
 	"github.com/df-mc/dragonfly/server"
+	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"log/slog"
 )
@@ -42,26 +43,32 @@ func (pr *Practice) Run() {
 
 		p.SetGameMode(world.GameModeAdventure)
 
-		u := user.New(p)
-		if err := u.Load(); err != nil {
-			pr.log.Error("failed to load user data", "error", err)
-			u.Disconnect(lang.Translate(u.Lang(), "user.load.error"))
-			continue
-		}
-		user.Store(u)
+		go func() {
+			u := user.New(p)
+			if err := u.Load(); err != nil {
+				pr.log.Error("failed to load user data", "error", err)
+				u.Disconnect(lang.Translate(u.Lang(), "user.load.error"))
+				return
+			}
+			user.Store(u)
 
-		intercept.Intercept(p)
-		p.Handle(newPlayerHandler(pr, u))
-		p.Inventory().Handle(newPlayerInvHandler(p.Inventory()))
-		p.Inventory().Handle(newPlayerInvHandler(p.Armour().Inventory()))
+			p.H().ExecWorld(func(tx *world.Tx, e world.Entity) {
+				newP := e.(*player.Player)
 
-		user.BroadcastMessaget("player.join.message", p.Name())
+				intercept.Intercept(newP)
+				newP.Handle(newPlayerHandler(pr, u))
+				newP.Inventory().Handle(newPlayerInvHandler(newP.Inventory()))
+				newP.Inventory().Handle(newPlayerInvHandler(newP.Armour().Inventory()))
 
-		if err := pr.l.Init(); err != nil {
-			panic(fmt.Errorf("failed to init lobby: %w", err))
-		}
-		pr.l.Spawn(p)
+				user.BroadcastMessaget("player.join.message", newP.Name())
 
-		go startPlayerTick(u)
+				if err := pr.l.Init(); err != nil {
+					panic(fmt.Errorf("failed to init lobby: %w", err))
+				}
+				pr.l.Spawn(newP)
+
+				go startPlayerTick(u)
+			})
+		}()
 	}
 }

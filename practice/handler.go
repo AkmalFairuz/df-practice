@@ -311,7 +311,7 @@ func (ph *playerHandler) HandleCommandExecution(ctx *player.Context, command cmd
 }
 
 func (ph *playerHandler) HandleQuit(p *player.Player) {
-	_ = ph.u.SynchronizeLastSeen()
+	go ph.u.SynchronizeLastSeen()
 
 	if ffaArena := ph.ffaArena(p); ffaArena != nil {
 		helper.LogErrors(ffaArena.Quit(p))
