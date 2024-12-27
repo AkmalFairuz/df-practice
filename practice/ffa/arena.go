@@ -5,6 +5,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/kit"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/df-mc/dragonfly/server/item"
@@ -35,7 +36,11 @@ type Arena struct {
 	allowBuild bool
 
 	placedBlocksMu sync.RWMutex
-	placedBlocks   map[cube.Pos]world.Block
+	placedBlocks   map[cube.Pos]placedBlockInfo
+}
+
+type placedBlockInfo struct {
+	placedAt time.Time
 }
 
 func New(w *world.World) *Arena {
@@ -72,6 +77,12 @@ func (a *Arena) Init() error {
 	a.w.StopThundering()
 	a.w.StopWeatherCycle()
 
+	a.w.Exec(func(tx *world.Tx) {
+		for ent := range tx.Entities() {
+			_ = ent.Close()
+		}
+	})
+
 	go a.startTicking()
 	return nil
 }
@@ -105,6 +116,24 @@ func (a *Arena) handleTick(currentTick int64) {
 				}
 			}
 		}
+
+		if currentTick%20 == 0 {
+			if a.allowBuild {
+				a.placedBlocksMu.RLock()
+				placedBlocks := a.placedBlocks
+				a.placedBlocksMu.RUnlock()
+
+				for pos, info := range placedBlocks {
+					if time.Since(info.placedAt) > 45*time.Second {
+						a.removePlacedBlock(pos)
+
+						tx.SetBlock(pos, block.Air{}, nil)
+						tx.AddParticle(pos.Vec3().Add(mgl64.Vec3{0.5, 0.5, 0.5}), particle.BlockBreak{Block: tx.Block(pos)})
+						continue
+					}
+				}
+			}
+		}
 	})
 }
 
@@ -127,6 +156,10 @@ func (a *Arena) sendUserScoreboard(p *Participant, tx *world.Tx) {
 
 func (a *Arena) Join(p *player.Player, tx *world.Tx) error {
 	u := user.Get(p)
+
+	if u.CurrentGame() != nil {
+		return errors.New("user already in game")
+	}
 
 	if u.CurrentFFAArena() != nil {
 		return errors.New("user already in arena")
@@ -156,6 +189,7 @@ func (a *Arena) Join(p *player.Player, tx *world.Tx) error {
 		_ = a.sendKit(newP)
 		newP.SetGameMode(world.GameModeSurvival)
 		helper.UpdatePlayerNameTagWithHealth(newP, 0)
+		newP.SetImmobile()
 	})
 
 	a.sendUserScoreboard(par, tx)
@@ -337,7 +371,10 @@ func (a *Arena) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b world.Bloc
 		ctx.Cancel()
 		return
 	}
-
+	if a.hasPlacedBlock(pos) {
+		ctx.Cancel()
+		return
+	}
 	a.addPlacedBlock(pos, b)
 }
 
@@ -346,13 +383,24 @@ func (a *Arena) HandleBlockBreak(ctx *player.Context, pos cube.Pos, drops *[]ite
 		ctx.Cancel()
 		return
 	}
+	if !a.hasPlacedBlock(pos) {
+		ctx.Cancel()
+		return
+	}
 
 	a.removePlacedBlock(pos)
 }
 
+func (a *Arena) hasPlacedBlock(pos cube.Pos) bool {
+	a.placedBlocksMu.RLock()
+	_, ok := a.placedBlocks[pos]
+	a.placedBlocksMu.RUnlock()
+	return ok
+}
+
 func (a *Arena) addPlacedBlock(pos cube.Pos, b world.Block) {
 	a.placedBlocksMu.Lock()
-	a.placedBlocks[pos] = b
+	a.placedBlocks[pos] = placedBlockInfo{placedAt: time.Now()}
 	a.placedBlocksMu.Unlock()
 }
 

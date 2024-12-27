@@ -31,6 +31,7 @@ func New(w *world.World) *Lobby {
 	}
 	w.SetSpawn(cube.Pos{0, 69, 0})
 	instance = ret
+	initFFAEntries()
 	return ret
 }
 
