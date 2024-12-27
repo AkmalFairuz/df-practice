@@ -72,3 +72,8 @@ game.item.play.again.name: "<green>Play Again</green>"
 form.playing.format: "<diamond>%d playing</diamond>"
 
 form.ffa.selector.nodebuff: "NoDebuff"
+
+broadcast.1.message: "<red><bold>ALERT</bold></red> <diamond>This server is under development.</diamond>"
+broadcast.2.message: "<green><bold>TIP</bold></green> <diamond>Type /lobby to return to the lobby.</diamond>"
+
+welcome.message: "<green>Hello <yellow>%s</yellow>, Welcome to Practice server.</green> <red>This server is under development.</red>"

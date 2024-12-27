@@ -12,6 +12,8 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"log/slog"
+	"strconv"
+	"time"
 )
 
 type Practice struct {
@@ -36,6 +38,19 @@ func New(log *slog.Logger, srv *server.Server) *Practice {
 
 func (pr *Practice) Run() {
 	intercept.Hook(&packetHandler{})
+
+	go func() {
+		broadcastNo := 0
+		ticker := time.NewTicker(time.Second * 60)
+		select {
+		case <-ticker.C:
+			broadcastNo++
+			if broadcastNo >= 3 {
+				broadcastNo = 1
+			}
+			user.BroadcastMessaget("broadcast." + strconv.Itoa(broadcastNo) + ".message")
+		}
+	}()
 
 	pr.srv.Listen()
 	for p := range pr.srv.Accept() {
@@ -66,6 +81,8 @@ func (pr *Practice) Run() {
 					panic(fmt.Errorf("failed to init lobby: %w", err))
 				}
 				pr.l.Spawn(newP)
+
+				u.Translatef("welcome.message", newP.Name())
 
 				go startPlayerTick(u)
 			})
