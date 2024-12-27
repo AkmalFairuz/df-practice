@@ -1,28 +1,30 @@
 error.cooldown.chat: "<red>Tenang! Anda mengirim pesan terlalu cepat. Harap tunggu %.1f detik sebelum mengirim pesan lagi.</red>"
-error.cooldown.command: "<red>Tenang! Anda menggunakan perintah terlalu cepat. Harap tunggu %.1f detik sebelum menggunakan perintah lagi.</red>"
+error.cooldown.command: "<red>Tenang! Anda menggunakan perintah terlalu cepat. Harap tunggu %.1f detik sebelum menggunakan perintah lainnya.</red>"
 player.quit.message: "<grey>%s keluar dari server.</grey>"
 player.join.message: "<grey>%s bergabung ke server.</grey>"
 user.load.error: "<red>Gagal memuat data pengguna.</red>"
 lobby.item.play.ffa.name: "<yellow>Main FFA</yellow>"
 lobby.item.play.duels.name: "<yellow>Main Duels</yellow>"
 lobby.item.profile.name: "<yellow>Profil</yellow>"
-error.skin.change.not.allowed: "<red>Anda tidak dapat mengubah skin saat dalam permainan. Cobalah keluar dan bergabung kembali ke server untuk mengubah skin Anda.</red>"
-scoreboard.title: "<diamond><bold>PRACTICE</bold></diamond>"
+error.skin.change.not.allowed: "<red>Anda tidak dapat mengganti skin saat dalam permainan. Coba bergabung kembali ke server untuk mengganti skin.</red>"
+scoreboard.title: "<diamond><bold>PRAKTIK</bold></diamond>"
 lobby.scoreboard.players.online.count: "<diamond>Online:</diamond> <white>%d</white>"
-scoreboard.footer: "<diamond>practice.com</diamond>"
+lobby.scoreboard.players.playing.count: "<diamond>Bermain:</diamond> <white>%d</white>"
+scoreboard.footer: "<diamond>pr.venitymc.com</diamond>"
 scoreboard.your.ping: "<diamond>Ping Anda:</diamond> <white>%dms</white>"
+scoreboard.their.ping: "<diamond>Ping Mereka:</diamond> <white>%dms</white>"
 
-death.message.format: "<red>%s</red> <white>mati</white>"
+death.message.format: "<red>%s</red> <white>meninggal</white>"
 killed.message.format: "<red>%s</red> <white>dibunuh oleh</white> <red>%s</red>"
 killed.shot.message.format: "<red>%s</red> <white>ditembak oleh</white> <red>%s</red>"
-death.void.message.format: "<red>%s</red> <white>jatuh ke jurang</white>"
-killed.void.knocked.message.format: "<red>%s</red> <white>didorong ke jurang oleh</white> <red>%s</red>"
-killed.void.message.format: "<red>%s</red> <white>dibunuh ke jurang oleh</white> <red>%s</red>"
+death.void.message.format: "<red>%s</red> <white>jatuh ke dalam void</white>"
+killed.void.knocked.message.format: "<red>%s</red> <white>didorong ke dalam void oleh</white> <red>%s</red>"
+killed.void.message.format: "<red>%s</red> <white>dibunuh ke dalam void oleh</white> <red>%s</red>"
 
 ffa.scoreboard.your.kills: "<diamond>Pembunuhan Anda:</diamond> <white>%d</white>"
 ffa.scoreboard.your.deaths: "<diamond>Kematian Anda:</diamond> <white>%d</white>"
-ffa.scoreboard.your.streak: "<diamond>Killstreak Anda:</diamond> <white>%d</white>"
-ffa.scoreboard.combat.timer: "<diamond>Timer Pertempuran:</diamond> <white>%ds</white>"
+ffa.scoreboard.your.streak: "<diamond>Serangkaian Pembunuhan Anda:</diamond> <white>%d</white>"
+ffa.scoreboard.combat.timer: "<diamond>Timer Pertarungan:</diamond> <white>%ds</white>"
 ffa.scoreboard.players: "<diamond>Pemain:</diamond> <white>%d</white>"
 
 chat.message: "<green>%s:</green><white> %s</white>"
@@ -36,7 +38,42 @@ whisper.sent: "<diamond>Pesan pribadi ke <white>%s</white>:</diamond> <white>%s<
 form.ffa.selector.title: "Free for All"
 form.ffa.selector.classic: "Klasik"
 
-error.lobby.in.combat: "<red>Anda tidak dapat pergi ke lobby saat dalam pertempuran. Harap tunggu hingga timer pertempuran berakhir.</red>"
+error.lobby.in.combat: "<red>Anda tidak dapat pergi ke lobby saat dalam pertarungan. Harap tunggu hingga timer pertarungan habis.</red>"
 
-error.command.reply.no.target: "<red>Tidak ada pemain untuk membalas.</red>"
-error.command.reply.target.offline: "<red>Pemain yang Anda coba balas sedang offline.</red>"
+error.command.reply.no.target: "<red>Tidak ada yang bisa dibalas.</red>"
+error.command.reply.target.offline: "<red>Pemain yang ingin Anda balas sedang offline.</red>"
+
+game.waiting.join.message: "<grey>%s bergabung ke permainan (%d/%d)</grey>"
+game.waiting.left.message: "<grey>%s meninggalkan permainan (%d/%d)</grey>"
+
+game.waiting.scoreboard.players: "<diamond>Pemain:</diamond> <white>%d/%d</white>"
+game.waiting.scoreboard.starting.in: "<diamond>Mulai dalam:</diamond> <white>%ds</white>"
+game.waiting.scoreboard.waiting.for.players: "<diamond>Menunggu pemain...</diamond>"
+
+game.ending.scoreboard.stopping.in: "<diamond>Berhenti dalam:</diamond> <white>%ds</white>"
+
+game.scoreboard.time.left: "<diamond>Waktu Tersisa:</diamond> <white>%s</white>"
+
+gamemode.command.success: "<green>Berhasil mengubah mode permainan %s menjadi %s.</green>"
+
+form.duels.selector.title: "Duels"
+form.duels.selector.classic: "Klasik"
+form.duels.selector.nodebuff: "NoDebuff"
+
+game.waiting.starting.message: "<diamond>Permainan dimulai dalam <white>%d</white> detik.</diamond>"
+game.started.message: "<diamond>Permainan telah dimulai!</diamond>"
+game.ended.message: "<diamond>Permainan telah selesai!</diamond>"
+
+game.you.died.title: "<red>ANDA MATI!</red>"
+game.item.quit.name: "<red>Kembali ke Lobby</red>"
+
+game.item.play.again.name: "<green>Main Lagi</green>"
+
+form.playing.format: "<diamond>%d bermain</diamond>"
+
+form.ffa.selector.nodebuff: "NoDebuff"
+
+broadcast.1.message: "<red><bold>PERINGATAN</bold></red> <diamond>Server ini sedang dalam pengembangan.</diamond>"
+broadcast.2.message: "<green><bold>TIPS</bold></green> <diamond>Ketik /lobby untuk kembali ke lobby.</diamond>"
+
+welcome.message: "<green>Halo <yellow>%s</yellow>, Selamat datang di server Praktik.</green> <red>Server ini sedang dalam pengembangan.</red>"

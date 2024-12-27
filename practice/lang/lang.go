@@ -14,6 +14,7 @@ var translations = map[language.Tag]map[string]string{}
 func init() {
 	register(language.English)
 	register(language.Indonesian)
+	register(language.Chinese)
 }
 
 // Register registers a language file.
