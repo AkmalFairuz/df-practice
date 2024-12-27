@@ -6,6 +6,7 @@ import (
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/go-gl/mathgl/mgl64"
 	"reflect"
+	"unsafe"
 )
 
 type Location struct {
@@ -25,17 +26,10 @@ func (loc Location) ToMgl32Vec3() mgl32.Vec3 {
 }
 
 func (loc Location) TeleportPlayer(p *player.Player) {
-	//u := user.Get(p)
-	//LogErrors(u.Conn().WritePacket(&packet.MovePlayer{
-	//	EntityRuntimeID: u.EntityRuntimeID(),
-	//	Position:        mgl32.Vec3{float32(p.Position().X()), float32(p.Position().Y() + 1.62), float32(p.Position().Z())},
-	//	Yaw:             loc.Yaw,
-	//	HeadYaw:         loc.Yaw,
-	//	Pitch:           loc.Pitch,
-	//	OnGround:        p.OnGround(),
-	//	Mode:            packet.MoveModeTeleport,
-	//}))
-	reflect.ValueOf(p).Elem().FieldByName("data").Elem().FieldByName("Rot").Set(reflect.ValueOf(cube.Rotation{float64(loc.Yaw), float64(loc.Pitch)}))
+	// TODO: don't use reflect when dragonfly has a method to set player rotation
+	rf := reflect.ValueOf(p).Elem().FieldByName("data")
+	reflect.NewAt(rf.Type(), unsafe.Pointer(rf.UnsafeAddr())).Elem().Elem().FieldByName("Rot").Set(reflect.ValueOf(cube.Rotation{float64(loc.Yaw), float64(loc.Pitch)}))
+
 	p.Teleport(loc.ToMgl64Vec3())
 }
 
