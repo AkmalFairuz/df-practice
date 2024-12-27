@@ -47,12 +47,21 @@ func sendDuelsForm(p *player.Player) {
 			{
 				Text: u.Translatef("form.duels.selector.classic"),
 				Submit: func(tx *world.Tx) {
-					for ent := range tx.Entities() {
-						if p2, ok := ent.(*player.Player); ok && p2.XUID() == p.XUID() {
-							helper.LogErrors(duelsmanager.Classic.Join(p2))
-							return
-						}
+					ent, ok := p.H().Entity(tx)
+					if !ok {
+						return
 					}
+					helper.LogErrors(duelsmanager.Classic.Join(ent.(*player.Player)))
+				},
+			},
+			{
+				Text: u.Translatef("form.duels.selector.nodebuff"),
+				Submit: func(tx *world.Tx) {
+					ent, ok := p.H().Entity(tx)
+					if !ok {
+						return
+					}
+					helper.LogErrors(duelsmanager.NoDebuff.Join(ent.(*player.Player)))
 				},
 			},
 		},

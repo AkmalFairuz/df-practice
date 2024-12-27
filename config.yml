@@ -2,6 +2,7 @@ server:
   name: Practice
   listen_address: 0.0.0.0:19132
   max_players: 1000
+  auth_enabled: false
 
 database:
   hostname: 127.0.0.1

@@ -20,6 +20,7 @@ func main() {
 	userConfig.Players.SaveData = false
 	userConfig.Players.MaxCount = config.Get().Server.MaxPlayers
 	userConfig.Network.Address = config.Get().Server.ListenAddress
+	userConfig.Server.AuthEnabled = config.Get().Server.AuthEnabled
 
 	serverConfig, err := userConfig.Config(log)
 	if err != nil {

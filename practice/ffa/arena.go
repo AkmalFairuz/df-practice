@@ -3,6 +3,7 @@ package ffa
 import (
 	"errors"
 	"github.com/akmalfairuz/df-practice/practice/helper"
+	"github.com/akmalfairuz/df-practice/practice/kit"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/entity"
@@ -26,7 +27,7 @@ type Arena struct {
 
 	dropAllowed    bool
 	hungerDisabled bool
-	onSendKit      func(*player.Player) error
+	k              kit.Kit
 
 	icon string
 
@@ -175,10 +176,10 @@ func (a *Arena) Respawn(p *player.Player, tx *world.Tx) error {
 }
 
 func (a *Arena) sendKit(p *player.Player) error {
-	if a.onSendKit == nil {
-		return nil
+	if a.k != nil {
+		kit.Apply(a.k, p)
 	}
-	return (a.onSendKit)(p)
+	return nil
 }
 
 // Quit removes a player from the arena. Caller should teleport the player to lobby.

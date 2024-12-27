@@ -13,7 +13,7 @@ func HandleKillMessage(g igame.IGame, p *player.Player, src world.DamageSource) 
 	case entity.AttackDamageSource:
 		att, ok := src.Attacker.(*player.Player)
 		if !ok {
-			return
+			break
 		}
 
 		handled = true
@@ -21,7 +21,7 @@ func HandleKillMessage(g igame.IGame, p *player.Player, src world.DamageSource) 
 	case entity.ProjectileDamageSource:
 		att, ok := src.Owner.(*player.Player)
 		if !ok {
-			return
+			break
 		}
 
 		handled = true

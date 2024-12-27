@@ -11,6 +11,7 @@ type Config struct {
 		Name          string `yaml:"name"`
 		ListenAddress string `yaml:"listen_address"`
 		MaxPlayers    int    `yaml:"max_players"`
+		AuthEnabled   bool   `yaml:"auth_enabled"`
 	} `yaml:"server"`
 
 	Database struct {

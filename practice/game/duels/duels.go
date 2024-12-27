@@ -4,6 +4,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/game/gamedefaults"
 	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/helper"
+	"github.com/akmalfairuz/df-practice/practice/kit"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
@@ -25,7 +26,7 @@ type Duels struct {
 	spawns   []*spawnInfo
 	spawnsMu sync.Mutex
 
-	onSendKit func(p *player.Player) error
+	k kit.Kit
 }
 
 func (d *Duels) Create(g igame.IGame) {
@@ -104,7 +105,9 @@ func (d *Duels) OnStart() {
 			p.SetMobile()
 			p.SetGameMode(world.GameModeSurvival)
 
-			helper.LogErrors((d.onSendKit)(p))
+			if d.k != nil {
+				kit.Apply(d.k, p)
+			}
 		}
 	})
 }
@@ -177,8 +180,8 @@ func (d *Duels) Game() igame.IGame {
 	return d.g
 }
 
-func (d *Duels) SetKit(kit func(p *player.Player) error) {
-	d.onSendKit = kit
+func (d *Duels) SetKit(kit kit.Kit) {
+	d.k = kit
 }
 
 // Compile-time check to ensure that Duels implements game.Impl.

@@ -50,15 +50,17 @@ game.waiting.scoreboard.waiting.for.players: "<diamond>Waiting for players...</d
 
 game.ending.scoreboard.stopping.in: "<diamond>Stopping in:</diamond> <white>%ds</white>"
 
-game.scoreboard.time.left: "<diamond>Time Left:</diamond> <white>%ds</white>"
+game.scoreboard.time.left: "<diamond>Time Left:</diamond> <white>%s</white>"
 
 gamemode.command.success: "<green>Successfully changed %s's gamemode to %s.</green>"
 
 form.duels.selector.title: "Duels"
 form.duels.selector.classic: "Classic"
+form.duels.selector.nodebuff: "NoDebuff"
 
 game.waiting.starting.message: "<diamond>The game is starting in <white>%d</white> seconds.</diamond>"
 game.started.message: "<diamond>The game has started!</diamond>"
 game.ended.message: "<diamond>The game has ended!</diamond>"
 
 game.you.died.title: "<red>YOU DIED!</red>"
+game.item.quit.name: "<red>Return to Lobby</red>"

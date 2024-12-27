@@ -11,7 +11,24 @@ import (
 
 var Classic = gamemanager.New(func() igame.Impl {
 	d := &duels.Duels{}
-	d.SetKit(kit.Classic)
+	d.SetKit(kit.Classic{})
+
+	gConf := game.Config{
+		Log:     slog.Default(),
+		MapName: "classic",
+		Impl:    d,
+	}
+	g, err := gConf.New()
+	if err != nil {
+		panic(err)
+	}
+	d.Create(g)
+	return d
+})
+
+var NoDebuff = gamemanager.New(func() igame.Impl {
+	d := &duels.Duels{}
+	d.SetKit(kit.NoDebuff{})
 
 	gConf := game.Config{
 		Log:     slog.Default(),
