@@ -48,7 +48,11 @@ func (g GameMode) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 
 func (g GameMode) Allow(s cmd.Source) bool {
 	if p, ok := s.(*player.Player); ok {
-		return user.Get(p).RankName() == "admin"
+		u := user.Get(p)
+		if u == nil {
+			return false
+		}
+		return u.RankName() == "admin"
 	}
 	return false
 }
