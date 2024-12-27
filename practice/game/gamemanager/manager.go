@@ -20,6 +20,17 @@ func New(createGameFunc func(mgr *Manager) igame.Impl) *Manager {
 	}
 }
 
+func (mgr *Manager) PlayersCount() int {
+	mgr.mu.Lock()
+	defer mgr.mu.Unlock()
+
+	var count int
+	for _, d := range mgr.g {
+		count += len(d.Game().Participants())
+	}
+	return count
+}
+
 func (mgr *Manager) Join(p *player.Player) error {
 	mgr.mu.Lock()
 	defer mgr.mu.Unlock()

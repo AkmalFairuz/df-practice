@@ -3,6 +3,7 @@ package lobby
 import (
 	"github.com/akmalfairuz/df-practice/practice/ffa"
 	"github.com/akmalfairuz/df-practice/practice/game/duelsmanager"
+	"github.com/akmalfairuz/df-practice/practice/game/gamemanager"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/player"
@@ -38,32 +39,42 @@ func sendFFAForm(p *player.Player) {
 	})
 }
 
+type duelsEntry struct {
+	TranslationName string
+	Manager         *gamemanager.Manager
+}
+
+var duelsEntries = []duelsEntry{
+	{
+		TranslationName: "form.duels.selector.classic",
+		Manager:         duelsmanager.Classic,
+	},
+	{
+		TranslationName: "form.duels.selector.nodebuff",
+		Manager:         duelsmanager.NoDebuff,
+	},
+}
+
 func sendDuelsForm(p *player.Player) {
 	u := user.Get(p)
 
+	btns := make([]form.Button, 0, len(duelsEntries))
+
+	for _, entry := range duelsEntries {
+		btns = append(btns, form.Button{
+			Text: u.Translatef(entry.TranslationName) + "\n" + u.Translatef("form.playing.format", entry.Manager.PlayersCount()),
+			Submit: func(tx *world.Tx) {
+				ent, ok := p.H().Entity(tx)
+				if !ok {
+					return
+				}
+				helper.LogErrors(entry.Manager.Join(ent.(*player.Player)))
+			},
+		})
+	}
+
 	p.SendForm(&form.Menu{
-		Title: u.Translatef("form.duels.selector.title"),
-		Buttons: []form.Button{
-			{
-				Text: u.Translatef("form.duels.selector.classic"),
-				Submit: func(tx *world.Tx) {
-					ent, ok := p.H().Entity(tx)
-					if !ok {
-						return
-					}
-					helper.LogErrors(duelsmanager.Classic.Join(ent.(*player.Player)))
-				},
-			},
-			{
-				Text: u.Translatef("form.duels.selector.nodebuff"),
-				Submit: func(tx *world.Tx) {
-					ent, ok := p.H().Entity(tx)
-					if !ok {
-						return
-					}
-					helper.LogErrors(duelsmanager.NoDebuff.Join(ent.(*player.Player)))
-				},
-			},
-		},
+		Title:   u.Translatef("form.duels.selector.title"),
+		Buttons: btns,
 	})
 }
