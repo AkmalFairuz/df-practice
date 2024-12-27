@@ -387,11 +387,6 @@ func (g *Game) doQuit(p *player.Player) error {
 	}
 
 	user.Get(p).SetCurrentGame(nil)
-
-	//p.Tx().RemoveEntity(p)
-	meta.Get("lobby").(interface {
-		Spawn(p *player.Player)
-	}).Spawn(p)
 	return nil
 }
 
