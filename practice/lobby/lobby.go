@@ -138,7 +138,7 @@ func (l *Lobby) Spawn(p *player.Player) {
 
 		p.Tx().RemoveEntity(ent)
 
-		l.w.Exec(func(tx *world.Tx) {
+		<-l.w.Exec(func(tx *world.Tx) {
 			newP := tx.AddEntity(p.H()).(*player.Player)
 			helper.ResetPlayer(newP)
 			u := user.Get(newP)
