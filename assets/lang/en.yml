@@ -70,3 +70,5 @@ game.item.quit.name: "<red>Return to Lobby</red>"
 game.item.play.again.name: "<green>Play Again</green>"
 
 form.playing.format: "<diamond>%d playing</diamond>"
+
+form.ffa.selector.nodebuff: "NoDebuff"

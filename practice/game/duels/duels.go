@@ -27,8 +27,6 @@ type Duels struct {
 	spawnsMu sync.Mutex
 
 	k kit.Kit
-
-	playAgain func(p *player.Player) error
 }
 
 func (d *Duels) Create(g igame.IGame) {

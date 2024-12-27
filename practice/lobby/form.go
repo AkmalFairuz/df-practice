@@ -24,6 +24,10 @@ func initFFAEntries() {
 			TranslationName: "form.ffa.selector.classic",
 			Arena:           ffa.ClassicArena(),
 		},
+		{
+			TranslationName: "form.ffa.selector.nodebuff",
+			Arena:           ffa.NoDebuffArena(),
+		},
 	}
 }
 
