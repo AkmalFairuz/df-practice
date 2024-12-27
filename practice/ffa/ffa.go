@@ -9,6 +9,7 @@ import (
 
 func InitArenas(log *slog.Logger) {
 	initClassicArena(log)
+	initNoDebuffArena(log)
 }
 
 func initWorldConfig(log *slog.Logger, path string) world.Config {
