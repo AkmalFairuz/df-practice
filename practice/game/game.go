@@ -28,7 +28,7 @@ func quitItem(p *player.Player) item.Stack {
 }
 
 func playAgainItem(p *player.Player) item.Stack {
-	return item.NewStack(item.DragonBreath{}, 1).WithCustomName(lang.Translatef(user.Lang(p), "game.item.play.again.name")).WithValue("game_item", "play_again")
+	return item.NewStack(item.Paper{}, 1).WithCustomName(lang.Translatef(user.Lang(p), "game.item.play.again.name")).WithValue("game_item", "play_again")
 }
 
 func init() {
@@ -432,7 +432,6 @@ func (g *Game) HandleItemUse(ctx *player.Context) {
 				return
 			case "play_again":
 				if err := g.doQuit(ctx.Val()); err != nil {
-					ctx.Val().Tx().RemoveEntity(ctx.Val())
 					_ = g.playAgain(ctx.Val())
 				}
 				return
