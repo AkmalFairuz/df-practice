@@ -10,6 +10,7 @@ import (
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
+	"github.com/df-mc/dragonfly/server/world/particle"
 	"github.com/go-gl/mathgl/mgl64"
 	"math/rand"
 	"sync"
@@ -97,6 +98,12 @@ func (a *Arena) handleTick(currentTick int64) {
 				par.combatTimer.Store(max(0, par.combatTimer.Load()-1))
 				a.sendUserScoreboard(par, tx)
 			}
+
+			if p, ok := par.Player(tx); ok {
+				if p.Immobile() && time.Since(par.lastSpawn.Load()) > time.Second {
+					p.SetMobile()
+				}
+			}
 		}
 	})
 }
@@ -130,7 +137,8 @@ func (a *Arena) Join(p *player.Player, tx *world.Tx) error {
 		a.mu.RUnlock()
 		return errors.New("user already in this arena, this should not happen after u.CurrentFFAArena() check before")
 	}
-	par := &Participant{u: u, lastSpawn: time.Now()}
+	par := &Participant{u: u}
+	par.lastSpawn.Store(time.Now())
 	a.u[u.XUID()] = par
 	a.mu.RUnlock()
 
@@ -168,9 +176,10 @@ func (a *Arena) Respawn(p *player.Player, tx *world.Tx) error {
 	selectedSpawn := a.spawns[rand.Intn(len(a.spawns))]
 	selectedSpawn.TeleportPlayer(p)
 	par.combatTimer.Store(0)
-	par.lastAttackedAt = time.Unix(0, 0)
-	par.lastSpawn = time.Now()
+	par.lastAttackedAt.Store(time.Unix(0, 0))
+	par.lastSpawn.Store(time.Now())
 	helper.UpdatePlayerNameTagWithHealth(p, 0)
+	p.SetImmobile()
 	_ = a.sendKit(p)
 	return nil
 }
@@ -184,7 +193,7 @@ func (a *Arena) sendKit(p *player.Player) error {
 
 // Quit removes a player from the arena. Caller should teleport the player to lobby.
 func (a *Arena) Quit(p *player.Player) error {
-
+	p.SetMobile()
 	u := user.Get(p)
 
 	a.mu.RLock()
@@ -218,8 +227,9 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		return
 	}
 
-	if time.Since(par.lastSpawn) < 4*time.Second {
+	if time.Since(par.lastSpawn.Load()) < 3*time.Second {
 		ctx.Cancel()
+		ctx.Val().Tx().AddParticle(ctx.Val().Position(), particle.Lava{})
 		return
 	}
 
@@ -291,6 +301,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 					attacker.kills.Add(1)
 					attacker.killStreak.Add(1)
 					a.BroadcastMessaget("killed.void.message.format", ctx.Val().Name(), attacker.u.Name())
+					handledDeathMessage = true
 					break
 				}
 			}
@@ -309,7 +320,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 
 		helper.LogErrors(a.Respawn(ctx.Val(), ctx.Val().Tx()))
 	} else {
-		par.lastAttackedAt = time.Now()
+		par.lastAttackedAt.Store(time.Now())
 		par.combatTimer.Store(11)
 		helper.UpdatePlayerNameTagWithHealth(ctx.Val(), 0-*damage)
 	}

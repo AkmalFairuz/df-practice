@@ -2,8 +2,10 @@ package ffa
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/df-mc/atomic"
+	"github.com/df-mc/dragonfly/server/player"
+	"github.com/df-mc/dragonfly/server/world"
 	"sync"
-	"sync/atomic"
 	"time"
 )
 
@@ -12,7 +14,7 @@ type Participant struct {
 
 	lastAttackedMu     sync.Mutex
 	lastAttackedByXUID string
-	lastAttackedAt     time.Time
+	lastAttackedAt     atomic.Value[time.Time]
 
 	combatTimer atomic.Int32
 
@@ -20,20 +22,20 @@ type Participant struct {
 	killStreak atomic.Int32
 	deaths     atomic.Int32
 
-	lastSpawn time.Time
+	lastSpawn atomic.Value[time.Time]
 }
 
 func (par *Participant) StoreLastAttackedBy(xuid string) {
 	par.lastAttackedMu.Lock()
 	defer par.lastAttackedMu.Unlock()
 	par.lastAttackedByXUID = xuid
-	par.lastAttackedAt = time.Now()
+	par.lastAttackedAt.Store(time.Now())
 }
 
 func (par *Participant) LastAttackedByWithMaxDuration(maxDuration time.Duration) string {
 	par.lastAttackedMu.Lock()
 	defer par.lastAttackedMu.Unlock()
-	if time.Since(par.lastAttackedAt) > maxDuration {
+	if time.Since(par.lastAttackedAt.Load()) > maxDuration {
 		return ""
 	}
 	return par.lastAttackedByXUID
@@ -49,4 +51,12 @@ func (par *Participant) InCombat() bool {
 
 func (par *Participant) Combat() int {
 	return int(par.combatTimer.Load())
+}
+
+func (par *Participant) Player(tx *world.Tx) (*player.Player, bool) {
+	e, ok := par.u.EntityHandle().Entity(tx)
+	if !ok {
+		return nil, false
+	}
+	return e.(*player.Player), true
 }
