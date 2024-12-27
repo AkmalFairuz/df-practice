@@ -433,6 +433,7 @@ func (g *Game) HandleItemUse(ctx *player.Context) {
 			case "play_again":
 				helper.LogErrors(g.Quit(ctx.Val()))
 				if err := g.doQuit(ctx.Val()); err != nil {
+					ctx.Val().Tx().RemoveEntity(ctx.Val())
 					_ = g.playAgain(ctx.Val())
 				}
 				return
