@@ -229,7 +229,9 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 
 	if time.Since(par.lastSpawn.Load()) < 3*time.Second {
 		ctx.Cancel()
-		ctx.Val().Tx().AddParticle(ctx.Val().Position(), particle.Lava{})
+		if _, ok := src.(entity.AttackDamageSource); ok {
+			ctx.Val().Tx().AddParticle(ctx.Val().Position(), particle.Lava{})
+		}
 		return
 	}
 
