@@ -50,6 +50,12 @@ func New(p *player.Player) *User {
 		locale = language.Indonesian
 	case "zh", "zh-CN", "zh-TW", "zh-HK":
 		locale = language.Chinese
+	case "vi", "vi-VN":
+		locale = language.Vietnamese
+	case "ja", "ja-JP":
+		locale = language.Japanese
+	case "hi", "hi-IN":
+		locale = language.Hindi
 	}
 
 	u := &User{

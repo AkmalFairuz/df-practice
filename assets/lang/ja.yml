@@ -1,0 +1,79 @@
+error.cooldown.chat: "<red>落ち着いて！メッセージを送信する速度が速すぎます。%.1f 秒待ってからもう一度メッセージを送信してください。</red>"
+error.cooldown.command: "<red>落ち着いて！コマンドを使う速度が速すぎます。%.1f 秒待ってからもう一度コマンドを使ってください。</red>"
+player.quit.message: "<grey>%s がサーバーから退出しました。</grey>"
+player.join.message: "<grey>%s がサーバーに参加しました。</grey>"
+user.load.error: "<red>ユーザーデータの読み込みに失敗しました。</red>"
+lobby.item.play.ffa.name: "<yellow>FFAをプレイ</yellow>"
+lobby.item.play.duels.name: "<yellow>デュエルをプレイ</yellow>"
+lobby.item.profile.name: "<yellow>プロフィール</yellow>"
+error.skin.change.not.allowed: "<red>ゲーム中はスキンを変更できません。スキンを変更するには再接続してください。</red>"
+scoreboard.title: "<diamond><bold>練習</bold></diamond>"
+lobby.scoreboard.players.online.count: "<diamond>オンライン：</diamond> <white>%d</white>"
+lobby.scoreboard.players.playing.count: "<diamond>プレイ中：</diamond> <white>%d</white>"
+scoreboard.footer: "<diamond>pr.venitymc.com</diamond>"
+scoreboard.your.ping: "<diamond>あなたのPing：</diamond> <white>%dms</white>"
+scoreboard.their.ping: "<diamond>相手のPing：</diamond> <white>%dms</white>"
+
+death.message.format: "<red>%s</red> <white>が死亡しました</white>"
+killed.message.format: "<red>%s</red> <white>が</white> <red>%s</red> <white>によって殺されました</white>"
+killed.shot.message.format: "<red>%s</red> <white>が</white> <red>%s</red> <white>に撃たれました</white>"
+death.void.message.format: "<red>%s</red> <white>が虚無に落ちました</white>"
+killed.void.knocked.message.format: "<red>%s</red> <white>が</white> <red>%s</red> <white>によって虚無にノックバックされました</white>"
+killed.void.message.format: "<red>%s</red> <white>が</white> <red>%s</red> <white>によって虚無で殺されました</white>"
+
+ffa.scoreboard.your.kills: "<diamond>あなたのキル：</diamond> <white>%d</white>"
+ffa.scoreboard.your.deaths: "<diamond>あなたの死亡：</diamond> <white>%d</white>"
+ffa.scoreboard.your.streak: "<diamond>あなたのキルストリーク：</diamond> <white>%d</white>"
+ffa.scoreboard.combat.timer: "<diamond>戦闘タイマー：</diamond> <white>%ds</white>"
+ffa.scoreboard.players: "<diamond>プレイヤー：</diamond> <white>%d</white>"
+
+chat.message: "<green>%s:</green><white> %s</white>"
+
+error.command.whisper.missing.target: "<red>ターゲットが指定されていません。</red>"
+error.command.whisper.missing.message: "<red>メッセージが指定されていません。</red>"
+
+whisper.received: "<diamond><white>%s</white>からのプライベートメッセージ：</diamond> <white>%s</white>"
+whisper.sent: "<diamond><white>%s</white>へのプライベートメッセージ：</diamond> <white>%s</white>"
+
+form.ffa.selector.title: "フリーフォーオール"
+form.ffa.selector.classic: "クラシック"
+
+error.lobby.in.combat: "<red>戦闘中はロビーに移動できません。戦闘タイマーが終了するまでお待ちください。</red>"
+
+error.command.reply.no.target: "<red>返信する相手がいません。</red>"
+error.command.reply.target.offline: "<red>返信しようとしたプレイヤーはオフラインです。</red>"
+
+game.waiting.join.message: "<grey>%s がゲームに参加しました (%d/%d)</grey>"
+game.waiting.left.message: "<grey>%s がゲームから退出しました (%d/%d)</grey>"
+
+game.waiting.scoreboard.players: "<diamond>プレイヤー：</diamond> <white>%d/%d</white>"
+game.waiting.scoreboard.starting.in: "<diamond>開始まで：</diamond> <white>%ds</white>"
+game.waiting.scoreboard.waiting.for.players: "<diamond>プレイヤーを待機中...</diamond>"
+
+game.ending.scoreboard.stopping.in: "<diamond>停止まで：</diamond> <white>%ds</white>"
+
+game.scoreboard.time.left: "<diamond>残り時間：</diamond> <white>%s</white>"
+
+gamemode.command.success: "<green>%s のゲームモードを %s に変更しました。</green>"
+
+form.duels.selector.title: "デュエル"
+form.duels.selector.classic: "クラシック"
+form.duels.selector.nodebuff: "ノーデバフ"
+
+game.waiting.starting.message: "<diamond>ゲームは <white>%d</white> 秒後に開始します。</diamond>"
+game.started.message: "<diamond>ゲームが開始されました！</diamond>"
+game.ended.message: "<diamond>ゲームが終了しました！</diamond>"
+
+game.you.died.title: "<red>あなたは死にました！</red>"
+game.item.quit.name: "<red>ロビーに戻る</red>"
+
+game.item.play.again.name: "<green>再度プレイ</green>"
+
+form.playing.format: "<diamond>%d 人がプレイ中</diamond>"
+
+form.ffa.selector.nodebuff: "ノーデバフ"
+
+broadcast.1.message: "<red><bold>警告</bold></red> <diamond>このサーバーは開発中です。</diamond>"
+broadcast.2.message: "<green><bold>ヒント</bold></green> <diamond>/lobby と入力してロビーに戻ります。</diamond>"
+
+welcome.message: "<green>こんにちは <yellow>%s</yellow>、練習サーバーへようこそ。</green> <red>このサーバーは開発中です。</red>"

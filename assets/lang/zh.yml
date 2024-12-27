@@ -1,18 +1,18 @@
-error.cooldown.chat: "<red>冷静！您发送消息太快了。请等待 %.1f 秒后再发送另一条消息。</red>"
-error.cooldown.command: "<red>冷静！您使用指令太快了。请等待 %.1f 秒后再使用另一条指令。</red>"
+error.cooldown.chat: "<red>冷静！你发送消息太快了。请等待 %.1f 秒后再发送另一条消息。</red>"
+error.cooldown.command: "<red>冷静！你使用命令太快了。请等待 %.1f 秒后再使用另一条命令。</red>"
 player.quit.message: "<grey>%s 离开了服务器。</grey>"
 player.join.message: "<grey>%s 加入了服务器。</grey>"
 user.load.error: "<red>加载用户数据失败。</red>"
 lobby.item.play.ffa.name: "<yellow>玩 FFA</yellow>"
-lobby.item.play.duels.name: "<yellow>玩对战</yellow>"
+lobby.item.play.duels.name: "<yellow>玩决斗</yellow>"
 lobby.item.profile.name: "<yellow>个人资料</yellow>"
-error.skin.change.not.allowed: "<red>您无法在游戏中更改皮肤。请尝试重新加入服务器以更改皮肤。</red>"
+error.skin.change.not.allowed: "<red>你不能在游戏中更改皮肤。尝试重新加入服务器以更改皮肤。</red>"
 scoreboard.title: "<diamond><bold>练习</bold></diamond>"
-lobby.scoreboard.players.online.count: "<diamond>在线人数:</diamond> <white>%d</white>"
-lobby.scoreboard.players.playing.count: "<diamond>游戏中人数:</diamond> <white>%d</white>"
+lobby.scoreboard.players.online.count: "<diamond>在线：</diamond> <white>%d</white>"
+lobby.scoreboard.players.playing.count: "<diamond>正在游戏：</diamond> <white>%d</white>"
 scoreboard.footer: "<diamond>pr.venitymc.com</diamond>"
-scoreboard.your.ping: "<diamond>您的延迟:</diamond> <white>%dms</white>"
-scoreboard.their.ping: "<diamond>他们的延迟:</diamond> <white>%dms</white>"
+scoreboard.your.ping: "<diamond>你的 Ping：</diamond> <white>%dms</white>"
+scoreboard.their.ping: "<diamond>他们的 Ping：</diamond> <white>%dms</white>"
 
 death.message.format: "<red>%s</red> <white>死亡</white>"
 killed.message.format: "<red>%s</red> <white>被</white> <red>%s</red> <white>杀死</white>"
@@ -21,44 +21,44 @@ death.void.message.format: "<red>%s</red> <white>掉入虚空</white>"
 killed.void.knocked.message.format: "<red>%s</red> <white>被</white> <red>%s</red> <white>击入虚空</white>"
 killed.void.message.format: "<red>%s</red> <white>被</white> <red>%s</red> <white>杀入虚空</white>"
 
-ffa.scoreboard.your.kills: "<diamond>您的击杀:</diamond> <white>%d</white>"
-ffa.scoreboard.your.deaths: "<diamond>您的死亡:</diamond> <white>%d</white>"
-ffa.scoreboard.your.streak: "<diamond>您的连杀:</diamond> <white>%d</white>"
-ffa.scoreboard.combat.timer: "<diamond>战斗计时器:</diamond> <white>%ds</white>"
-ffa.scoreboard.players: "<diamond>玩家:</diamond> <white>%d</white>"
+ffa.scoreboard.your.kills: "<diamond>你的击杀：</diamond> <white>%d</white>"
+ffa.scoreboard.your.deaths: "<diamond>你的死亡：</diamond> <white>%d</white>"
+ffa.scoreboard.your.streak: "<diamond>你的击杀连杀：</diamond> <white>%d</white>"
+ffa.scoreboard.combat.timer: "<diamond>战斗计时器：</diamond> <white>%ds</white>"
+ffa.scoreboard.players: "<diamond>玩家：</diamond> <white>%d</white>"
 
 chat.message: "<green>%s:</green><white> %s</white>"
 
 error.command.whisper.missing.target: "<red>未指定目标。</red>"
 error.command.whisper.missing.message: "<red>未指定消息。</red>"
 
-whisper.received: "<diamond>来自 <white>%s</white> 的私人消息:</diamond> <white>%s</white>"
-whisper.sent: "<diamond>发送给 <white>%s</white> 的私人消息:</diamond> <white>%s</white>"
+whisper.received: "<diamond>来自 <white>%s</white> 的私信：</diamond> <white>%s</white>"
+whisper.sent: "<diamond>私信发送给 <white>%s</white>：</diamond> <white>%s</white>"
 
 form.ffa.selector.title: "自由混战"
 form.ffa.selector.classic: "经典"
 
-error.lobby.in.combat: "<red>您无法在战斗中返回大厅。请等待战斗计时器结束。</red>"
+error.lobby.in.combat: "<red>你不能在战斗中进入大厅。请等战斗计时器结束后再进入。</red>"
 
-error.command.reply.no.target: "<red>没有可回复的目标。</red>"
-error.command.reply.target.offline: "<red>您尝试回复的玩家已离线。</red>"
+error.command.reply.no.target: "<red>没有人可回复。</red>"
+error.command.reply.target.offline: "<red>你想回复的玩家离线。</red>"
 
 game.waiting.join.message: "<grey>%s 加入了游戏 (%d/%d)</grey>"
 game.waiting.left.message: "<grey>%s 离开了游戏 (%d/%d)</grey>"
 
-game.waiting.scoreboard.players: "<diamond>玩家:</diamond> <white>%d/%d</white>"
-game.waiting.scoreboard.starting.in: "<diamond>开始于:</diamond> <white>%ds</white>"
+game.waiting.scoreboard.players: "<diamond>玩家：</diamond> <white>%d/%d</white>"
+game.waiting.scoreboard.starting.in: "<diamond>开始倒计时：</diamond> <white>%ds</white>"
 game.waiting.scoreboard.waiting.for.players: "<diamond>等待玩家...</diamond>"
 
-game.ending.scoreboard.stopping.in: "<diamond>停止于:</diamond> <white>%ds</white>"
+game.ending.scoreboard.stopping.in: "<diamond>停止倒计时：</diamond> <white>%ds</white>"
 
-game.scoreboard.time.left: "<diamond>剩余时间:</diamond> <white>%s</white>"
+game.scoreboard.time.left: "<diamond>剩余时间：</diamond> <white>%s</white>"
 
 gamemode.command.success: "<green>成功将 %s 的游戏模式更改为 %s。</green>"
 
-form.duels.selector.title: "对战"
+form.duels.selector.title: "决斗"
 form.duels.selector.classic: "经典"
-form.duels.selector.nodebuff: "无增益"
+form.duels.selector.nodebuff: "无 debuff"
 
 game.waiting.starting.message: "<diamond>游戏将在 <white>%d</white> 秒后开始。</diamond>"
 game.started.message: "<diamond>游戏已开始！</diamond>"
@@ -69,11 +69,11 @@ game.item.quit.name: "<red>返回大厅</red>"
 
 game.item.play.again.name: "<green>再玩一次</green>"
 
-form.playing.format: "<diamond>%d 人正在玩</diamond>"
+form.playing.format: "<diamond>%d 正在玩</diamond>"
 
-form.ffa.selector.nodebuff: "无增益"
+form.ffa.selector.nodebuff: "无 debuff"
 
-broadcast.1.message: "<red><bold>警告</bold></red> <diamond>该服务器正在开发中。</diamond>"
+broadcast.1.message: "<red><bold>警报</bold></red> <diamond>本服务器正在开发中。</diamond>"
 broadcast.2.message: "<green><bold>提示</bold></green> <diamond>输入 /lobby 返回大厅。</diamond>"
 
-welcome.message: "<green>您好 <yellow>%s</yellow>，欢迎来到练习服务器。</green> <red>该服务器正在开发中。</red>"
+welcome.message: "<green>你好 <yellow>%s</yellow>，欢迎来到练习服务器。</green> <red>本服务器正在开发中。</red>"

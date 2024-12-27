@@ -1,0 +1,79 @@
+error.cooldown.chat: "<red>Bình tĩnh! Bạn đang gửi tin nhắn quá nhanh. Vui lòng đợi %.1f giây trước khi gửi tin nhắn khác.</red>"
+error.cooldown.command: "<red>Bình tĩnh! Bạn đang sử dụng lệnh quá nhanh. Vui lòng đợi %.1f giây trước khi sử dụng lệnh khác.</red>"
+player.quit.message: "<grey>%s đã rời khỏi máy chủ.</grey>"
+player.join.message: "<grey>%s đã tham gia vào máy chủ.</grey>"
+user.load.error: "<red>Không thể tải dữ liệu người dùng.</red>"
+lobby.item.play.ffa.name: "<yellow>Chơi FFA</yellow>"
+lobby.item.play.duels.name: "<yellow>Chơi Đấu</yellow>"
+lobby.item.profile.name: "<yellow>Hồ sơ</yellow>"
+error.skin.change.not.allowed: "<red>Bạn không thể thay đổi skin trong khi đang chơi. Hãy thử tham gia lại máy chủ để thay đổi skin.</red>"
+scoreboard.title: "<diamond><bold>Luyện Tập</bold></diamond>"
+lobby.scoreboard.players.online.count: "<diamond>Đang trực tuyến:</diamond> <white>%d</white>"
+lobby.scoreboard.players.playing.count: "<diamond>Đang chơi:</diamond> <white>%d</white>"
+scoreboard.footer: "<diamond>pr.venitymc.com</diamond>"
+scoreboard.your.ping: "<diamond>Ping của bạn:</diamond> <white>%dms</white>"
+scoreboard.their.ping: "<diamond>Ping của họ:</diamond> <white>%dms</white>"
+
+death.message.format: "<red>%s</red> <white>đã chết</white>"
+killed.message.format: "<red>%s</red> <white>đã bị</white> <red>%s</red> <white>giết</white>"
+killed.shot.message.format: "<red>%s</red> <white>đã bị</white> <red>%s</red> <white>bắn chết</white>"
+death.void.message.format: "<red>%s</red> <white>rơi vào hư vô</white>"
+killed.void.knocked.message.format: "<red>%s</red> <white>đã bị</white> <red>%s</red> <white>đẩy vào hư vô</white>"
+killed.void.message.format: "<red>%s</red> <white>đã bị</white> <red>%s</red> <white>giết vào hư vô</white>"
+
+ffa.scoreboard.your.kills: "<diamond>Kills của bạn:</diamond> <white>%d</white>"
+ffa.scoreboard.your.deaths: "<diamond>Deaths của bạn:</diamond> <white>%d</white>"
+ffa.scoreboard.your.streak: "<diamond>Killstreak của bạn:</diamond> <white>%d</white>"
+ffa.scoreboard.combat.timer: "<diamond>Thời gian chiến đấu:</diamond> <white>%ds</white>"
+ffa.scoreboard.players: "<diamond>Người chơi:</diamond> <white>%d</white>"
+
+chat.message: "<green>%s:</green><white> %s</white>"
+
+error.command.whisper.missing.target: "<red>Không có mục tiêu được chỉ định.</red>"
+error.command.whisper.missing.message: "<red>Không có tin nhắn được chỉ định.</red>"
+
+whisper.received: "<diamond>Thông điệp riêng từ <white>%s</white>:</diamond> <white>%s</white>"
+whisper.sent: "<diamond>Thông điệp riêng gửi đến <white>%s</white>:</diamond> <white>%s</white>"
+
+form.ffa.selector.title: "Tự do cho tất cả"
+form.ffa.selector.classic: "Cổ điển"
+
+error.lobby.in.combat: "<red>Bạn không thể vào phòng chờ trong khi đang chiến đấu. Hãy đợi đến khi hết thời gian chiến đấu.</red>"
+
+error.command.reply.no.target: "<red>Không có ai để trả lời.</red>"
+error.command.reply.target.offline: "<red>Người chơi mà bạn đang cố trả lời đã offline.</red>"
+
+game.waiting.join.message: "<grey>%s đã tham gia trò chơi (%d/%d)</grey>"
+game.waiting.left.message: "<grey>%s đã rời khỏi trò chơi (%d/%d)</grey>"
+
+game.waiting.scoreboard.players: "<diamond>Người chơi:</diamond> <white>%d/%d</white>"
+game.waiting.scoreboard.starting.in: "<diamond>Bắt đầu trong:</diamond> <white>%ds</white>"
+game.waiting.scoreboard.waiting.for.players: "<diamond>Đang chờ người chơi...</diamond>"
+
+game.ending.scoreboard.stopping.in: "<diamond>Dừng lại trong:</diamond> <white>%ds</white>"
+
+game.scoreboard.time.left: "<diamond>Thời gian còn lại:</diamond> <white>%s</white>"
+
+gamemode.command.success: "<green>Đã thay đổi thành công chế độ chơi của %s thành %s.</green>"
+
+form.duels.selector.title: "Đấu"
+form.duels.selector.classic: "Cổ điển"
+form.duels.selector.nodebuff: "Không Debuff"
+
+game.waiting.starting.message: "<diamond>Trò chơi sẽ bắt đầu trong <white>%d</white> giây.</diamond>"
+game.started.message: "<diamond>Trò chơi đã bắt đầu!</diamond>"
+game.ended.message: "<diamond>Trò chơi đã kết thúc!</diamond>"
+
+game.you.died.title: "<red>BẠN ĐÃ CHẾT!</red>"
+game.item.quit.name: "<red>Quay lại phòng chờ</red>"
+
+game.item.play.again.name: "<green>Chơi lại</green>"
+
+form.playing.format: "<diamond>%d đang chơi</diamond>"
+
+form.ffa.selector.nodebuff: "Không Debuff"
+
+broadcast.1.message: "<red><bold>CẢNH BÁO</bold></red> <diamond>Máy chủ này đang phát triển.</diamond>"
+broadcast.2.message: "<green><bold>GỢI Ý</bold></green> <diamond>Gõ /lobby để quay lại phòng chờ.</diamond>"
+
+welcome.message: "<green>Chào <yellow>%s</yellow>, chào mừng đến với máy chủ Luyện Tập.</green> <red>Máy chủ này đang phát triển.</red>"

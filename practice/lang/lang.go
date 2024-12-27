@@ -15,6 +15,9 @@ func init() {
 	register(language.English)
 	register(language.Indonesian)
 	register(language.Chinese)
+	register(language.Japanese)
+	register(language.Vietnamese)
+	register(language.Hindi)
 }
 
 // Register registers a language file.

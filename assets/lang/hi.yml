@@ -1,0 +1,79 @@
+error.cooldown.chat: "<red>शांत हो जाओ! आप बहुत जल्दी संदेश भेज रहे हैं। कृपया %.1f सेकंड इंतजार करें फिर एक और संदेश भेजें।</red>"
+error.cooldown.command: "<red>शांत हो जाओ! आप बहुत जल्दी कमांड्स का उपयोग कर रहे हैं। कृपया %.1f सेकंड इंतजार करें फिर एक और कमांड का उपयोग करें।</red>"
+player.quit.message: "<grey>%s सर्वर से निकल गया।</grey>"
+player.join.message: "<grey>%s सर्वर में शामिल हुआ।</grey>"
+user.load.error: "<red>उपयोगकर्ता डेटा लोड करने में विफल।</red>"
+lobby.item.play.ffa.name: "<yellow>FFA खेलें</yellow>"
+lobby.item.play.duels.name: "<yellow>द्वंद्व खेलें</yellow>"
+lobby.item.profile.name: "<yellow>प्रोफ़ाइल</yellow>"
+error.skin.change.not.allowed: "<red>आप गेम में रहते हुए अपनी स्किन नहीं बदल सकते। स्किन बदलने के लिए सर्वर में फिर से जुड़ने का प्रयास करें।</red>"
+scoreboard.title: "<diamond><bold>अभ्यास</bold></diamond>"
+lobby.scoreboard.players.online.count: "<diamond>ऑनलाइन:</diamond> <white>%d</white>"
+lobby.scoreboard.players.playing.count: "<diamond>खेल रहे:</diamond> <white>%d</white>"
+scoreboard.footer: "<diamond>pr.venitymc.com</diamond>"
+scoreboard.your.ping: "<diamond>आपकी पिंग:</diamond> <white>%dms</white>"
+scoreboard.their.ping: "<diamond>उनकी पिंग:</diamond> <white>%dms</white>"
+
+death.message.format: "<red>%s</red> <white>मर गया</white>"
+killed.message.format: "<red>%s</red> <white>को</white> <red>%s</red> <white>ने मारा</white>"
+killed.shot.message.format: "<red>%s</red> <white>को</white> <red>%s</red> <white>ने गोली मारी</white>"
+death.void.message.format: "<red>%s</red> <white>खाली में गिर गया</white>"
+killed.void.knocked.message.format: "<red>%s</red> <white>को</white> <red>%s</red> <white>ने खाली में धकेल दिया</white>"
+killed.void.message.format: "<red>%s</red> <white>को</white> <red>%s</red> <white>ने खाली में मारा</white>"
+
+ffa.scoreboard.your.kills: "<diamond>आपकी किल्स:</diamond> <white>%d</white>"
+ffa.scoreboard.your.deaths: "<diamond>आपकी मौतें:</diamond> <white>%d</white>"
+ffa.scoreboard.your.streak: "<diamond>आपकी किल स्ट्रीक:</diamond> <white>%d</white>"
+ffa.scoreboard.combat.timer: "<diamond>कॉम्बैट टाइमर:</diamond> <white>%ds</white>"
+ffa.scoreboard.players: "<diamond>खिलाड़ी:</diamond> <white>%d</white>"
+
+chat.message: "<green>%s:</green><white> %s</white>"
+
+error.command.whisper.missing.target: "<red>कोई लक्ष्य निर्दिष्ट नहीं है।</red>"
+error.command.whisper.missing.message: "<red>कोई संदेश निर्दिष्ट नहीं है।</red>"
+
+whisper.received: "<diamond><white>%s</white> से निजी संदेश:</diamond> <white>%s</white>"
+whisper.sent: "<diamond><white>%s</white> को निजी संदेश:</diamond> <white>%s</white>"
+
+form.ffa.selector.title: "फ्री फॉर ऑल"
+form.ffa.selector.classic: "क्लासिक"
+
+error.lobby.in.combat: "<red>आप युद्ध में हैं, इसलिए आप लॉबी में नहीं जा सकते। कृपया युद्ध टाइमर खत्म होने तक इंतजार करें।</red>"
+
+error.command.reply.no.target: "<red>कोई जवाब देने के लिए नहीं है।</red>"
+error.command.reply.target.offline: "<red>जिस खिलाड़ी को आप जवाब देना चाहते हैं, वह ऑफलाइन है।</red>"
+
+game.waiting.join.message: "<grey>%s खेल में शामिल हुआ (%d/%d)</grey>"
+game.waiting.left.message: "<grey>%s खेल से निकल गया (%d/%d)</grey>"
+
+game.waiting.scoreboard.players: "<diamond>खिलाड़ी:</diamond> <white>%d/%d</white>"
+game.waiting.scoreboard.starting.in: "<diamond>शुरू हो रहा है:</diamond> <white>%ds</white>"
+game.waiting.scoreboard.waiting.for.players: "<diamond>खिलाड़ियों का इंतजार कर रहे हैं...</diamond>"
+
+game.ending.scoreboard.stopping.in: "<diamond>रोकने में:</diamond> <white>%ds</white>"
+
+game.scoreboard.time.left: "<diamond>समय बचा:</diamond> <white>%s</white>"
+
+gamemode.command.success: "<green>सफलतापूर्वक %s का गेम मोड %s में बदल दिया।</green>"
+
+form.duels.selector.title: "द्वंद्व"
+form.duels.selector.classic: "क्लासिक"
+form.duels.selector.nodebuff: "नो डेबफ"
+
+game.waiting.starting.message: "<diamond>खेल <white>%d</white> सेकंड में शुरू हो रहा है।</diamond>"
+game.started.message: "<diamond>खेल शुरू हो गया है!</diamond>"
+game.ended.message: "<diamond>खेल समाप्त हो गया!</diamond>"
+
+game.you.died.title: "<red>आप मरे!</red>"
+game.item.quit.name: "<red>लॉबी में वापस जाएं</red>"
+
+game.item.play.again.name: "<green>फिर से खेलें</green>"
+
+form.playing.format: "<diamond>%d खेल रहे हैं</diamond>"
+
+form.ffa.selector.nodebuff: "नो डेबफ"
+
+broadcast.1.message: "<red><bold>अलर्ट</bold></red> <diamond>यह सर्वर विकासाधीन है।</diamond>"
+broadcast.2.message: "<green><bold>टिप</bold></green> <diamond>/lobby टाइप करें ताकि आप लॉबी में वापस जा सकें।</diamond>"
+
+welcome.message: "<green>नमस्ते <yellow>%s</yellow>, अभ्यास सर्वर में आपका स्वागत है।</green> <red>यह सर्वर विकासाधीन है।</red>"
