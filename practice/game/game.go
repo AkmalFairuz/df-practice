@@ -419,7 +419,9 @@ func (g *Game) HandleItemUse(ctx *player.Context) {
 			case "play_again":
 				helper.LogErrors(g.Quit(ctx.Val()))
 				if hasPlayAgain, ok := g.impl.(interface{ PlayAgain(p *player.Player) error }); ok {
-					helper.LogErrors(hasPlayAgain.PlayAgain(ctx.Val()))
+					ctx.Val().H().ExecWorld(func(tx *world.Tx, e world.Entity) {
+						helper.LogErrors(hasPlayAgain.PlayAgain(e.(*player.Player)))
+					})
 				}
 				return
 			}
