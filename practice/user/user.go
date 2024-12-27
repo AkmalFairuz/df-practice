@@ -51,7 +51,6 @@ func New(p *player.Player) *User {
 	case "zh", "zh-CN", "zh-TW", "zh-HK":
 		locale = language.Chinese
 	}
-	fmt.Println(p.Locale().String())
 
 	u := &User{
 		p:    p.H(),

@@ -82,7 +82,7 @@ func (pr *Practice) Run() {
 				}
 				pr.l.Spawn(newP)
 
-				u.Translatef("welcome.message", newP.Name())
+				u.Messaget("welcome.message", newP.Name())
 
 				go startPlayerTick(u)
 			})
