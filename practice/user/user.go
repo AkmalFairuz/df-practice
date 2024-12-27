@@ -46,11 +46,12 @@ func New(p *player.Player) *User {
 
 	locale := language.English
 	switch p.Locale().String() {
-	case "id", "id_ID":
+	case "id", "id-ID":
 		locale = language.Indonesian
-	case "zh", "zh_CN", "zh_TW", "zh_HK":
+	case "zh", "zh-CN", "zh-TW", "zh-HK":
 		locale = language.Chinese
 	}
+	fmt.Println(p.Locale().String())
 
 	u := &User{
 		p:    p.H(),
