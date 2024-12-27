@@ -36,6 +36,7 @@ func ResetPlayer(p *player.Player) {
 	ResetPlayerExp(p)
 	ResetPlayerAttributes(p)
 	p.SetNameTag(p.Name())
+	p.Extinguish()
 }
 
 func UpdatePlayerNameTagWithHealth(p *player.Player, additionalHealth float64) {
