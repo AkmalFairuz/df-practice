@@ -27,6 +27,10 @@ func quitItem(p *player.Player) item.Stack {
 	return item.NewStack(item.DragonBreath{}, 1).WithCustomName(lang.Translatef(user.Lang(p), "game.item.quit.name")).WithValue("game_item", "quit")
 }
 
+func playAgainItem(p *player.Player) item.Stack {
+	return item.NewStack(item.DragonBreath{}, 1).WithCustomName(lang.Translatef(user.Lang(p), "game.item.play.again.name")).WithValue("game_item", "play_again")
+}
+
 func init() {
 	if err := helper.RemoveDir(gameWorldsPath); err != nil {
 		if !errors.Is(err, os.ErrNotExist) {
@@ -220,8 +224,9 @@ func (g *Game) End() {
 			if par.IsPlaying() {
 				p.SetGameMode(world.GameModeAdventure)
 			}
+			_ = p.Inventory().SetItem(0, playAgainItem(p))
 			_ = p.Inventory().SetItem(8, quitItem(p))
-			_ = p.SetHeldSlot(0)
+			_ = p.SetHeldSlot(1)
 		}
 
 	})
@@ -410,6 +415,12 @@ func (g *Game) HandleItemUse(ctx *player.Context) {
 			switch v {
 			case "quit":
 				helper.LogErrors(g.Quit(ctx.Val()))
+				return
+			case "play_again":
+				helper.LogErrors(g.Quit(ctx.Val()))
+				if hasPlayAgain, ok := g.impl.(interface{ PlayAgain(p *player.Player) error }); ok {
+					helper.LogErrors(hasPlayAgain.PlayAgain(ctx.Val()))
+				}
 				return
 			}
 		}

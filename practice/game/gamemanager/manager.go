@@ -10,10 +10,10 @@ type Manager struct {
 	mu sync.Mutex
 	g  map[string]igame.Impl
 
-	createGameFunc func() igame.Impl
+	createGameFunc func(mgr *Manager) igame.Impl
 }
 
-func New(createGameFunc func() igame.Impl) *Manager {
+func New(createGameFunc func(mgr *Manager) igame.Impl) *Manager {
 	return &Manager{
 		g:              make(map[string]igame.Impl),
 		createGameFunc: createGameFunc,
@@ -30,7 +30,7 @@ func (mgr *Manager) Join(p *player.Player) error {
 		}
 	}
 
-	d := (mgr.createGameFunc)()
+	d := (mgr.createGameFunc)(mgr)
 	mgr.g[d.Game().ID()] = d
 	d.Game().SetCloseHook(func() {
 		mgr.mu.Lock()

@@ -27,6 +27,8 @@ type Duels struct {
 	spawnsMu sync.Mutex
 
 	k kit.Kit
+
+	playAgain func(p *player.Player) error
 }
 
 func (d *Duels) Create(g igame.IGame) {
@@ -131,7 +133,7 @@ func (d *Duels) OnTick() {
 				}
 
 				p.User().SendScoreboard([]string{
-					p.User().Translatef("game.scoreboard.time.left", helper.FormatTime(int(d.g.CurrentTick()/20))),
+					p.User().Translatef("game.scoreboard.time.left", helper.FormatTime(d.PlayingTime()-int(d.g.CurrentTick()/20))),
 					"",
 					p.User().Translatef("scoreboard.their.ping", opponentPing),
 					p.User().Translatef("scoreboard.your.ping", p.User().Ping()),
@@ -182,6 +184,17 @@ func (d *Duels) Game() igame.IGame {
 
 func (d *Duels) SetKit(kit kit.Kit) {
 	d.k = kit
+}
+
+func (d *Duels) SetPlayAgainHook(hook func(p *player.Player) error) {
+	d.playAgain = hook
+}
+
+func (d *Duels) PlayAgain(p *player.Player) error {
+	if d.playAgain != nil {
+		return d.playAgain(p)
+	}
+	return nil
 }
 
 // Compile-time check to ensure that Duels implements game.Impl.

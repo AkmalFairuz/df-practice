@@ -9,7 +9,7 @@ import (
 	"log/slog"
 )
 
-var Classic = gamemanager.New(func() igame.Impl {
+var Classic = gamemanager.New(func(mgr *gamemanager.Manager) igame.Impl {
 	d := &duels.Duels{}
 	d.SetKit(kit.Classic{})
 
@@ -23,10 +23,11 @@ var Classic = gamemanager.New(func() igame.Impl {
 		panic(err)
 	}
 	d.Create(g)
+	d.SetPlayAgainHook(mgr.Join)
 	return d
 })
 
-var NoDebuff = gamemanager.New(func() igame.Impl {
+var NoDebuff = gamemanager.New(func(mgr *gamemanager.Manager) igame.Impl {
 	d := &duels.Duels{}
 	d.SetKit(kit.NoDebuff{})
 
@@ -40,5 +41,6 @@ var NoDebuff = gamemanager.New(func() igame.Impl {
 		panic(err)
 	}
 	d.Create(g)
+	d.SetPlayAgainHook(mgr.Join)
 	return d
 })
