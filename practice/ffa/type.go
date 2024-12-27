@@ -27,7 +27,7 @@ func InitArenas(log *slog.Logger) {
 	}
 	classicArena.voidY = 80
 	classicArena.icon = "textures/items/iron_sword.png"
-	classicArena.k = kit.Classic
+	classicArena.k = kit.Classic{}
 	if err := classicArena.Init(); err != nil {
 		panic(err)
 	}
