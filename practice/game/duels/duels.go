@@ -47,7 +47,7 @@ func (d *Duels) WaitingTime() int {
 }
 
 func (d *Duels) EndingTime() int {
-	return 10
+	return 5
 }
 
 func (d *Duels) MaxParticipants() int {
