@@ -617,8 +617,5 @@ func (g *Game) SetPlayAgainHook(hook func(p *player.Player) error) {
 }
 
 func (g *Game) playAgain(p *player.Player) error {
-	if g.playAgainHook != nil {
-		return g.playAgainHook(p)
-	}
-	return nil
+	return (g.playAgainHook)(p)
 }

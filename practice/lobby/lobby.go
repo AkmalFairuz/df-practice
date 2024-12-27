@@ -122,6 +122,14 @@ func (l *Lobby) sendLobbyItems(p *player.Player) {
 }
 
 func (l *Lobby) Spawn(p *player.Player) {
+	l.doSpawn(p, false)
+}
+
+func (l *Lobby) SpawnSync(p *player.Player) {
+	l.doSpawn(p, true)
+}
+
+func (l *Lobby) doSpawn(p *player.Player, sync bool) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("panic recovered when spawning player to lobby: %v\n", r)
@@ -138,7 +146,7 @@ func (l *Lobby) Spawn(p *player.Player) {
 
 		p.Tx().RemoveEntity(ent)
 
-		l.w.Exec(func(tx *world.Tx) {
+		exec := l.w.Exec(func(tx *world.Tx) {
 			newP := tx.AddEntity(p.H()).(*player.Player)
 			helper.ResetPlayer(newP)
 			u := user.Get(newP)
@@ -149,6 +157,9 @@ func (l *Lobby) Spawn(p *player.Player) {
 			newP.SetGameMode(world.GameModeAdventure)
 			newP.Teleport(l.w.Spawn().Vec3())
 		})
+		if sync {
+			<-exec
+		}
 	}
 }
 
