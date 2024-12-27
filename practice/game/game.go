@@ -308,6 +308,15 @@ func (g *Game) ParticipantByXUID(xuid string) (igame.IParticipant, bool) {
 }
 
 func (g *Game) Join(p *player.Player) error {
+	u := user.Get(p)
+	if u.CurrentGame() != nil {
+		return errors.New("already joined another game")
+	}
+
+	if u.CurrentFFAArena() != nil {
+		return errors.New("already joined ffa arena")
+	}
+
 	if g.state.Load() != StateWaiting {
 		return errors.New("game already started")
 	}
@@ -333,7 +342,7 @@ func (g *Game) Join(p *player.Player) error {
 	g.p[p.XUID()] = par
 	g.pMu.Unlock()
 
-	user.Get(p).SetCurrentGame(g)
+	u.SetCurrentGame(g)
 
 	p.Tx().RemoveEntity(p)
 	<-g.w.Exec(func(tx *world.Tx) {

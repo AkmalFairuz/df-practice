@@ -22,8 +22,8 @@ type Practice struct {
 }
 
 func New(log *slog.Logger, srv *server.Server) *Practice {
-	l := lobby.New(srv.World())
 	ffa.InitArenas(log)
+	l := lobby.New(srv.World())
 
 	meta.Set("lobby", lobby.Instance())
 

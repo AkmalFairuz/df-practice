@@ -11,47 +11,60 @@ import (
 	form "github.com/twistedasylummc/inline-forms"
 )
 
+type ffaEntry struct {
+	TranslationName string
+	Arena           *ffa.Arena
+}
+
+var ffaEntries []ffaEntry
+
+func initFFAEntries() {
+	ffaEntries = []ffaEntry{
+		{
+			TranslationName: "form.ffa.selector.classic",
+			Arena:           ffa.ClassicArena(),
+		},
+	}
+}
+
 func sendFFAForm(p *player.Player) {
 	u := user.Get(p)
 
-	p.SendForm(&form.Menu{
-		Title: u.Translatef("form.ffa.selector.title"),
-		Buttons: []form.Button{
-			{
-				Text:  u.Translatef("form.ffa.selector.classic"),
-				Image: ffa.ClassicArena().Icon(),
-				Submit: func(tx *world.Tx) {
-					helper.LogErrors(ffa.ClassicArena().Join(p, tx))
-				},
+	btns := make([]form.Button, 0, len(ffaEntries))
+	for _, entry := range ffaEntries {
+		btns = append(btns, form.Button{
+			Text: u.Translatef(entry.TranslationName) + "\n" + u.Translatef("form.playing.format", len(entry.Arena.Participants())),
+			Submit: func(tx *world.Tx) {
+				ent, _ := p.H().Entity(tx)
+				ent2 := ent.(*player.Player)
+				helper.LogErrors(entry.Arena.Join(ent2, ent2.Tx()))
 			},
-			//{
-			//	Text: "NoDebuff",
-			//	Submit: func(tx *world.Tx) {
-			//		_ = ffa.NoDebuffArena().Join(p, tx)
-			//	},
-			//},
-			//{
-			//	Text: "Build",
-			//	Submit: func(tx *world.Tx) {
-			//	},
-			//},
-		},
+			Image: entry.Arena.Icon(),
+		})
+	}
+
+	p.SendForm(&form.Menu{
+		Title:   u.Translatef("form.ffa.selector.title"),
+		Buttons: btns,
 	})
 }
 
 type duelsEntry struct {
 	TranslationName string
 	Manager         *gamemanager.Manager
+	Icon            string
 }
 
 var duelsEntries = []duelsEntry{
 	{
 		TranslationName: "form.duels.selector.classic",
 		Manager:         duelsmanager.Classic,
+		Icon:            "textures/items/iron_sword",
 	},
 	{
 		TranslationName: "form.duels.selector.nodebuff",
 		Manager:         duelsmanager.NoDebuff,
+		Icon:            "textures/items/potion_bottle_splash_heal",
 	},
 }
 

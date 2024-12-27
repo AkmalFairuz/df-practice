@@ -3,11 +3,8 @@ package ffa
 import (
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/kit"
-	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/df-mc/dragonfly/server/world"
-	"github.com/df-mc/dragonfly/server/world/biome"
-	"github.com/df-mc/dragonfly/server/world/generator"
 	"github.com/df-mc/dragonfly/server/world/mcdb"
 	"log/slog"
 )
@@ -43,7 +40,8 @@ func initWorldConfig(log *slog.Logger, path string) world.Config {
 		Entities:  entity.DefaultRegistry,
 		Dim:       world.Overworld,
 		Provider:  prov,
-		Generator: generator.NewFlat(biome.Plains{}, []world.Block{block.Grass{}, block.Dirt{}, block.Dirt{}, block.Bedrock{}}),
+		ReadOnly:  true,
+		Generator: world.NopGenerator{},
 	}
 }
 
