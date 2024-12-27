@@ -90,8 +90,11 @@ func (l *Lobby) onUserTick(u *user.User, tx *world.Tx, currentTick int64) {
 }
 
 func (l *Lobby) sendUserScoreboard(u *user.User, tx *world.Tx) {
+
 	u.SendScoreboard([]string{
 		u.Translatef("lobby.scoreboard.players.online.count", user.Count()),
+		u.Translatef("lobby.scoreboard.players.playing.count", user.Count()-len(l.users(tx))),
+		"",
 		u.Translatef("scoreboard.your.ping", u.Session().Latency().Milliseconds()),
 	})
 }
