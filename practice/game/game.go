@@ -577,3 +577,18 @@ func (g *Game) Players(tx *world.Tx) []*player.Player {
 func (g *Game) SetCloseHook(hook func()) {
 	g.closeHook = hook
 }
+
+func (g *Game) HandleItemPickup(ctx *player.Context, i *item.Stack) {
+	if !g.IsPlaying() {
+		ctx.Cancel()
+		return
+	}
+
+	par, ok := g.ParticipantByXUID(ctx.Val().XUID())
+	if ok {
+		if par.IsSpectating() {
+			ctx.Cancel()
+			return
+		}
+	}
+}

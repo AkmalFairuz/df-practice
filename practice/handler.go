@@ -276,6 +276,10 @@ func (ph *playerHandler) HandleItemPickup(ctx *player.Context, i *item.Stack) {
 		ctx.Cancel()
 		return
 	}
+
+	if g := ph.game(ctx.Val()); g != nil {
+		g.HandleItemPickup(ctx, i)
+	}
 }
 
 func (ph *playerHandler) HandleHeldSlotChange(ctx *player.Context, from, to int) {

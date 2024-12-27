@@ -1,11 +1,11 @@
 package helper
 
 import (
-	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/go-gl/mathgl/mgl32"
 	"github.com/go-gl/mathgl/mgl64"
-	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
+	"reflect"
 )
 
 type Location struct {
@@ -25,16 +25,17 @@ func (loc Location) ToMgl32Vec3() mgl32.Vec3 {
 }
 
 func (loc Location) TeleportPlayer(p *player.Player) {
-	u := user.Get(p)
-	LogErrors(u.Conn().WritePacket(&packet.MovePlayer{
-		EntityRuntimeID: u.EntityRuntimeID(),
-		Position:        mgl32.Vec3{float32(p.Position().X()), float32(p.Position().Y() + 1.62), float32(p.Position().Z())},
-		Yaw:             loc.Yaw,
-		HeadYaw:         loc.Yaw,
-		Pitch:           loc.Pitch,
-		OnGround:        p.OnGround(),
-		Mode:            packet.MoveModeTeleport,
-	}))
+	//u := user.Get(p)
+	//LogErrors(u.Conn().WritePacket(&packet.MovePlayer{
+	//	EntityRuntimeID: u.EntityRuntimeID(),
+	//	Position:        mgl32.Vec3{float32(p.Position().X()), float32(p.Position().Y() + 1.62), float32(p.Position().Z())},
+	//	Yaw:             loc.Yaw,
+	//	HeadYaw:         loc.Yaw,
+	//	Pitch:           loc.Pitch,
+	//	OnGround:        p.OnGround(),
+	//	Mode:            packet.MoveModeTeleport,
+	//}))
+	reflect.ValueOf(p).Elem().FieldByName("data").Elem().FieldByName("Rot").Set(reflect.ValueOf(cube.Rotation{float64(loc.Yaw), float64(loc.Pitch)}))
 	p.Teleport(loc.ToMgl64Vec3())
 }
 

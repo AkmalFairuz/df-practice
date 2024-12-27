@@ -40,4 +40,5 @@ type IGame interface {
 	Load() error
 	Messaget(translationName string, args ...any)
 	Sound(name string)
+	HandleItemPickup(ctx *player.Context, i *item.Stack)
 }
