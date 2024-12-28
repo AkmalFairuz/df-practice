@@ -1,7 +1,6 @@
 package command
 
 import (
-	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -18,6 +17,8 @@ func (gameModeEnum) Options(_ cmd.Source) []string {
 }
 
 type GameMode struct {
+	onlyAdmin
+
 	Type    gameModeEnum               `cmd:"gamemode"`
 	Targets cmd.Optional[[]cmd.Target] `cmd:"target"`
 }
@@ -44,15 +45,4 @@ func (g GameMode) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 			o.Printf(translatef(s, "gamemode.command.success", p.Name(), g.Type))
 		}
 	}
-}
-
-func (g GameMode) Allow(s cmd.Source) bool {
-	if p, ok := s.(*player.Player); ok {
-		u := user.Get(p)
-		if u == nil {
-			return false
-		}
-		return u.RankName() == "admin"
-	}
-	return false
 }

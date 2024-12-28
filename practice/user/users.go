@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github.com/akmalfairuz/df-practice/practice/database"
 	"github.com/akmalfairuz/df-practice/practice/repository"
 	"github.com/df-mc/dragonfly/server/player"
 	"golang.org/x/text/language"
@@ -11,7 +10,7 @@ import (
 var (
 	users          = make(map[string]*User)
 	usersMu        sync.RWMutex
-	userRepository = repository.NewUser(database.Get())
+	userRepository = repository.UserRepo()
 )
 
 func Get(p *player.Player) *User {

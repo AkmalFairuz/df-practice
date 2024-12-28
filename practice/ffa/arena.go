@@ -378,7 +378,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		helper.LogErrors(a.Respawn(ctx.Val(), ctx.Val().Tx()))
 	} else {
 		par.lastAttackedAt.Store(time.Now())
-		par.combatTimer.Store(11)
+		par.combatTimer.Store(16)
 		if !a.disableHPNameTag {
 			helper.UpdatePlayerNameTagWithHealth(ctx.Val(), 0-*damage)
 		}

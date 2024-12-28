@@ -44,19 +44,7 @@ func New(p *player.Player) *User {
 	s := playerSession(p)
 	conn := sessionConn(s)
 
-	locale := language.English
-	switch p.Locale().String() {
-	case "id", "id-ID":
-		locale = language.Indonesian
-	case "zh", "zh-CN", "zh-TW", "zh-HK":
-		locale = language.Chinese
-	case "vi", "vi-VN":
-		locale = language.Vietnamese
-	case "ja", "ja-JP":
-		locale = language.Japanese
-	case "hi", "hi-IN":
-		locale = language.Hindi
-	}
+	locale := lang.ToLangTag(p.Locale().String())
 
 	u := &User{
 		p:    p.H(),

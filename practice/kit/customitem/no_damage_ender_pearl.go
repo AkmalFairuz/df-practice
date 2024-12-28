@@ -22,7 +22,7 @@ func (e NoDamageEnderPearl) Use(tx *world.Tx, user item.User, ctx *item.UseConte
 	}
 
 	create := newNoDamageEnderPearl
-	opts := world.EntitySpawnOpts{Position: user.Position().Add(mgl64.Vec3{0, eyeHeight}), Velocity: user.Rotation().Vec3().Mul(2.2)}
+	opts := world.EntitySpawnOpts{Position: user.Position().Add(mgl64.Vec3{0, eyeHeight}), Velocity: user.Rotation().Vec3().Mul(2.3)}
 	tx.AddEntity(create(opts, user))
 	tx.PlaySound(user.Position(), sound.ItemThrow{})
 

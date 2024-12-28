@@ -36,6 +36,22 @@ func register(lang language.Tag) {
 	translations[lang] = translationData
 }
 
+func ToLangTag(locale string) language.Tag {
+	switch locale {
+	case "id", "id-ID":
+		return language.Indonesian
+	case "zh", "zh-CN", "zh-TW", "zh-HK":
+		return language.Chinese
+	case "vi", "vi-VN":
+		return language.Vietnamese
+	case "ja", "ja-JP":
+		return language.Japanese
+	case "hi", "hi-IN":
+		return language.Hindi
+	}
+	return language.English
+}
+
 func Translatef(lang language.Tag, key string, args ...interface{}) string {
 	return text.Colourf(Translate(lang, key), args...)
 }

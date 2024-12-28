@@ -69,6 +69,9 @@ type Game struct {
 	closing   chan struct{}
 
 	playAgainHook func(p *player.Player) error
+
+	placedBlocksMu sync.Mutex
+	placedBlocks   map[cube.Pos]bool
 }
 
 const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -473,6 +476,25 @@ func (g *Game) Sound(name string) {
 	})
 }
 
+func (g *Game) StorePlacedBlock(pos cube.Pos) {
+	g.placedBlocksMu.Lock()
+	g.placedBlocks[pos] = true
+	g.placedBlocksMu.Unlock()
+}
+
+func (g *Game) RemovePlacedBlock(pos cube.Pos) {
+	g.placedBlocksMu.Lock()
+	delete(g.placedBlocks, pos)
+	g.placedBlocksMu.Unlock()
+}
+
+func (g *Game) IsBlockPlaced(pos cube.Pos) bool {
+	g.placedBlocksMu.Lock()
+	_, ok := g.placedBlocks[pos]
+	g.placedBlocksMu.Unlock()
+	return ok
+}
+
 func (g *Game) World() *world.World {
 	return g.w
 }
@@ -517,21 +539,29 @@ func (g *Game) HandleFoodLoss(ctx *player.Context, from int, to *int) {
 }
 
 func (g *Game) HandleBlockBreak(ctx *player.Context, pos cube.Pos, drops *[]item.Stack, xp *int) {
-	if !g.IsPlaying() {
+	if !g.IsPlaying() || !g.impl.AllowBuild() || !g.IsBlockPlaced(pos) {
 		ctx.Cancel()
 		return
 	}
 
 	g.impl.HandleBlockBreak(ctx, pos, drops, xp)
+
+	if !ctx.Cancelled() {
+		g.RemovePlacedBlock(pos)
+	}
 }
 
 func (g *Game) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b world.Block) {
-	if !g.IsPlaying() {
+	if !g.IsPlaying() || !g.impl.AllowBuild() || g.IsBlockPlaced(pos) {
 		ctx.Cancel()
 		return
 	}
 
 	g.impl.HandleBlockPlace(ctx, pos, b)
+
+	if !ctx.Cancelled() {
+		g.StorePlacedBlock(pos)
+	}
 }
 
 func (g *Game) HandleMove(ctx *player.Context, pos mgl64.Vec3, rot cube.Rotation) {

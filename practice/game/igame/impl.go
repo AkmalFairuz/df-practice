@@ -45,6 +45,8 @@ type Impl interface {
 	Game() IGame
 	// Create sets the game instance.
 	Create(g IGame)
+	// AllowBuild returns whether the player is allowed to place or break blocks.
+	AllowBuild() bool
 
 	HandleHurt(ctx *player.Context, damage *float64, immune bool, immunity *time.Duration, src world.DamageSource)
 	HandleHeal(ctx *player.Context, health *float64, src world.HealingSource)

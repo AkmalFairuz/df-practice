@@ -5,6 +5,10 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 )
 
+type CustomKB interface {
+	KnockBack(vertical, force *float32)
+}
+
 type Kit interface {
 	Items(p *player.Player) [36]item.Stack
 	Armour(p *player.Player) [4]item.Stack

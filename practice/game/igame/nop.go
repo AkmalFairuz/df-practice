@@ -13,6 +13,10 @@ import (
 type Nop struct {
 }
 
+func (g Nop) AllowBuild() bool {
+	return false
+}
+
 func (g Nop) MinimumParticipants() int {
 	panic("must be implemented")
 }

@@ -30,6 +30,7 @@ require (
 	github.com/sandertv/go-raknet v1.14.2 // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
+	github.com/unickorn/strutils v0.0.0-20221027210219-8e7a82cccd62 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
 	golang.org/x/image v0.23.0 // indirect

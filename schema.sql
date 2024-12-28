@@ -11,3 +11,14 @@ CREATE TABLE users
     lastSeenAt   BIGINT       NOT NULL,
     UNIQUE (xuid)
 ) ENGINE = InnoDB;
+
+CREATE TABLE bans
+(
+    id        INT AUTO_INCREMENT PRIMARY KEY,
+    playerId  INT          NOT NULL,
+    reason    VARCHAR(255) NOT NULL,
+    expireAt  BIGINT       NOT NULL,
+    createdAt BIGINT       NOT NULL,
+    UNIQUE (playerId),
+    FOREIGN KEY (playerId) REFERENCES users (id)
+);

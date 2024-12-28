@@ -27,10 +27,13 @@ func main() {
 		panic(err)
 	}
 
+	serverConfig.Allower = practice.NewAllower()
 	srv := serverConfig.New()
 
 	meta.Set("server", srv)
 
+	cmd.Register(cmd.New("ban", "", nil, command.Ban{}))
+	cmd.Register(cmd.New("pardon", "", []string{"unban"}, command.Pardon{}))
 	cmd.Register(cmd.New("whisper", "", []string{"w", "msg"}, command.Whisper{}))
 	cmd.Register(cmd.New("reply", "", []string{"r"}, command.Reply{}))
 	cmd.Register(cmd.New("lobby", "", []string{"hub"}, command.Lobby{}))
