@@ -274,7 +274,7 @@ func (u *User) CPS() int {
 	now := time.Now()
 	u.clicksMu.Lock()
 	for i := 0; i < len(u.clicks); i++ {
-		if now.Sub(u.clicks[i]) < time.Second {
+		if now.Sub(u.clicks[i]) <= time.Second {
 			clicks++
 		}
 	}
