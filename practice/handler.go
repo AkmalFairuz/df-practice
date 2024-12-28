@@ -201,6 +201,10 @@ func (ph *playerHandler) HandleBlockPick(ctx *player.Context, pos cube.Pos, b wo
 func (ph *playerHandler) HandleItemUse(ctx *player.Context) {
 	ph.l.HandleItemUse(ctx)
 
+	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
+		ffaArena.HandleItemUse(ctx)
+	}
+
 	if g := ph.game(ctx.Val()); g != nil {
 		g.HandleItemUse(ctx)
 	}

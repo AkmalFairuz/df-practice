@@ -91,3 +91,5 @@ command.ban.success: "<green>Successfully banned <white>%s</white> with reason: 
 command.pardon.success: "<green>Successfully pardoned <white>%s</white>.</green>"
 error.command.pardon.target.not.found: "<red>That player is not found in the database.</red>"
 error.command.pardon.target.not.banned: "<red>That player is not banned.</red>"
+
+error.cooldown.pearl: "<red>Please wait %.1f seconds before using another ender pearl.</red>"

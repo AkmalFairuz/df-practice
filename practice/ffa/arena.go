@@ -4,6 +4,7 @@ import (
 	"errors"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/kit"
+	"github.com/akmalfairuz/df-practice/practice/kit/customitem"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/block/cube"
@@ -43,6 +44,8 @@ type Arena struct {
 
 	disableHPNameTag bool
 	disableHunger    bool
+
+	pearlCooldown time.Duration
 }
 
 type placedBlockInfo struct {
@@ -51,8 +54,9 @@ type placedBlockInfo struct {
 
 func New(w *world.World) *Arena {
 	return &Arena{
-		w: w,
-		u: map[string]*Participant{},
+		w:             w,
+		u:             map[string]*Participant{},
+		pearlCooldown: 15 * time.Second,
 	}
 }
 
@@ -119,6 +123,10 @@ func (a *Arena) handleTick(currentTick int64) {
 			if p, ok := par.Player(tx); ok {
 				if p.Immobile() && time.Since(par.lastSpawn.Load()) > time.Second {
 					p.SetMobile()
+				}
+
+				if currentTick%2 == 0 {
+					helper.UpdateXPBarCooldownDisplay(p, par.lastPearlThrow.Load(), a.pearlCooldown)
 				}
 			}
 		}
@@ -219,6 +227,7 @@ func (a *Arena) Respawn(p *player.Player, tx *world.Tx) error {
 	selectedSpawn := a.spawns[rand.Intn(len(a.spawns))]
 	selectedSpawn.TeleportPlayer(p)
 	par.combatTimer.Store(0)
+	par.lastPearlThrow.Store(time.Unix(0, 0))
 	par.lastAttackedAt.Store(time.Unix(0, 0))
 	par.lastSpawn.Store(time.Now())
 	if !a.disableHPNameTag {
@@ -458,5 +467,24 @@ func (a *Arena) HandleItemDrop(ctx *player.Context, s item.Stack) {
 func (a *Arena) HandleMove(ctx *player.Context, pos mgl64.Vec3, rot cube.Rotation) {
 	if pos.Y() < float64(a.voidY) {
 		ctx.Val().Hurt(1000, entity.VoidDamageSource{})
+	}
+}
+
+func (a *Arena) HandleItemUse(ctx *player.Context) {
+	par, ok := a.ParticipantByXUID(ctx.Val().XUID())
+	if !ok {
+		return
+	}
+
+	mainHand, _ := ctx.Val().HeldItems()
+
+	if mainHand.Comparable(item.NewStack(customitem.NoDamageEnderPearl{}, 1)) && !ctx.Cancelled() {
+		lastPearlThrow := par.lastPearlThrow.Load()
+		if time.Since(lastPearlThrow) < a.pearlCooldown {
+			par.u.Messaget("error.cooldown.pearl", time.Until(lastPearlThrow.Add(a.pearlCooldown)).Seconds())
+			ctx.Cancel()
+			return
+		}
+		par.lastPearlThrow.Store(time.Now())
 	}
 }

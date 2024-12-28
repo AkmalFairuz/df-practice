@@ -22,6 +22,8 @@ type Participant struct {
 	killStreak atomic.Int32
 	deaths     atomic.Int32
 
+	lastPearlThrow atomic.Value[time.Time]
+
 	lastSpawn atomic.Value[time.Time]
 }
 

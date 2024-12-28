@@ -77,3 +77,9 @@ func Lang(p *player.Player) language.Tag {
 	}
 	return language.English
 }
+
+func Messaget(p *player.Player, translationName string, args ...any) {
+	if u := Get(p); u != nil {
+		u.Messaget(translationName, args...)
+	}
+}
