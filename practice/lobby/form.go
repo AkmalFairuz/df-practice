@@ -28,6 +28,10 @@ func initFFAEntries() {
 			TranslationName: "form.ffa.selector.nodebuff",
 			Arena:           ffa.NoDebuffArena(),
 		},
+		{
+			TranslationName: "form.ffa.selector.sumo",
+			Arena:           ffa.SumoArena(),
+		},
 	}
 }
 

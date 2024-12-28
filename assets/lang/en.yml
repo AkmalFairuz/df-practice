@@ -77,3 +77,5 @@ broadcast.1.message: "<red><bold>ALERT</bold></red> <diamond>This server is unde
 broadcast.2.message: "<green><bold>TIP</bold></green> <diamond>Type /lobby to return to the lobby.</diamond>"
 
 welcome.message: "<green>Hello <yellow>%s</yellow>, Welcome to Practice server.</green> <red>This server is under development.</red>"
+
+form.ffa.selector.sumo: "Sumo"

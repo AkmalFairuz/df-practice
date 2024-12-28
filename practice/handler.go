@@ -101,7 +101,7 @@ func (ph *playerHandler) HandleFoodLoss(ctx *player.Context, from int, to *int) 
 }
 
 func (ph *playerHandler) HandleHeal(ctx *player.Context, health *float64, src world.HealingSource) {
-	if _, ok := src.(helper.SetHealthSource); !ok {
+	if _, ok := src.(helper.SetHealthSource); ok {
 		return
 	}
 

@@ -37,6 +37,12 @@ type Arena struct {
 
 	placedBlocksMu sync.RWMutex
 	placedBlocks   map[cube.Pos]placedBlockInfo
+
+	zeroDamageExceptVoid bool
+
+	attackCooldownTick int
+
+	disableHPNameTag bool
 }
 
 type placedBlockInfo struct {
@@ -179,6 +185,7 @@ func (a *Arena) Join(p *player.Player, tx *world.Tx) error {
 
 	selectedSpawn := a.spawns[rand.Intn(len(a.spawns))]
 
+	p.SetImmobile()
 	tx.RemoveEntity(p)
 
 	<-a.w.Exec(func(tx2 *world.Tx) {
@@ -188,8 +195,10 @@ func (a *Arena) Join(p *player.Player, tx *world.Tx) error {
 		helper.ResetPlayer(newP)
 		_ = a.sendKit(newP)
 		newP.SetGameMode(world.GameModeSurvival)
-		helper.UpdatePlayerNameTagWithHealth(newP, 0)
-		newP.SetImmobile()
+
+		if !a.disableHPNameTag {
+			helper.UpdatePlayerNameTagWithHealth(newP, 0)
+		}
 	})
 
 	a.sendUserScoreboard(par, tx)
@@ -212,7 +221,9 @@ func (a *Arena) Respawn(p *player.Player, tx *world.Tx) error {
 	par.combatTimer.Store(0)
 	par.lastAttackedAt.Store(time.Unix(0, 0))
 	par.lastSpawn.Store(time.Now())
-	helper.UpdatePlayerNameTagWithHealth(p, 0)
+	if !a.disableHPNameTag {
+		helper.UpdatePlayerNameTagWithHealth(p, 0)
+	}
 	p.SetImmobile()
 	_ = a.sendKit(p)
 	return nil
@@ -261,6 +272,12 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		return
 	}
 
+	if a.zeroDamageExceptVoid {
+		if _, ok := src.(entity.VoidDamageSource); !ok {
+			*damage = 0
+		}
+	}
+
 	if time.Since(par.lastSpawn.Load()) < 3*time.Second {
 		ctx.Cancel()
 		if _, ok := src.(entity.AttackDamageSource); ok {
@@ -293,6 +310,10 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		if !ok {
 			ctx.Cancel()
 			return
+		}
+
+		if a.attackCooldownTick != 0 {
+			*immunity = time.Millisecond * 50 * time.Duration(a.attackCooldownTick)
 		}
 
 		if death {
@@ -358,7 +379,9 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 	} else {
 		par.lastAttackedAt.Store(time.Now())
 		par.combatTimer.Store(11)
-		helper.UpdatePlayerNameTagWithHealth(ctx.Val(), 0-*damage)
+		if !a.disableHPNameTag {
+			helper.UpdatePlayerNameTagWithHealth(ctx.Val(), 0-*damage)
+		}
 	}
 }
 
@@ -414,7 +437,10 @@ func (a *Arena) HandleHeal(ctx *player.Context, health *float64, src world.Heali
 	if ctx.Cancelled() {
 		return
 	}
-	helper.UpdatePlayerNameTagWithHealth(ctx.Val(), *health)
+
+	if !a.disableHPNameTag {
+		helper.UpdatePlayerNameTagWithHealth(ctx.Val(), *health)
+	}
 }
 
 func (a *Arena) HandleFoodLoss(ctx *player.Context, from int, to *int) {
