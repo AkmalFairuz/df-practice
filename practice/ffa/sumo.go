@@ -20,7 +20,7 @@ func initSumoArena(log *slog.Logger) {
 	sumoArena.zeroDamageExceptVoid = true
 	sumoArena.icon = "textures/items/lead"
 	sumoArena.k = kit.Nop{}
-	sumoArena.attackCooldownTick = 8
+	sumoArena.attackCooldownTick = 7
 	sumoArena.disableHPNameTag = true
 	sumoArena.disableHunger = true
 	if err := sumoArena.Init(); err != nil {
