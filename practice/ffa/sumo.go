@@ -22,6 +22,7 @@ func initSumoArena(log *slog.Logger) {
 	sumoArena.k = kit.Nop{}
 	sumoArena.attackCooldownTick = 8
 	sumoArena.disableHPNameTag = true
+	sumoArena.disableHunger = true
 	if err := sumoArena.Init(); err != nil {
 		panic(err)
 	}

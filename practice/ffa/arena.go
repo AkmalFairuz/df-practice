@@ -27,9 +27,8 @@ type Arena struct {
 	spawns []helper.Location
 	voidY  int
 
-	dropAllowed    bool
-	hungerDisabled bool
-	k              kit.Kit
+	dropAllowed bool
+	k           kit.Kit
 
 	icon string
 
@@ -43,6 +42,7 @@ type Arena struct {
 	attackCooldownTick int
 
 	disableHPNameTag bool
+	disableHunger    bool
 }
 
 type placedBlockInfo struct {
@@ -444,7 +444,7 @@ func (a *Arena) HandleHeal(ctx *player.Context, health *float64, src world.Heali
 }
 
 func (a *Arena) HandleFoodLoss(ctx *player.Context, from int, to *int) {
-	if a.hungerDisabled {
+	if a.disableHunger {
 		ctx.Cancel()
 	}
 }
