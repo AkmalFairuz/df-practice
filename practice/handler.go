@@ -236,6 +236,10 @@ func (ph *playerHandler) HandleAttackEntity(ctx *player.Context, e world.Entity,
 		return
 	}
 
+	// Venity Knockback
+	*force = 0.4
+	*height = 0.405
+
 	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
 		if targetPlayer, ok := e.(*player.Player); ok {
 			if !ffaArena.IsInArena(user.Get(targetPlayer)) {
