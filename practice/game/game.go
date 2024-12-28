@@ -540,6 +540,10 @@ func (g *Game) HandleAttackEntity(ctx *player.Context, e world.Entity, force *fl
 }
 
 func (g *Game) HandleHurt(ctx *player.Context, damage *float64, immune bool, immunity *time.Duration, src world.DamageSource) {
+	if immune {
+		return
+	}
+
 	if !g.IsPlaying() {
 		ctx.Cancel()
 		return

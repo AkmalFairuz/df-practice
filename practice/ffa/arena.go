@@ -276,6 +276,10 @@ func (a *Arena) BroadcastMessaget(translationName string, args ...any) {
 }
 
 func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, immunity *time.Duration, src world.DamageSource) {
+	if immune {
+		return
+	}
+
 	par, ok := a.u[ctx.Val().XUID()]
 	if !ok {
 		return

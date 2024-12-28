@@ -28,5 +28,10 @@ func handlePlayerTick(u *user.User, currentTick int64) {
 		//u.EntityHandle().ExecWorld(func(tx *world.Tx, e world.Entity) {
 		//	e.(*player.Player).SendTip(fmt.Sprintf("X: %.1f Y: %.1f Z: %.1f YAW: %.0f PIT: %.0f", e.Position().X(), e.Position().Y(), e.Position().Z(), e.Rotation().Yaw(), e.Rotation().Pitch()))
 		//})
+		u.RemoveOldClicks()
+
+		if time.Since(u.LastComboCounterModified()) > 5*time.Second {
+			u.ResetComboCounter()
+		}
 	}
 }

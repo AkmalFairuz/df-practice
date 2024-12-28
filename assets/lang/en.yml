@@ -93,3 +93,5 @@ error.command.pardon.target.not.found: "<red>That player is not found in the dat
 error.command.pardon.target.not.banned: "<red>That player is not banned.</red>"
 
 error.cooldown.pearl: "<red>Please wait %.1f seconds before using another ender pearl.</red>"
+
+pvp.info.tip: "<diamond>CPS: <white>%d</white> | Combo: <white>%d</white> | Reach: <white>%.2f</white></diamond>"

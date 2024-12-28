@@ -14,6 +14,8 @@ import (
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
 	"golang.org/x/text/language"
 	"strings"
+	"sync"
+	"time"
 )
 
 type User struct {
@@ -37,6 +39,17 @@ type User struct {
 	currentGame     atomic.Value[any]
 
 	lastWhisperFromXUID atomic.Value[string]
+
+	clicksMu sync.Mutex
+	clicks   []time.Time
+
+	comboCounter             int
+	comboCounterMu           sync.Mutex
+	lastComboCounterModified time.Time
+
+	lastHitReachDistance         float64
+	lastHitReachDistanceModified time.Time
+	lastHitReachDistanceMu       sync.Mutex
 }
 
 func New(p *player.Player) *User {
@@ -47,12 +60,13 @@ func New(p *player.Player) *User {
 	locale := lang.ToLangTag(p.Locale().String())
 
 	u := &User{
-		p:    p.H(),
-		xuid: p.XUID(),
-		name: p.Name(),
-		s:    s,
-		conn: conn,
-		lang: locale,
+		p:      p.H(),
+		xuid:   p.XUID(),
+		name:   p.Name(),
+		s:      s,
+		conn:   conn,
+		lang:   locale,
+		clicks: make([]time.Time, 0),
 	}
 
 	u.lastWhisperFromXUID.Store("")
@@ -232,4 +246,94 @@ func (u *User) Player(tx *world.Tx) (*player.Player, bool) {
 		return nil, false
 	}
 	return ent.(*player.Player), true
+}
+
+// RemoveOldClicks removes all clicks that are older than 1 second.
+func (u *User) RemoveOldClicks() {
+	u.clicksMu.Lock()
+	defer u.clicksMu.Unlock()
+	newClicks := make([]time.Time, 0)
+
+	for _, click := range u.clicks {
+		if time.Since(click) < time.Second {
+			newClicks = append(newClicks, click)
+		}
+	}
+
+	u.clicks = newClicks
+}
+
+func (u *User) HandleClientClick() {
+	u.clicksMu.Lock()
+	u.clicks = append(u.clicks, time.Now())
+	u.clicksMu.Unlock()
+}
+
+func (u *User) CPS() int {
+	clicks := 0
+	now := time.Now()
+	u.clicksMu.Lock()
+	for i := 0; i < len(u.clicks); i++ {
+		if now.Sub(u.clicks[i]) < time.Second {
+			clicks++
+		}
+	}
+	u.clicksMu.Unlock()
+	return clicks
+}
+
+func (u *User) ComboCounter() int {
+	return u.comboCounter
+}
+
+func (u *User) AddComboCounter() {
+	u.comboCounterMu.Lock()
+	u.comboCounter++
+	u.lastComboCounterModified = time.Now()
+	u.comboCounterMu.Unlock()
+}
+
+func (u *User) ResetComboCounter() {
+	u.comboCounterMu.Lock()
+	u.comboCounter = 0
+	u.lastComboCounterModified = time.Now()
+	u.comboCounterMu.Unlock()
+}
+
+func (u *User) LastComboCounterModified() time.Time {
+	return u.lastComboCounterModified
+}
+
+func (u *User) LastHitReachDistance() float64 {
+	u.lastHitReachDistanceMu.Lock()
+	defer u.lastHitReachDistanceMu.Unlock()
+	if time.Since(u.lastHitReachDistanceModified) > time.Second {
+		return 0
+	}
+	return u.lastHitReachDistance
+}
+
+func (u *User) SetLastHitReachDistance(d float64) {
+	u.lastHitReachDistanceMu.Lock()
+	u.lastHitReachDistance = d
+	u.lastHitReachDistanceModified = time.Now()
+	u.lastHitReachDistanceMu.Unlock()
+}
+
+func (u *User) LastHitReachDistanceModified() time.Time {
+	return u.lastHitReachDistanceModified
+}
+
+func (u *User) SendPVPInfoTip() {
+	cps := u.CPS()
+	combo := u.ComboCounter()
+	reach := u.LastHitReachDistance()
+	if reach > 3.0 {
+		reach = 3.0
+	}
+
+	if cps == 0 && combo == 0 && reach <= 0.1 {
+		return
+	}
+	u.Session().SendTip(u.Translatef("pvp.info.tip", cps, combo, reach))
 }

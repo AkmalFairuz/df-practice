@@ -77,3 +77,21 @@ broadcast.1.message: "<red><bold>警告</bold></red> <diamond>このサーバー
 broadcast.2.message: "<green><bold>ヒント</bold></green> <diamond>/lobby と入力してロビーに戻ります。</diamond>"
 
 welcome.message: "<green>こんにちは <yellow>%s</yellow>、練習サーバーへようこそ。</green> <red>このサーバーは開発中です。</red>"
+
+form.ffa.selector.sumo: "相撲"
+
+banned.kick.message: "<diamond>このサーバーから禁止されています。</diamond>\n<diamond>理由: <white>%s</white>\n<diamond>有効期限</diamond> <white>%s</white>"
+time.short.dhm: "%日 %時間 %分"
+error.unknown: "<red>エラーが発生しました。</red>"
+
+error.command.ban.target.not.found: "<red>データベースにそのプレイヤーが見つかりません。</red>"
+error.command.ban.target.already.banned: "<red>そのプレイヤーは既に禁止されています。</red>"
+command.ban.success: "<green><white>%s</white> を禁止しました。理由: <white>%s</white>。有効期限: <white>%s</white>。</green>"
+
+command.pardon.success: "<green><white>%s</white> の禁止を解除しました。</green>"
+error.command.pardon.target.not.found: "<red>データベースにそのプレイヤーが見つかりません。</red>"
+error.command.pardon.target.not.banned: "<red>そのプレイヤーは禁止されていません。</red>"
+
+error.cooldown.pearl: "<red>次のエンダーパールを使用する前に %.1f 秒お待ちください。</red>"
+
+pvp.info.tip: "<diamond>CPS: <white>%d</white> | コンボ: <white>%d</white> | リーチ: <white>%.2f</white></diamond>"

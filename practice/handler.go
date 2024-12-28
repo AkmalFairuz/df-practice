@@ -62,7 +62,10 @@ func (ph *playerHandler) HandleTeleport(ctx *player.Context, pos mgl64.Vec3) {
 }
 
 func (ph *playerHandler) HandleChangeWorld(p *player.Player, before, after *world.World) {
-
+	u := user.Get(p)
+	if u != nil {
+		u.ResetComboCounter()
+	}
 }
 
 func (ph *playerHandler) HandleToggleSprint(ctx *player.Context, after bool) {
@@ -119,13 +122,13 @@ func (ph *playerHandler) HandleHurt(ctx *player.Context, damage *float64, immune
 		*attackImmunity = (time.Millisecond * 50) * 9
 	}
 
-	if *damage > ctx.Val().Health() {
-		ctx.Cancel()
-	}
-
 	if lobby.Instance().IsInLobby(ctx.Val()) {
 		ctx.Cancel()
 		return
+	}
+
+	if *damage > ctx.Val().Health() {
+		ctx.Cancel()
 	}
 
 	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
@@ -134,6 +137,34 @@ func (ph *playerHandler) HandleHurt(ctx *player.Context, damage *float64, immune
 
 	if g := ph.game(ctx.Val()); g != nil {
 		g.HandleHurt(ctx, damage, immune, attackImmunity, src)
+	}
+
+	// Final check (*damage may be changed), if death, reset combo counter
+	if !immune && *damage > ctx.Val().Health() {
+		if u := user.Get(ctx.Val()); u != nil {
+			u.ResetComboCounter()
+		}
+	}
+
+	if attackSource, ok := src.(entity.AttackDamageSource); ok {
+		if attacker, ok := attackSource.Attacker.(*player.Player); ok {
+			if u := user.Get(attacker); u != nil {
+				if !ctx.Cancelled() && !immune {
+					u.AddComboCounter()
+				}
+
+				// TODO: Basic reach distance, this is not accurate, account for latency and other network factors
+				eyePos := attacker.Position().Add(mgl64.Vec3{0, ctx.Val().EyeHeight(), 0})
+				targetPos := ctx.Val().Position()
+				reachDistance := eyePos.Sub(targetPos).Len()
+				u.SetLastHitReachDistance(reachDistance)
+			}
+			if !immune {
+				if u := user.Get(ctx.Val()); u != nil {
+					u.ResetComboCounter()
+				}
+			}
+		}
 	}
 }
 

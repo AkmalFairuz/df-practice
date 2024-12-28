@@ -77,3 +77,21 @@ broadcast.1.message: "<red><bold>PERINGATAN</bold></red> <diamond>Server ini sed
 broadcast.2.message: "<green><bold>TIPS</bold></green> <diamond>Ketik /lobby untuk kembali ke lobby.</diamond>"
 
 welcome.message: "<green>Halo <yellow>%s</yellow>, Selamat datang di server Praktik.</green> <red>Server ini sedang dalam pengembangan.</red>"
+
+form.ffa.selector.sumo: "Sumo"
+
+banned.kick.message: "<diamond>Anda telah diblokir dari server ini.</diamond>\n<diamond>Alasan: <white>%s</white>\n<diamond>Kadaluarsa dalam</diamond> <white>%s</white>"
+time.short.dhm: "%dh %dm %dd"
+error.unknown: "<red>Terjadi kesalahan.</red>"
+
+error.command.ban.target.not.found: "<red>Pemain tersebut tidak ditemukan di database.</red>"
+error.command.ban.target.already.banned: "<red>Pemain tersebut sudah diblokir.</red>"
+command.ban.success: "<green>Berhasil memblokir <white>%s</white> dengan alasan: <white>%s</white>. Berakhir pada <white>%s</white>.</green>"
+
+command.pardon.success: "<green>Berhasil memaafkan <white>%s</white>.</green>"
+error.command.pardon.target.not.found: "<red>Pemain tersebut tidak ditemukan di database.</red>"
+error.command.pardon.target.not.banned: "<red>Pemain tersebut tidak diblokir.</red>"
+
+error.cooldown.pearl: "<red>Harap tunggu %.1f detik sebelum menggunakan ender pearl lagi.</red>"
+
+pvp.info.tip: "<diamond>CPS: <white>%d</white> | Kombo: <white>%d</white> | Jangkauan: <white>%.2f</white></diamond>"

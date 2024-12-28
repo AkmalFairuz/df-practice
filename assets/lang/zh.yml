@@ -77,3 +77,21 @@ broadcast.1.message: "<red><bold>警报</bold></red> <diamond>本服务器正在
 broadcast.2.message: "<green><bold>提示</bold></green> <diamond>输入 /lobby 返回大厅。</diamond>"
 
 welcome.message: "<green>你好 <yellow>%s</yellow>，欢迎来到练习服务器。</green> <red>本服务器正在开发中。</red>"
+
+form.ffa.selector.sumo: "相扑"
+
+banned.kick.message: "<diamond>您已被禁止访问此服务器。</diamond>\n<diamond>原因: <white>%s</white>\n<diamond>到期时间</diamond> <white>%s</white>"
+time.short.dhm: "%天 %小时 %分钟"
+error.unknown: "<red>发生错误。</red>"
+
+error.command.ban.target.not.found: "<red>数据库中未找到该玩家。</red>"
+error.command.ban.target.already.banned: "<red>该玩家已被禁止。</red>"
+command.ban.success: "<green>成功禁止 <white>%s</white>，原因: <white>%s</white>。到期时间 <white>%s</white>。</green>"
+
+command.pardon.success: "<green>成功原谅 <white>%s</white>。</green>"
+error.command.pardon.target.not.found: "<red>数据库中未找到该玩家。</red>"
+error.command.pardon.target.not.banned: "<red>该玩家未被禁止。</red>"
+
+error.cooldown.pearl: "<red>请等待 %.1f 秒后再使用末影珍珠。</red>"
+
+pvp.info.tip: "<diamond>CPS: <white>%d</white> | 连击: <white>%d</white> | 距离: <white>%.2f</white></diamond>"
