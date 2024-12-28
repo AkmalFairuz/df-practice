@@ -34,4 +34,8 @@ func handlePlayerTick(u *user.User, currentTick int64) {
 			u.ResetComboCounter()
 		}
 	}
+
+	if currentTick%2 == 0 {
+		u.SendPVPInfoTip()
+	}
 }
