@@ -60,6 +60,19 @@ func New(w *world.World) *Arena {
 	}
 }
 
+func (a *Arena) applyConfig(config config) {
+	a.spawns = config.SpawnLocations()
+	a.voidY = config.VoidY
+
+	if config.AttackCooldown != 0 {
+		a.attackCooldownTick = config.AttackCooldown
+	}
+
+	if config.Icon != "" {
+		a.icon = config.Icon
+	}
+}
+
 func (a *Arena) Participants() map[string]*Participant {
 	a.mu.RLock()
 	defer a.mu.RUnlock()
@@ -214,10 +227,8 @@ func (a *Arena) Join(p *player.Player, tx *world.Tx) error {
 	return nil
 }
 
-func (a *Arena) Respawn(p *player.Player, tx *world.Tx) error {
-	a.mu.Lock()
-	par, ok := a.u[p.XUID()]
-	a.mu.Unlock()
+func (a *Arena) Respawn(p *player.Player) error {
+	par, ok := a.ParticipantByXUID(user.Get(p).XUID())
 
 	if !ok {
 		return errors.New("user is not in this arena")
@@ -388,7 +399,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		par.deaths.Add(1)
 		par.killStreak.Store(0)
 
-		helper.LogErrors(a.Respawn(ctx.Val(), ctx.Val().Tx()))
+		helper.LogErrors(a.Respawn(ctx.Val()))
 	} else {
 		par.lastAttackedAt.Store(time.Now())
 		par.combatTimer.Store(16)

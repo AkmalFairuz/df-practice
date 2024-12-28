@@ -10,11 +10,19 @@ import (
 )
 
 type Location struct {
-	X     float64 `yaml:"x"`
-	Y     float64 `yaml:"y"`
-	Z     float64 `yaml:"z"`
-	Yaw   float32 `yaml:"yaw"`
-	Pitch float32 `yaml:"pitch"`
+	X     float64
+	Y     float64
+	Z     float64
+	Yaw   float32
+	Pitch float32
+}
+
+func ParseSliceOfLocation(slice [][5]float64) []Location {
+	var locs []Location
+	for _, loc := range slice {
+		locs = append(locs, Location{loc[0], loc[1], loc[2], float32(loc[3]), float32(loc[4])})
+	}
+	return locs
 }
 
 func (loc Location) ToMgl64Vec3() mgl64.Vec3 {

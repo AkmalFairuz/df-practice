@@ -10,8 +10,8 @@ var userRepo *User
 var banRepo *Ban
 
 func init() {
-	userRepo = &User{db: database.Get()}
-	banRepo = &Ban{db: database.Get()}
+	userRepo = NewUser(database.Get())
+	banRepo = NewBan(database.Get())
 }
 
 func UserRepo() *User {

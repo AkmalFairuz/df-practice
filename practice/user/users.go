@@ -4,6 +4,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/repository"
 	"github.com/df-mc/dragonfly/server/player"
 	"golang.org/x/text/language"
+	"strings"
 	"sync"
 )
 
@@ -21,6 +22,17 @@ func Get(p *player.Player) *User {
 		return nil
 	}
 	return ret
+}
+
+func GetByPrefix(prefix string) (*User, bool) {
+	usersMu.RLock()
+	defer usersMu.RUnlock()
+	for _, u := range users {
+		if strings.HasPrefix(u.Name(), prefix) {
+			return u, true
+		}
+	}
+	return nil, false
 }
 
 func GetByXUID(xuid string) *User {

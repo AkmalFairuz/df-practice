@@ -6,6 +6,7 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/sandertv/gophertunnel/minecraft/protocol"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/packet"
+	"strings"
 )
 
 type packetHandler struct {
@@ -27,6 +28,11 @@ func (p packetHandler) HandleClientPacket(ctx *event.Context[*player.Player], pk
 	case *packet.LevelSoundEvent:
 		if pk.SoundType == packet.SoundEventAttackNoDamage {
 			addUserClick(ctx.Val())
+		}
+	case *packet.Text:
+		// Execute command if it starts with "./" like PocketMine does
+		if strings.HasPrefix(pk.Message, "./") {
+			ctx.Val().ExecuteCommand(pk.Message[1:])
 		}
 	}
 }

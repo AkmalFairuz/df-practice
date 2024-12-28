@@ -1,0 +1,29 @@
+sumo:
+  attack_cooldown: 7
+  icon: textures/items/lead
+  void_y: 37
+  spawns:
+    - [27, 42, -12, 45, 0]
+    - [27, 42, 27, 135, 0]
+    - [-12, 42, 27, -135, 0]
+    - [-12, 42, -12, -45, 0]
+
+classic:
+  icon: textures/items/iron_sword
+  void_y: 80
+  spawns:
+    - [-15, 100, -26, -32, 0]
+    - [-10, 100, -29, -25, 0]
+    - [2, 100, -31, 0, 0]
+    - [14, 100, -29, 25, 0]
+    - [9, 100, 25, 32, 0]
+
+no_debuff:
+  icon: textures/items/potion_bottle_splash_heal
+  void_y: 70
+  spawns:
+    - [46, 76, 44, 135, 0]
+    - [48, 76, 44, 135, 0]
+    - [46, 76, 46, 135, 0]
+    - [48, 76, 46, 135, 0]
+    - [50, 76, 44, 135, 0]
