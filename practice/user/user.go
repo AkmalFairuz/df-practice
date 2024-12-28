@@ -225,3 +225,11 @@ func (u *User) Ping() int {
 func (u *User) RankName() string {
 	return u.rankName
 }
+
+func (u *User) Player(tx *world.Tx) (*player.Player, bool) {
+	ent, ok := u.EntityHandle().Entity(tx)
+	if !ok {
+		return nil, false
+	}
+	return ent.(*player.Player), true
+}

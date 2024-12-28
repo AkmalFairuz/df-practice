@@ -5,6 +5,7 @@ import (
 	"github.com/akmalfairuz/df-practice/internal/meta"
 	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/helper"
+	"github.com/akmalfairuz/df-practice/practice/kit/customitem"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/atomic"
@@ -72,6 +73,8 @@ type Game struct {
 
 	placedBlocksMu sync.Mutex
 	placedBlocks   map[cube.Pos]bool
+
+	pearlCooldown time.Duration
 }
 
 const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -88,6 +91,7 @@ func (g *Game) Load() error {
 	g.closed.Store(false)
 	g.tickQueue = make(chan struct{})
 	g.closing = make(chan struct{})
+	g.pearlCooldown = 15 * time.Second
 
 	g.impl.OnInit()
 
@@ -125,7 +129,7 @@ func (g *Game) handleTick() {
 
 func (g *Game) OnTick() {
 	g.impl.OnTick()
-	g.currentTick.Add(1)
+	currentTick := g.currentTick.Add(1)
 
 	switch g.state.Load() {
 	case StateWaiting:
@@ -133,7 +137,7 @@ func (g *Game) OnTick() {
 			g.currentTick.Store(0)
 		}
 
-		if g.currentTick.Load()%20 == 0 {
+		if currentTick%20 == 0 {
 			for _, p := range g.Participants() {
 				u := p.User()
 
@@ -156,16 +160,27 @@ func (g *Game) OnTick() {
 			}
 		}
 
-		if g.CurrentTick() >= uint64(g.impl.WaitingTime())*20 {
+		if currentTick >= uint64(g.impl.WaitingTime())*20 {
 			g.Start()
 		}
 	case StatePlaying:
-		if g.CurrentTick() >= uint64(g.impl.PlayingTime())*20 {
+		if currentTick >= uint64(g.impl.PlayingTime())*20 {
 			g.End()
 			return
 		}
+		if currentTick%2 == 0 {
+			g.w.Exec(func(tx *world.Tx) {
+				for _, par := range g.Participants() {
+					p, ok := par.User().Player(tx)
+					if !ok {
+						continue
+					}
+					helper.UpdateXPBarCooldownDisplay(p, par.PearlCooldown(), g.pearlCooldown)
+				}
+			})
+		}
 	case StateEnding:
-		if g.currentTick.Load()%20 == 0 {
+		if currentTick%20 == 0 {
 			for _, p := range g.Participants() {
 				u := p.User()
 
@@ -427,10 +442,11 @@ func (g *Game) newParticipant(p *player.Player) *Participant {
 func (g *Game) HandleItemUse(ctx *player.Context) {
 	par, _ := g.ParticipantByXUID(ctx.Val().XUID())
 
+	mainHand, _ := ctx.Val().HeldItems()
+
 	if !g.IsPlaying() || par.IsSpectating() {
 		ctx.Cancel()
 
-		mainHand, _ := ctx.Val().HeldItems()
 		v, ok := mainHand.Value("game_item")
 		if ok {
 			switch v {
@@ -443,6 +459,17 @@ func (g *Game) HandleItemUse(ctx *player.Context) {
 				}
 				return
 			}
+		}
+	}
+
+	if g.IsPlaying() {
+		if mainHand.Comparable(item.NewStack(customitem.NoDamageEnderPearl{}, 1)) {
+			if time.Since(par.PearlCooldown()) < g.pearlCooldown {
+				par.User().Messaget("error.pearl.cooldown", time.Until(par.PearlCooldown().Add(g.pearlCooldown)).Seconds())
+				ctx.Cancel()
+				return
+			}
+			par.SetPearlCooldown(time.Now())
 		}
 	}
 
