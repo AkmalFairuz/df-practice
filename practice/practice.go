@@ -42,13 +42,15 @@ func (pr *Practice) Run() {
 	go func() {
 		broadcastNo := 0
 		ticker := time.NewTicker(time.Second * 60)
-		select {
-		case <-ticker.C:
-			broadcastNo++
-			if broadcastNo >= 3 {
-				broadcastNo = 1
+		for {
+			select {
+			case <-ticker.C:
+				broadcastNo++
+				if broadcastNo >= 3 {
+					broadcastNo = 1
+				}
+				user.BroadcastMessaget("broadcast." + strconv.Itoa(broadcastNo) + ".message")
 			}
-			user.BroadcastMessaget("broadcast." + strconv.Itoa(broadcastNo) + ".message")
 		}
 	}()
 
