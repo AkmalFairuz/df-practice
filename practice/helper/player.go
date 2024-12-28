@@ -47,7 +47,7 @@ func UpdatePlayerNameTagWithHealth(p *player.Player, additionalHealth float64) {
 
 func UpdateXPBarCooldownDisplay(p *player.Player, lastCooldownStart time.Time, cooldown time.Duration) {
 	if time.Since(lastCooldownStart) < cooldown {
-		p.SetExperienceLevel(int(time.Until(lastCooldownStart.Add(cooldown)).Seconds()))
+		p.SetExperienceLevel(int(time.Until(lastCooldownStart.Add(cooldown)).Seconds()) + 1)
 		p.SetExperienceProgress(1 - float64(time.Since(lastCooldownStart))/float64(cooldown))
 	} else if p.ExperienceLevel() != 0 || p.ExperienceProgress() >= 0.01 {
 		p.SetExperienceLevel(0)
