@@ -20,6 +20,8 @@ killed.shot.message.format: "<red>%s</red> <white>को</white> <red>%s</red> <
 death.void.message.format: "<red>%s</red> <white>खाली में गिर गया</white>"
 killed.void.knocked.message.format: "<red>%s</red> <white>को</white> <red>%s</red> <white>ने खाली में धकेल दिया</white>"
 killed.void.message.format: "<red>%s</red> <white>को</white> <red>%s</red> <white>ने खाली में मारा</white>"
+killed.self.shot.message.format: "<red>%s</red> <white>स्वयं को गोली मारी</white>"
+killed.self.void.message.format: "<red>%s</red> <white>स्वयं को शून्य में गिराया</white>"
 
 ffa.scoreboard.your.kills: "<diamond>आपकी किल्स:</diamond> <white>%d</white>"
 ffa.scoreboard.your.deaths: "<diamond>आपकी मौतें:</diamond> <white>%d</white>"
