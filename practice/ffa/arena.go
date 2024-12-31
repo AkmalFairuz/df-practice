@@ -366,8 +366,8 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		}
 
 		if death {
-			if v.H() == owner.H() {
-				a.BroadcastMessaget("killed.self.shot.message.format", ctx.Val().Name(), owner.Name())
+			if ctx.Val().Name() == owner.Name() {
+				a.BroadcastMessaget("killed.self.shot.message.format", ctx.Val().Name())
 				handledDeathMessage = true
 				break
 			}
@@ -386,8 +386,8 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 			if lastAttackedBy := par.LastAttackedBy(); lastAttackedBy != "" {
 				attacker, ok := a.u[lastAttackedBy]
 				if ok {
-					if v.H() == owner.H() {
-						a.BroadcastMessaget("killed.self.shot.message.format", ctx.Val().Name(), owner.Name())
+					if ctx.Val().Name() == attacker.u.Name() {
+						a.BroadcastMessaget("killed.self.void.message.format", ctx.Val().Name())
 						handledDeathMessage = true
 						break
 					}
