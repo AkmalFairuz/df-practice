@@ -6,6 +6,8 @@ github.com/akmalfairuz/legacy-version v0.0.1 h1:jXG7DuyBo5WvjbteSIyFuo/JsQUhvqk+
 github.com/akmalfairuz/legacy-version v0.0.1/go.mod h1:kvJh8TcWqcJZz6k5wU1NZ93sD09P+DuAO18M7TEqeY4=
 github.com/akmalfairuz/legacy-version v0.0.2 h1:q9WqUyND3aBXkJrCRb91B6vpHxzbRLleUHgzxM7lIbY=
 github.com/akmalfairuz/legacy-version v0.0.2/go.mod h1:kvJh8TcWqcJZz6k5wU1NZ93sD09P+DuAO18M7TEqeY4=
+github.com/akmalfairuz/legacy-version v0.0.3-0.20241231220855-b353cf43082b h1:rsU7EPZNR74WjqtPfdmwGmBciH9SYFjJBblbjSB1erY=
+github.com/akmalfairuz/legacy-version v0.0.3-0.20241231220855-b353cf43082b/go.mod h1:kvJh8TcWqcJZz6k5wU1NZ93sD09P+DuAO18M7TEqeY4=
 github.com/bedrock-gophers/intercept v0.2.0 h1:vBU5JAuFttxYnWimwnkbruPehte9+XP47dnYCAW3Px4=
 github.com/bedrock-gophers/intercept v0.2.0/go.mod h1:O9x7OdMuTnKfqoCvqL0+xD9OwCmlPnyOvFo9Nq+Dg8E=
 github.com/bedrock-gophers/intercept v0.2.1-0.20241127002705-553929b05d82 h1:nRcQNsjYMUFPMaZNz1Uu6B4yj4G7mVqZk1BUpRjtaWw=

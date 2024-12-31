@@ -3,7 +3,6 @@ module github.com/akmalfairuz/df-practice
 go 1.23.3
 
 require (
-	github.com/akmalfairuz/legacy-version v0.0.2
 	github.com/bedrock-gophers/intercept v0.2.1-0.20241127002705-553929b05d82
 	github.com/df-mc/atomic v1.10.0
 	github.com/df-mc/dragonfly v0.9.20-0.20241229163702-cc7e4ee0e3ce
@@ -19,6 +18,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
+	github.com/akmalfairuz/legacy-version v0.0.3-0.20241231220855-b353cf43082b // indirect
 	github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/df-mc/goleveldb v1.1.9 // indirect

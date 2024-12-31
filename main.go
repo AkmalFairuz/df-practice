@@ -43,7 +43,10 @@ func main() {
 				ResourcePacks:          conf.Resources,
 				Biomes:                 biomes(),
 				TexturePacksRequired:   conf.ResourcesRequired,
-				AcceptedProtocols:      []minecraft.Protocol{legacyver.New748(false)},
+				AcceptedProtocols: []minecraft.Protocol{
+					legacyver.New748(false),
+					legacyver.New729(false),
+				},
 			}
 			l, err := cfg.Listen("raknet", userConfig.Network.Address)
 			if err != nil {
