@@ -366,12 +366,11 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		}
 
 		if death {
-			if ctx.Val().Name() == owner.Name() {
+			if ctx.Val().H() == owner.H() {
 				a.BroadcastMessaget("killed.self.shot.message.format", ctx.Val().Name())
 				handledDeathMessage = true
 				break
 			}
-			// Please fix it after you return from a vacation. :)
 
 			a.BroadcastMessaget("killed.shot.message.format", ctx.Val().Name(), owner.Name())
 			handledDeathMessage = true
@@ -391,7 +390,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 						handledDeathMessage = true
 						break
 					}
-					// Please fix it after you return from a vacation. :)
+					// Should using EntityHandle later
 
 					attacker.kills.Add(1)
 					attacker.killStreak.Add(1)
