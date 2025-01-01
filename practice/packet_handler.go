@@ -14,6 +14,8 @@ type packetHandler struct {
 
 func (p packetHandler) HandleClientPacket(ctx *event.Context[*player.Player], pk packet.Packet) {
 	switch pk := pk.(type) {
+	case *packet.ClientCacheStatus:
+		pk.Enabled = false
 	case *packet.PlayerAuthInput:
 		if pk.InputData.Load(packet.InputFlagMissedSwing) {
 			addUserClick(ctx.Val())

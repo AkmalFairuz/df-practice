@@ -15,12 +15,14 @@ import (
 	"github.com/df-mc/dragonfly/server/session"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/go-gl/mathgl/mgl64"
+	"log/slog"
 	"net"
 	"time"
 )
 
 type playerHandler struct {
-	u *user.User
+	log *slog.Logger
+	u   *user.User
 
 	lastChatAt    time.Time
 	lastCommandAt time.Time
@@ -38,8 +40,9 @@ const (
 
 func newPlayerHandler(pr *Practice, u *user.User) *playerHandler {
 	return &playerHandler{
-		u: u,
-		l: pr.l,
+		u:   u,
+		l:   pr.l,
+		log: pr.log,
 	}
 }
 
@@ -363,6 +366,7 @@ func (ph *playerHandler) HandleQuit(p *player.Player) {
 	user.BroadcastMessaget("player.quit.message", p.Name())
 
 	_ = ph.u.Close()
+	ph.log.Info("player disconnected", "player", p.Name())
 }
 
 func (ph *playerHandler) HandleDiagnostics(p *player.Player, d session.Diagnostics) {
