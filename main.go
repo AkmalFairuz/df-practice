@@ -46,6 +46,9 @@ func main() {
 				AcceptedProtocols: []minecraft.Protocol{
 					legacyver.New748(false),
 					legacyver.New729(false),
+					legacyver.New712(false),
+					legacyver.New686(false),
+					legacyver.New685(false),
 				},
 			}
 			l, err := cfg.Listen("raknet", userConfig.Network.Address)
