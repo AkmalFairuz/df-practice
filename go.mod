@@ -18,7 +18,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/akmalfairuz/legacy-version v0.0.4-0.20250101064455-e2c9fe43cc1e // indirect
+	github.com/akmalfairuz/legacy-version v0.0.5-0.20250101072241-d469d7573d51 // indirect
 	github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/df-mc/goleveldb v1.1.9 // indirect
