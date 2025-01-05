@@ -6,6 +6,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/game/gamemanager"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	form "github.com/twistedasylummc/inline-forms"
@@ -21,19 +22,19 @@ var ffaEntries []ffaEntry
 func initFFAEntries() {
 	ffaEntries = []ffaEntry{
 		{
-			TranslationName: "form.ffa.selector.classic",
+			TranslationName: translations.FormFfaSelectorClassic,
 			Arena:           ffa.ClassicArena(),
 		},
 		{
-			TranslationName: "form.ffa.selector.nodebuff",
+			TranslationName: translations.FormFfaSelectorNodebuff,
 			Arena:           ffa.NoDebuffArena(),
 		},
 		{
-			TranslationName: "form.ffa.selector.sumo",
+			TranslationName: translations.FormFfaSelectorSumo,
 			Arena:           ffa.SumoArena(),
 		},
 		{
-			TranslationName: "form.ffa.selector.build",
+			TranslationName: translations.FormFfaSelectorBuild,
 			Arena:           ffa.BuildArena(),
 		},
 	}
@@ -45,7 +46,7 @@ func sendFFAForm(p *player.Player) {
 	btns := make([]form.Button, 0, len(ffaEntries))
 	for _, entry := range ffaEntries {
 		btns = append(btns, form.Button{
-			Text: u.Translatef(entry.TranslationName) + "\n" + u.Translatef("form.playing.format", len(entry.Arena.Participants())),
+			Text: u.Translatef(entry.TranslationName) + "\n" + u.Translatef(translations.FormPlayingFormat, len(entry.Arena.Participants())),
 			Submit: func(tx *world.Tx) {
 				ent, _ := p.H().Entity(tx)
 				ent2 := ent.(*player.Player)
@@ -56,7 +57,7 @@ func sendFFAForm(p *player.Player) {
 	}
 
 	p.SendForm(&form.Menu{
-		Title:   u.Translatef("form.ffa.selector.title"),
+		Title:   u.Translatef(translations.FormFfaSelectorTitle),
 		Buttons: btns,
 	})
 }
@@ -69,12 +70,12 @@ type duelsEntry struct {
 
 var duelsEntries = []duelsEntry{
 	{
-		TranslationName: "form.duels.selector.classic",
+		TranslationName: translations.FormDuelsSelectorClassic,
 		Manager:         duelsmanager.Classic,
 		Icon:            "textures/items/iron_sword",
 	},
 	{
-		TranslationName: "form.duels.selector.nodebuff",
+		TranslationName: translations.FormDuelsSelectorNodebuff,
 		Manager:         duelsmanager.NoDebuff,
 		Icon:            "textures/items/potion_bottle_splash_heal",
 	},
@@ -87,7 +88,7 @@ func sendDuelsForm(p *player.Player) {
 
 	for _, entry := range duelsEntries {
 		btns = append(btns, form.Button{
-			Text: u.Translatef(entry.TranslationName) + "\n" + u.Translatef("form.playing.format", entry.Manager.PlayersCount()),
+			Text: u.Translatef(entry.TranslationName) + "\n" + u.Translatef(translations.FormPlayingFormat, entry.Manager.PlayersCount()),
 			Submit: func(tx *world.Tx) {
 				ent, ok := p.H().Entity(tx)
 				if !ok {
@@ -99,7 +100,7 @@ func sendDuelsForm(p *player.Player) {
 	}
 
 	p.SendForm(&form.Menu{
-		Title:   u.Translatef("form.duels.selector.title"),
+		Title:   u.Translatef(translations.FormDuelsSelectorTitle),
 		Buttons: btns,
 	})
 }

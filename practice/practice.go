@@ -7,6 +7,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/bedrock-gophers/intercept/intercept"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
@@ -68,7 +69,7 @@ func (pr *Practice) Run() {
 
 			if err := u.Load(); err != nil {
 				pr.log.Error("failed to load user data", "error", err)
-				u.Disconnect(lang.Translate(u.Lang(), "user.load.error"))
+				u.Disconnect(lang.Translate(u.Lang(), translations.UserLoadError))
 				return
 			}
 
@@ -82,14 +83,14 @@ func (pr *Practice) Run() {
 				newP.Inventory().Handle(newPlayerInvHandler(newP.Inventory()))
 				newP.Inventory().Handle(newPlayerInvHandler(newP.Armour().Inventory()))
 
-				user.BroadcastMessaget("player.join.message", newP.Name())
+				user.BroadcastMessaget(translations.PlayerJoinMessage, newP.Name())
 
 				if err := pr.l.Init(); err != nil {
 					panic(fmt.Errorf("failed to init lobby: %w", err))
 				}
 				pr.l.Spawn(newP)
 
-				u.Messaget("welcome.message", newP.Name())
+				u.Messaget(translations.WelcomeMessage, newP.Name())
 
 				go startPlayerTick(u)
 			})

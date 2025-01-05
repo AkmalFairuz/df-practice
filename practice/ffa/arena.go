@@ -6,6 +6,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/kit"
 	"github.com/akmalfairuz/df-practice/practice/kit/customitem"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/entity"
@@ -191,16 +192,16 @@ func (a *Arena) handleTick(currentTick int64) {
 func (a *Arena) sendUserScoreboard(p *Participant, tx *world.Tx) {
 	combatInfo := "<empty>"
 	if p.combatTimer.Load() > 0 {
-		combatInfo = p.u.Translatef("ffa.scoreboard.combat.timer", p.combatTimer.Load())
+		combatInfo = p.u.Translatef(translations.FfaScoreboardCombatTimer, p.combatTimer.Load())
 	}
 
 	p.u.SendScoreboard([]string{
-		p.u.Translatef("ffa.scoreboard.your.kills", p.kills.Load()),
-		p.u.Translatef("ffa.scoreboard.your.deaths", p.deaths.Load()),
-		p.u.Translatef("ffa.scoreboard.your.streak", p.killStreak.Load()),
+		p.u.Translatef(translations.FfaScoreboardYourKills, p.kills.Load()),
+		p.u.Translatef(translations.FfaScoreboardYourDeaths, p.deaths.Load()),
+		p.u.Translatef(translations.FfaScoreboardYourStreak, p.killStreak.Load()),
 		"",
-		p.u.Translatef("ffa.scoreboard.players", len(a.u)),
-		p.u.Translatef("scoreboard.your.ping", p.u.Session().Latency().Milliseconds()),
+		p.u.Translatef(translations.FfaScoreboardPlayers, len(a.u)),
+		p.u.Translatef(translations.ScoreboardYourPing, p.u.Session().Latency().Milliseconds()),
 		combatInfo,
 	})
 }
@@ -369,7 +370,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		}
 
 		if death {
-			a.BroadcastMessaget("killed.message.format", ctx.Val().Name(), attacker.Name())
+			a.BroadcastMessaget(translations.KilledMessageFormat, ctx.Val().Name(), attacker.Name())
 			handledDeathMessage = true
 
 			a.OnKill(attacker, attackerPar)
@@ -393,7 +394,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		}
 
 		if death {
-			a.BroadcastMessaget("killed.shot.message.format", ctx.Val().Name(), owner.Name())
+			a.BroadcastMessaget(translations.KilledShotMessageFormat, ctx.Val().Name(), owner.Name())
 			handledDeathMessage = true
 
 			a.OnKill(owner, attackerPar)
@@ -407,18 +408,18 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 				if ok {
 					attacker.kills.Add(1)
 					attacker.killStreak.Add(1)
-					a.BroadcastMessaget("killed.void.message.format", ctx.Val().Name(), attacker.u.Name())
+					a.BroadcastMessaget(translations.KilledVoidMessageFormat, ctx.Val().Name(), attacker.u.Name())
 					handledDeathMessage = true
 					break
 				}
 			}
-			a.BroadcastMessaget("death.void.message.format", ctx.Val().Name())
+			a.BroadcastMessaget(translations.DeathVoidMessageFormat, ctx.Val().Name())
 			handledDeathMessage = true
 		}
 	}
 
 	if !handledDeathMessage && death {
-		a.BroadcastMessaget("death.message.format", ctx.Val().Name())
+		a.BroadcastMessaget(translations.DeathMessageFormat, ctx.Val().Name())
 	}
 
 	if death {
@@ -450,20 +451,20 @@ func (a *Arena) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b world.Bloc
 	}
 	if a.hasPlacedBlock(pos) {
 		ctx.Cancel()
-		user.Messaget(ctx.Val(), "error.place.block")
+		user.Messaget(ctx.Val(), translations.ErrorPlaceBlock)
 		return
 	}
 	for _, spawn := range a.spawns {
 		if spawn.ToMgl64Vec3().Sub(pos.Vec3()).Len() < 2 {
 			ctx.Cancel()
-			user.Messaget(ctx.Val(), "error.place.block")
+			user.Messaget(ctx.Val(), translations.ErrorPlaceBlock)
 			return
 		}
 	}
 	currentBlock := ctx.Val().Tx().Block(pos)
 	if _, ok := currentBlock.(block.Air); !ok {
 		ctx.Cancel()
-		user.Messaget(ctx.Val(), "error.place.block")
+		user.Messaget(ctx.Val(), translations.ErrorPlaceBlock)
 		return
 	}
 
@@ -575,7 +576,7 @@ func (a *Arena) HandleItemUse(ctx *player.Context) {
 	if mainHand.Comparable(item.NewStack(customitem.NoDamageEnderPearl{}, 1)) && !ctx.Cancelled() {
 		lastPearlThrow := par.lastPearlThrow.Load()
 		if time.Since(lastPearlThrow) < a.pearlCooldown {
-			par.u.Messaget("error.cooldown.pearl", time.Until(lastPearlThrow.Add(a.pearlCooldown)).Seconds())
+			par.u.Messaget(translations.ErrorCooldownPearl, time.Until(lastPearlThrow.Add(a.pearlCooldown)).Seconds())
 			ctx.Cancel()
 			return
 		}

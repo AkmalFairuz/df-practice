@@ -2,6 +2,7 @@ package command
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -18,7 +19,7 @@ func (w Whisper) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 	u := user.Get(s.(*player.Player))
 
 	if len(w.Message) == 0 {
-		o.Error(translatef(s, "error.command.whisper.missing.message"))
+		o.Error(translatef(s, translations.ErrorCommandWhisperMissingMessage))
 		return
 	}
 

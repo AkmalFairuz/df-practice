@@ -1,6 +1,7 @@
 package command
 
 import (
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -40,7 +41,7 @@ type TeleportTargetToPos struct {
 func (t TeleportToPos) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 	p := s.(*player.Player)
 	p.Teleport(t.Pos)
-	messaget(s, "command.teleport.success", p.Name(), formatPos(t.Pos))
+	messaget(s, translations.CommandTeleportSuccess, p.Name(), formatPos(t.Pos))
 }
 
 func (t TeleportToTarget) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
@@ -52,10 +53,10 @@ func (t TeleportToTarget) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 		if ok {
 			p := ent.(*player.Player)
 			p.Teleport(s.(*player.Player).Position())
-			messaget(s, "command.teleport.success", p.Name(), t.Target.User().Name())
+			messaget(s, translations.CommandTeleportSuccess, p.Name(), t.Target.User().Name())
 			return
 		}
-		messaget(s, "command.an.error.occurred")
+		messaget(s, translations.CommandAnErrorOccurred)
 		return
 	}
 
@@ -68,11 +69,11 @@ func (t TeleportToTarget) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 		if ok {
 			p := ent.(*player.Player)
 			p.Teleport(s.(*player.Player).Position())
-			messaget(s, "command.teleport.success", p.Name(), t.Target.User().Name())
+			messaget(s, translations.CommandTeleportSuccess, p.Name(), t.Target.User().Name())
 			return
 		}
 
-		messaget(s, "command.an.error.occurred")
+		messaget(s, translations.CommandAnErrorOccurred)
 	})
 }
 
@@ -90,7 +91,7 @@ func (t TeleportTargetToTarget) Run(s cmd.Source, o *cmd.Output, _ *world.Tx) {
 			}
 
 			toEnt.(*player.Player).Teleport(fromEnt.(*player.Player).Position())
-			messaget(s, "command.teleport.success", t.To.User().Name(), t.From.User().Name())
+			messaget(s, translations.CommandTeleportSuccess, t.To.User().Name(), t.From.User().Name())
 		})
 		return
 	}
@@ -111,7 +112,7 @@ func (t TeleportTargetToTarget) Run(s cmd.Source, o *cmd.Output, _ *world.Tx) {
 			}
 
 			toEnt.(*player.Player).Teleport(fromEnt.(*player.Player).Position())
-			messaget(s, "command.teleport.success", t.To.User().Name(), t.From.User().Name())
+			messaget(s, translations.CommandTeleportSuccess, t.To.User().Name(), t.From.User().Name())
 		})
 	})
 }
@@ -124,6 +125,6 @@ func (t TeleportTargetToPos) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 
 		p.Teleport(t.Pos)
 
-		messaget(s, "command.teleport.success", p.Name(), formatPos(t.Pos))
+		messaget(s, translations.CommandTeleportSuccess, p.Name(), formatPos(t.Pos))
 	})
 }

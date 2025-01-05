@@ -5,6 +5,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/kit"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
@@ -131,10 +132,10 @@ func (d *Duels) OnTick() {
 				}
 
 				p.User().SendScoreboard([]string{
-					p.User().Translatef("game.scoreboard.time.left", helper.FormatTime(d.PlayingTime()-int(d.g.CurrentTick()/20))),
+					p.User().Translatef(translations.GameScoreboardTimeLeft, helper.FormatTime(d.PlayingTime()-int(d.g.CurrentTick()/20))),
 					"",
-					p.User().Translatef("scoreboard.their.ping", opponentPing),
-					p.User().Translatef("scoreboard.your.ping", p.User().Ping()),
+					p.User().Translatef(translations.ScoreboardTheirPing, opponentPing),
+					p.User().Translatef(translations.ScoreboardYourPing, p.User().Ping()),
 				})
 			}
 		}

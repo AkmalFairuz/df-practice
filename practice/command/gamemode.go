@@ -2,6 +2,7 @@ package command
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -42,6 +43,6 @@ func (g GameMode) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 
 	target.ExecutePlayer(func(p *player.Player, ok bool) {
 		p.SetGameMode(getGameModeFromString(string(g.Type)))
-		messaget(s, "gamemode.command.success", p.Name(), g.Type)
+		messaget(s, translations.GamemodeCommandSuccess, p.Name(), g.Type)
 	})
 }

@@ -3,6 +3,7 @@ package command
 import (
 	"github.com/akmalfairuz/df-practice/practice/game/duelsmanager"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -41,7 +42,7 @@ func tryAcceptDuelReq(u *user.User, from *user.User, tx *world.Tx) bool {
 	fromEnt, _ := from.Player(tx)
 	uEnt, _ := u.Player(tx)
 
-	from.Messaget("duel.request.accepted", u.Name())
+	from.Messaget(translations.DuelRequestAccepted, u.Name())
 
 	_ = g.Game().Join(fromEnt)
 	_ = g.Game().Join(uEnt)
@@ -52,13 +53,13 @@ func tryAcceptDuelReq(u *user.User, from *user.User, tx *world.Tx) bool {
 func (d Duel) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 	u := user.Get(s.(*player.Player))
 	if !u.InLobby() {
-		u.Messaget("duel.request.must.in.lobby")
+		u.Messaget(translations.DuelRequestMustInLobby)
 		return
 	}
 
 	targetU := d.Target.User()
 	if targetU == u {
-		u.Messaget("command.an.error.occurred")
+		u.Messaget(translations.CommandAnErrorOccurred)
 		return
 	}
 	if tryAcceptDuelReq(u, targetU, tx) {

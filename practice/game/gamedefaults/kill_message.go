@@ -2,6 +2,7 @@ package gamedefaults
 
 import (
 	"github.com/akmalfairuz/df-practice/practice/game/igame"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/entity"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -17,7 +18,7 @@ func HandleKillMessage(g igame.IGame, p *player.Player, src world.DamageSource) 
 		}
 
 		handled = true
-		g.Messaget("killed.message.format", p.Name(), att.Name())
+		g.Messaget(translations.KilledMessageFormat, p.Name(), att.Name())
 	case entity.ProjectileDamageSource:
 		att, ok := src.Owner.(*player.Player)
 		if !ok {
@@ -25,12 +26,12 @@ func HandleKillMessage(g igame.IGame, p *player.Player, src world.DamageSource) 
 		}
 
 		handled = true
-		g.Messaget("killed.shot.message.format", p.Name(), att.Name())
+		g.Messaget(translations.KilledShotMessageFormat, p.Name(), att.Name())
 	case entity.VoidDamageSource:
 		// TODO: Handle void damage source
 	}
 
 	if !handled {
-		g.Messaget("death.message.format", p.Name())
+		g.Messaget(translations.DeathMessageFormat, p.Name())
 	}
 }

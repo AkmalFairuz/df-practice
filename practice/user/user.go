@@ -7,6 +7,7 @@ import (
 	"github.com/akmalfairuz/df-practice/internal/meta"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/model"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/atomic"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/scoreboard"
@@ -156,9 +157,9 @@ func (u *User) SendScoreboard(lines []string) {
 		lines2 = append(lines2, line)
 	}
 	lines2 = append(lines2, "")
-	lines2 = append(lines2, u.Translatef("scoreboard.footer"))
+	lines2 = append(lines2, u.Translatef(translations.ScoreboardFooter))
 
-	u.SendScoreboardRaw(u.Translatef("scoreboard.title"), lines2)
+	u.SendScoreboardRaw(u.Translatef(translations.ScoreboardTitle), lines2)
 }
 
 func (u *User) SendScoreboardRaw(title string, lines []string) {
@@ -218,11 +219,11 @@ func (u *User) EntityRuntimeID() uint64 {
 func (u *User) OnReceiveWhisper(sender *User, message string) {
 	u.lastWhisperFromXUID.Store(sender.XUID())
 
-	u.Messaget("whisper.received", sender.Name(), message)
+	u.Messaget(translations.WhisperReceived, sender.Name(), message)
 }
 
 func (u *User) OnSendWhisper(target *User, message string) {
-	u.Messaget("whisper.sent", target.Name(), message)
+	u.Messaget(translations.WhisperSent, target.Name(), message)
 }
 
 func (u *User) ReplyWhisperToXUID() string {
@@ -351,7 +352,7 @@ func (u *User) SendPVPInfoTip() {
 	if cps == 0 && combo == 0 && reach <= 0.1 {
 		return
 	}
-	u.Session().SendTip(u.Translatef("pvp.info.tip", cps, combo, reach))
+	u.Session().SendTip(u.Translatef(translations.PvpInfoTip, cps, combo, reach))
 }
 
 func (u *User) World() *world.World {
@@ -378,10 +379,10 @@ func (u *User) InLobby() bool {
 }
 
 func (u *User) OnSendDuelRequest(opponent *User) {
-	u.Messaget("duel.request.sent", u.Name())
+	u.Messaget(translations.DuelRequestSent, u.Name())
 	u.SetDuelRequestTo(opponent.XUID())
 }
 
 func (u *User) OnReceiveDuelRequest(opponent *User) {
-	u.Messaget("duel.request.received", opponent.Name(), opponent.Name(), 60)
+	u.Messaget(translations.DuelRequestReceived, opponent.Name(), opponent.Name(), 60)
 }
