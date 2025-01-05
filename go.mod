@@ -5,7 +5,7 @@ go 1.23.3
 require (
 	github.com/bedrock-gophers/intercept v0.2.1-0.20241127002705-553929b05d82
 	github.com/df-mc/atomic v1.10.0
-	github.com/df-mc/dragonfly v0.9.20-0.20250105044512-c209ad4d5e78
+	github.com/df-mc/dragonfly v0.10.0
 	github.com/go-gl/mathgl v1.2.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/jmoiron/sqlx v1.4.0
