@@ -617,5 +617,7 @@ func (a *Arena) HandleStartBreak(ctx *player.Context, pos cube.Pos) {
 		for _, viewer := range ctx.Val().Tx().Viewers(pos.Vec3()) {
 			viewer.ViewBlockAction(pos, block.StopCrackAction{})
 		}
+
+		ctx.Cancel()
 	}
 }

@@ -1,6 +1,7 @@
 package game
 
 import (
+	"github.com/akmalfairuz/df-practice/practice/game/igame"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/atomic"
 	"time"
@@ -17,7 +18,7 @@ func (p *Participant) XUID() string {
 	return p.xuid
 }
 
-func (p *Participant) User() *user.User {
+func (p *Participant) User() igame.User {
 	return user.GetByXUID(p.xuid)
 }
 

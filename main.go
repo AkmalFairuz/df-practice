@@ -71,6 +71,7 @@ func main() {
 	cmd.Register(cmd.New("lobby", "Teleport to the lobby.", []string{"hub"}, command.Lobby{}))
 	cmd.Register(cmd.New("gamemode", "Change the game mode of a player.", []string{"gm"}, command.GameMode{}))
 	cmd.Register(cmd.New("teleport", "Teleport to a player or location.", []string{"tp"}, command.TeleportToTarget{}, command.TeleportToPos{}, command.TeleportTargetToTarget{}, command.TeleportTargetToPos{}))
+	cmd.Register(cmd.New("duel", "Send a duel request to a player.", nil, command.Duel{}))
 
 	pr := practice.New(log, srv)
 	pr.Run()

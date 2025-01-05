@@ -75,6 +75,9 @@ type Game struct {
 	placedBlocks   map[cube.Pos]bool
 
 	pearlCooldown time.Duration
+
+	duelRequestMode    bool
+	duelRequestAborted bool
 }
 
 const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -135,6 +138,23 @@ func (g *Game) OnTick() {
 	case StateWaiting:
 		if len(g.p) < g.impl.MinimumParticipants() {
 			g.currentTick.Store(0)
+		}
+
+		if g.duelRequestAborted {
+			g.Messaget("duel.request.aborted")
+			g.w.Exec(func(tx *world.Tx) {
+				for _, par := range g.Participants() {
+					p, ok := par.User().Player(tx)
+					if !ok {
+						continue
+					}
+
+					_ = g.Quit(p)
+				}
+			})
+
+			g.Stop()
+			break
 		}
 
 		if currentTick%20 == 0 {
@@ -244,7 +264,9 @@ func (g *Game) End() {
 			if par.IsPlaying() {
 				p.SetGameMode(world.GameModeAdventure)
 			}
-			_ = p.Inventory().SetItem(0, playAgainItem(p))
+			if g.playAgainHook != nil {
+				_ = p.Inventory().SetItem(0, playAgainItem(p))
+			}
 			_ = p.Inventory().SetItem(8, quitItem(p))
 			_ = p.SetHeldSlot(1)
 		}
@@ -414,6 +436,10 @@ func (g *Game) doQuit(p *player.Player) error {
 	}
 
 	user.Get(p).SetCurrentGame(nil)
+
+	if g.duelRequestMode && g.IsWaiting() {
+		g.duelRequestAborted = true
+	}
 	return nil
 }
 
@@ -688,4 +714,8 @@ func (g *Game) SetPlayAgainHook(hook func(p *player.Player) error) {
 
 func (g *Game) playAgain(p *player.Player) error {
 	return (g.playAgainHook)(p)
+}
+
+func (g *Game) SetDuelRequestMode(b bool) {
+	g.duelRequestMode = b
 }

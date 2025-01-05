@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/akmalfairuz/df-practice/internal/meta"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/model"
 	"github.com/df-mc/atomic"
@@ -52,6 +53,8 @@ type User struct {
 	lastHitReachDistanceMu       sync.Mutex
 
 	w atomic.Value[*world.World]
+
+	duelRequestTo atomic.Value[DuelRequestInfo]
 }
 
 func New(p *player.Player) *User {
@@ -357,4 +360,28 @@ func (u *User) World() *world.World {
 
 func (u *User) SetWorld(w *world.World) {
 	u.w.Store(w)
+}
+
+func (u *User) SetDuelRequestTo(xuid string) {
+	u.duelRequestTo.Store(DuelRequestInfo{
+		TargetXUID: xuid,
+		RequestAt:  time.Now(),
+	})
+}
+
+func (u *User) DuelRequestTo() DuelRequestInfo {
+	return u.duelRequestTo.Load()
+}
+
+func (u *User) InLobby() bool {
+	return u.World() == meta.Get("lobby").(interface{ World() *world.World }).World()
+}
+
+func (u *User) OnSendDuelRequest(opponent *User) {
+	u.Messaget("duel.request.sent", u.Name())
+	u.SetDuelRequestTo(opponent.XUID())
+}
+
+func (u *User) OnReceiveDuelRequest(opponent *User) {
+	u.Messaget("duel.request.received", opponent.Name(), opponent.Name(), 60)
 }

@@ -104,3 +104,9 @@ error.command.invalid.target: "<red>Invalid target.</red>"
 command.teleport.success: "<green>Successfully teleported <white>%s</white> to <white>%s</white>.</green>"
 
 command.an.error.occurred: "<red>An error occurred when executing the command.</red>"
+
+duel.request.sent: "<diamond>You have sent a duel request to <white>%s</white>. Wait for them to accept the request.</diamond>"
+duel.request.received: "<diamond><white>%s</white> has sent you a duel request. Type <white>/duel %s</white> to accept the request. You have <white>%d seconds</white> to accept the request.</diamond>"
+duel.request.aborted: "<red>The duel request has been aborted.</red>"
+duel.request.accepted: "<green>The duel request has been accepted by <white>%s</white>.</green>"
+duel.request.must.in.lobby: "<red>You must be in the lobby to send/accept a duel request.</red>"

@@ -42,4 +42,5 @@ type IGame interface {
 	Sound(name string)
 	HandleItemPickup(ctx *player.Context, i *item.Stack)
 	SetPlayAgainHook(hook func(p *player.Player) error)
+	SetDuelRequestMode(b bool)
 }

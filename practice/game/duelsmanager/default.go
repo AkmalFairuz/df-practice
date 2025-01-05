@@ -10,6 +10,12 @@ import (
 )
 
 var Classic = gamemanager.New(func(mgr *gamemanager.Manager) igame.Impl {
+	g := ClassicRaw()
+	g.Game().SetPlayAgainHook(mgr.Join)
+	return g
+})
+
+var ClassicRaw = func() igame.Impl {
 	d := &duels.Duels{}
 	d.SetKit(kit.Classic{})
 
@@ -23,11 +29,16 @@ var Classic = gamemanager.New(func(mgr *gamemanager.Manager) igame.Impl {
 		panic(err)
 	}
 	d.Create(g)
-	g.SetPlayAgainHook(mgr.Join)
 	return d
-})
+}
 
 var NoDebuff = gamemanager.New(func(mgr *gamemanager.Manager) igame.Impl {
+	g := NoDebuffRaw()
+	g.Game().SetPlayAgainHook(mgr.Join)
+	return g
+})
+
+var NoDebuffRaw = func() igame.Impl {
 	d := &duels.Duels{}
 	d.SetKit(kit.NoDebuff{})
 
@@ -41,6 +52,5 @@ var NoDebuff = gamemanager.New(func(mgr *gamemanager.Manager) igame.Impl {
 		panic(err)
 	}
 	d.Create(g)
-	g.SetPlayAgainHook(mgr.Join)
 	return d
-})
+}
