@@ -35,7 +35,7 @@ func main() {
 
 		//convertMapping[key] = key2
 
-		contents += "\t" + key2 + " = \"" + key + "\"\n"
+		contents += "\t" + key2 + " = \"" + key + "\"\n\n"
 	}
 
 	contents += ")\n"
