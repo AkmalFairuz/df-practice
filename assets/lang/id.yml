@@ -95,3 +95,5 @@ error.command.pardon.target.not.banned: "<red>Pemain tersebut tidak diblokir.</r
 error.cooldown.pearl: "<red>Harap tunggu %.1f detik sebelum menggunakan ender pearl lagi.</red>"
 
 pvp.info.tip: "<diamond>CPS: <white>%d</white> | Kombo: <white>%d</white> | Jangkauan: <white>%.2f</white></diamond>"
+
+error.place.block: "<red>Anda tidak dapat meletakkan blok di sini.</red>"

@@ -32,6 +32,10 @@ func initFFAEntries() {
 			TranslationName: "form.ffa.selector.sumo",
 			Arena:           ffa.SumoArena(),
 		},
+		{
+			TranslationName: "form.ffa.selector.build",
+			Arena:           ffa.BuildArena(),
+		},
 	}
 }
 

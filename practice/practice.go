@@ -12,10 +12,8 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"log/slog"
-	"reflect"
 	"strconv"
 	"time"
-	"unsafe"
 )
 
 type Practice struct {
@@ -65,8 +63,8 @@ func (pr *Practice) Run() {
 		go func() {
 			u := user.New(p)
 
-			field := reflect.ValueOf(u.Conn()).Elem().FieldByName("cacheEnabled")
-			reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem().SetBool(false)
+			//field := reflect.ValueOf(u.Conn()).Elem().FieldByName("cacheEnabled")
+			//reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem().SetBool(false)
 
 			if err := u.Load(); err != nil {
 				pr.log.Error("failed to load user data", "error", err)

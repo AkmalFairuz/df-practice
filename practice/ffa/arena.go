@@ -13,6 +13,7 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/df-mc/dragonfly/server/world/particle"
+	"github.com/df-mc/dragonfly/server/world/sound"
 	"github.com/go-gl/mathgl/mgl64"
 	"math/rand"
 	"sync"
@@ -49,14 +50,17 @@ type Arena struct {
 }
 
 type placedBlockInfo struct {
-	placedAt time.Time
+	placedAt    time.Time
+	originBlock world.Block
+	isBreaking  bool
 }
 
 func New(w *world.World) *Arena {
 	return &Arena{
 		w:             w,
-		u:             map[string]*Participant{},
+		u:             make(map[string]*Participant),
 		pearlCooldown: 15 * time.Second,
+		placedBlocks:  make(map[cube.Pos]placedBlockInfo),
 	}
 }
 
@@ -144,19 +148,39 @@ func (a *Arena) handleTick(currentTick int64) {
 			}
 		}
 
-		if currentTick%20 == 0 {
+		if currentTick%5 == 0 {
 			if a.allowBuild {
 				a.placedBlocksMu.RLock()
 				placedBlocks := a.placedBlocks
 				a.placedBlocksMu.RUnlock()
 
 				for pos, info := range placedBlocks {
-					if time.Since(info.placedAt) > 45*time.Second {
+					diff := time.Since(info.placedAt)
+					if diff > 15*time.Second {
 						a.removePlacedBlock(pos)
 
-						tx.SetBlock(pos, block.Air{}, nil)
 						tx.AddParticle(pos.Vec3().Add(mgl64.Vec3{0.5, 0.5, 0.5}), particle.BlockBreak{Block: tx.Block(pos)})
+						tx.PlaySound(pos.Vec3(), sound.BlockBreaking{Block: tx.Block(pos)})
+
+						tx.SetBlock(pos, info.originBlock, &world.SetOpts{DisableBlockUpdates: true})
 						continue
+					}
+					if diff > 8*time.Second {
+						viewers := tx.Viewers(pos.Vec3())
+						for _, viewer := range viewers {
+							if info.isBreaking {
+								viewer.ViewBlockAction(pos, block.ContinueCrackAction{
+									BreakTime: time.Second * 7,
+								})
+							} else {
+								viewer.ViewBlockAction(pos, block.StartCrackAction{
+									BreakTime: time.Second * 7,
+								})
+							}
+						}
+						if !info.isBreaking {
+							a.setPlacedBlockBreaking(pos, true)
+						}
 					}
 				}
 			}
@@ -344,8 +368,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 			a.BroadcastMessaget("killed.message.format", ctx.Val().Name(), attacker.Name())
 			handledDeathMessage = true
 
-			attackerPar.kills.Add(1)
-			attackerPar.killStreak.Add(1)
+			a.OnKill(attacker, attackerPar)
 		} else {
 			par.StoreLastAttackedBy(user.Get(attacker).XUID())
 		}
@@ -369,8 +392,7 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 			a.BroadcastMessaget("killed.shot.message.format", ctx.Val().Name(), owner.Name())
 			handledDeathMessage = true
 
-			attackerPar.kills.Add(1)
-			attackerPar.killStreak.Add(1)
+			a.OnKill(owner, attackerPar)
 		} else {
 			par.StoreLastAttackedBy(user.Get(owner).XUID())
 		}
@@ -420,9 +442,24 @@ func (a *Arena) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b world.Bloc
 	}
 	if a.hasPlacedBlock(pos) {
 		ctx.Cancel()
+		user.Messaget(ctx.Val(), "error.place.block")
 		return
 	}
-	a.addPlacedBlock(pos, b)
+	for _, spawn := range a.spawns {
+		if spawn.ToMgl64Vec3().Sub(pos.Vec3()).Len() < 2 {
+			ctx.Cancel()
+			user.Messaget(ctx.Val(), "error.place.block")
+			return
+		}
+	}
+	currentBlock := ctx.Val().Tx().Block(pos)
+	if _, ok := currentBlock.(block.Air); !ok {
+		ctx.Cancel()
+		user.Messaget(ctx.Val(), "error.place.block")
+		return
+	}
+
+	a.addPlacedBlock(pos, currentBlock)
 }
 
 func (a *Arena) HandleBlockBreak(ctx *player.Context, pos cube.Pos, drops *[]item.Stack, xp *int) {
@@ -447,13 +484,23 @@ func (a *Arena) hasPlacedBlock(pos cube.Pos) bool {
 
 func (a *Arena) addPlacedBlock(pos cube.Pos, b world.Block) {
 	a.placedBlocksMu.Lock()
-	a.placedBlocks[pos] = placedBlockInfo{placedAt: time.Now()}
+	a.placedBlocks[pos] = placedBlockInfo{placedAt: time.Now(), originBlock: b}
 	a.placedBlocksMu.Unlock()
 }
 
 func (a *Arena) removePlacedBlock(pos cube.Pos) {
 	a.placedBlocksMu.Lock()
 	delete(a.placedBlocks, pos)
+	a.placedBlocksMu.Unlock()
+}
+
+func (a *Arena) setPlacedBlockBreaking(pos cube.Pos, breaking bool) {
+	a.placedBlocksMu.Lock()
+	info, ok := a.placedBlocks[pos]
+	if ok {
+		info.isBreaking = breaking
+		a.placedBlocks[pos] = info
+	}
 	a.placedBlocksMu.Unlock()
 }
 
@@ -502,4 +549,11 @@ func (a *Arena) HandleItemUse(ctx *player.Context) {
 		}
 		par.lastPearlThrow.Store(time.Now())
 	}
+}
+
+func (a *Arena) OnKill(p *player.Player, par *Participant) {
+	par.OnKill()
+	p.PlaySound(sound.Experience{})
+	helper.ClearAllPlayerInv(p)
+	_ = a.sendKit(p)
 }

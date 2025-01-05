@@ -62,3 +62,8 @@ func (par *Participant) Player(tx *world.Tx) (*player.Player, bool) {
 	}
 	return e.(*player.Player), true
 }
+
+func (par *Participant) OnKill() {
+	par.kills.Inc()
+	par.killStreak.Inc()
+}

@@ -37,6 +37,7 @@ whisper.sent: "<diamond>Private message to <white>%s</white>:</diamond> <white>%
 
 form.ffa.selector.title: "Free for All"
 form.ffa.selector.classic: "Classic"
+form.ffa.selector.build: "Build"
 
 error.lobby.in.combat: "<red>You can't go to the lobby while in combat. Please wait until the combat timer expires.</red>"
 
@@ -95,3 +96,5 @@ error.command.pardon.target.not.banned: "<red>That player is not banned.</red>"
 error.cooldown.pearl: "<red>Please wait %.1f seconds before using another ender pearl.</red>"
 
 pvp.info.tip: "<diamond>CPS: <white>%d</white> | Combo: <white>%d</white> | Reach: <white>%.2f</white></diamond>"
+
+error.place.block: "<red>You can't place blocks here.</red>"
