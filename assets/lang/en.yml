@@ -98,3 +98,9 @@ error.cooldown.pearl: "<red>Please wait %.1f seconds before using another ender 
 pvp.info.tip: "<diamond>CPS: <white>%d</white> | Combo: <white>%d</white> | Reach: <white>%.2f</white></diamond>"
 
 error.place.block: "<red>You can't place blocks here.</red>"
+
+error.command.invalid.target: "<red>Invalid target.</red>"
+
+command.teleport.success: "<green>Successfully teleported <white>%s</white> to <white>%s</white>.</green>"
+
+command.an.error.occurred: "<red>An error occurred when executing the command.</red>"

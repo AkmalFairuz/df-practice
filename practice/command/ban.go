@@ -14,14 +14,14 @@ import (
 type Ban struct {
 	onlyAdmin
 
-	Target   string      `cmd:"target"`
-	Duration int         `cmd:"duration"`
-	Reason   cmd.Varargs `cmd:"reason"`
+	Target   OfflineTarget `cmd:"target"`
+	Duration int           `cmd:"duration"`
+	Reason   cmd.Varargs   `cmd:"reason"`
 }
 
 func (b Ban) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 	go func() {
-		u, err := repository.UserRepo().FindByName(b.Target)
+		u, err := repository.UserRepo().FindByName(string(b.Target))
 		if err != nil {
 			if repository.IsNotExists(err) {
 				messaget(s, "error.command.ban.target.not.found")

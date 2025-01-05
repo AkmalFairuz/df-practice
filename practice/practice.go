@@ -71,9 +71,10 @@ func (pr *Practice) Run() {
 				u.Disconnect(lang.Translate(u.Lang(), "user.load.error"))
 				return
 			}
-			user.Store(u)
 
 			p.H().ExecWorld(func(tx *world.Tx, e world.Entity) {
+				user.Store(u)
+				u.SetWorld(tx.World())
 				newP := e.(*player.Player)
 
 				intercept.Intercept(newP)

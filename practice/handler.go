@@ -68,6 +68,7 @@ func (ph *playerHandler) HandleChangeWorld(p *player.Player, before, after *worl
 	u := user.Get(p)
 	if u != nil {
 		u.ResetComboCounter()
+		u.SetWorld(after)
 	}
 }
 
@@ -195,6 +196,10 @@ func (ph *playerHandler) HandleStartBreak(ctx *player.Context, pos cube.Pos) {
 	if lobby.Instance().IsInLobby(ctx.Val()) {
 		ctx.Cancel()
 		return
+	}
+
+	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
+		ffaArena.HandleStartBreak(ctx, pos)
 	}
 }
 

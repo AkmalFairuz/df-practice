@@ -9,12 +9,12 @@ import (
 
 type Pardon struct {
 	onlyAdmin
-	Target string `cmd:"target"`
+	Target OfflineTarget `cmd:"target"`
 }
 
 func (p Pardon) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 	go func() {
-		u, err := repository.UserRepo().FindByName(p.Target)
+		u, err := repository.UserRepo().FindByName(string(p.Target))
 		if err != nil {
 			if repository.IsNotExists(err) {
 				messaget(s, "error.command.pardon.target.not.found")

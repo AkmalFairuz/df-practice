@@ -25,13 +25,29 @@ func Get(p *player.Player) *User {
 }
 
 func GetByPrefix(prefix string) (*User, bool) {
+	prefix = strings.ToLower(prefix)
 	usersMu.RLock()
 	defer usersMu.RUnlock()
+
+	var prefixMatch *User
+
 	for _, u := range users {
-		if strings.HasPrefix(u.Name(), prefix) {
+		name := strings.ToLower(u.Name())
+		if name == prefix {
+			// Return immediately if an exact match is found
 			return u, true
 		}
+		if prefixMatch == nil && strings.HasPrefix(name, prefix) {
+			// Store the first prefix match, but keep looking for an exact match
+			prefixMatch = u
+		}
 	}
+
+	// Return the prefix match if no exact match was found
+	if prefixMatch != nil {
+		return prefixMatch, true
+	}
+
 	return nil, false
 }
 

@@ -50,6 +50,8 @@ type User struct {
 	lastHitReachDistance         float64
 	lastHitReachDistanceModified time.Time
 	lastHitReachDistanceMu       sync.Mutex
+
+	w atomic.Value[*world.World]
 }
 
 func New(p *player.Player) *User {
@@ -248,6 +250,17 @@ func (u *User) Player(tx *world.Tx) (*player.Player, bool) {
 	return ent.(*player.Player), true
 }
 
+func (u *User) ExecutePlayer(f func(p *player.Player, ok bool)) {
+	u.World().Exec(func(tx *world.Tx) {
+		ent, ok := u.EntityHandle().Entity(tx)
+		if !ok {
+			f(nil, false)
+			return
+		}
+		f(ent.(*player.Player), true)
+	})
+}
+
 // RemoveOldClicks removes all clicks that are older than 1 second.
 func (u *User) RemoveOldClicks() {
 	u.clicksMu.Lock()
@@ -336,4 +349,12 @@ func (u *User) SendPVPInfoTip() {
 		return
 	}
 	u.Session().SendTip(u.Translatef("pvp.info.tip", cps, combo, reach))
+}
+
+func (u *User) World() *world.World {
+	return u.w.Load()
+}
+
+func (u *User) SetWorld(w *world.World) {
+	u.w.Store(w)
 }

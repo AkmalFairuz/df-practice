@@ -1,6 +1,7 @@
 package command
 
 import (
+	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -20,7 +21,7 @@ type GameMode struct {
 	onlyAdmin
 
 	Type    gameModeEnum               `cmd:"gamemode"`
-	Targets cmd.Optional[[]cmd.Target] `cmd:"target"`
+	Targets cmd.Optional[onlineTarget] `cmd:"target"`
 }
 
 func getGameModeFromString(str string) world.GameMode {
@@ -37,12 +38,10 @@ func getGameModeFromString(str string) world.GameMode {
 }
 
 func (g GameMode) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
-	targets := g.Targets.LoadOr([]cmd.Target{s})
+	target := g.Targets.LoadOr(onlineTarget{name: s.(*player.Player).Name(), u: user.Get(s.(*player.Player))})
 
-	for _, t := range targets {
-		if p, ok := t.(*player.Player); ok {
-			p.SetGameMode(getGameModeFromString(string(g.Type)))
-			o.Printf(translatef(s, "gamemode.command.success", p.Name(), g.Type))
-		}
-	}
+	target.ExecutePlayer(func(p *player.Player, ok bool) {
+		p.SetGameMode(getGameModeFromString(string(g.Type)))
+		messaget(s, "gamemode.command.success", p.Name(), g.Type)
+	})
 }

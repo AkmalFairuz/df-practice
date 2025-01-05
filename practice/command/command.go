@@ -1,10 +1,12 @@
 package command
 
 import (
+	"fmt"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/user"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
+	"github.com/go-gl/mathgl/mgl64"
 	"golang.org/x/text/language"
 )
 
@@ -54,4 +56,8 @@ func (onlyAdmin) Allow(s cmd.Source) bool {
 		return u.RankName() == "admin"
 	}
 	return false
+}
+
+func formatPos(pos mgl64.Vec3) string {
+	return fmt.Sprintf("x=%.2f, y=%.2f, z=%.2f", pos.X(), pos.Y(), pos.Z())
 }
