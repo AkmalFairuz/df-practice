@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"gopkg.in/yaml.v3"
 	"os"
+	"sort"
 	"strings"
 )
 
@@ -21,11 +22,17 @@ func main() {
 		panic(err)
 	}
 
-	contents := "package translations\n\nconst (\n"
+	contents := "package translations\n\nconst (\n\n"
 
 	//convertMapping := map[string]string{}
 
+	var keys []string
 	for key := range translations {
+		keys = append(keys, key)
+	}
+	sort.Strings(keys)
+
+	for _, key := range keys {
 		parts := strings.Split(key, ".")
 		key2 := ""
 
