@@ -22,7 +22,7 @@ func main() {
 		panic(err)
 	}
 
-	contents := "package translations\n\nconst (\n\n"
+	contents := "package translations\n\nconst (\n"
 
 	//convertMapping := map[string]string{}
 
