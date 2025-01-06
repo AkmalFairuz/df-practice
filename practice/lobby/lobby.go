@@ -5,6 +5,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/item"
 	"github.com/df-mc/dragonfly/server/player"
@@ -92,10 +93,10 @@ func (l *Lobby) onUserTick(u *user.User, tx *world.Tx, currentTick int64) {
 func (l *Lobby) sendUserScoreboard(u *user.User, tx *world.Tx) {
 
 	u.SendScoreboard([]string{
-		u.Translatef("lobby.scoreboard.players.online.count", user.Count()),
-		u.Translatef("lobby.scoreboard.players.playing.count", user.Count()-len(l.users(tx))),
+		u.Translatef(translations.LobbyScoreboardPlayersOnlineCount, user.Count()),
+		u.Translatef(translations.LobbyScoreboardPlayersPlayingCount, user.Count()-len(l.users(tx))),
 		"",
-		u.Translatef("scoreboard.your.ping", u.Session().Latency().Milliseconds()),
+		u.Translatef(translations.ScoreboardYourPing, u.Session().Latency().Milliseconds()),
 	})
 }
 
@@ -120,9 +121,9 @@ func (l *Lobby) sendLobbyItems(p *player.Player) {
 		return
 	}
 
-	_ = p.Inventory().SetItem(0, item.NewStack(item.Sword{Tier: item.ToolTierDiamond}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.play.ffa.name")).WithValue(lobbyItemIndexKey, 0))
-	_ = p.Inventory().SetItem(1, item.NewStack(item.Sword{Tier: item.ToolTierIron}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.play.duels.name")).WithValue(lobbyItemIndexKey, 1))
-	//_ = p.Inventory().SetItem(8, item.NewStack(block.Skull{Type: block.PlayerHead()}, 1).WithCustomName(lang.Translatef(u.Lang(), "lobby.item.profile.name")).WithValue(lobbyItemIndexKey, 8))
+	_ = p.Inventory().SetItem(0, item.NewStack(item.Sword{Tier: item.ToolTierDiamond}, 1).WithCustomName(lang.Translatef(u.Lang(), translations.LobbyItemPlayFfaName)).WithValue(lobbyItemIndexKey, 0))
+	_ = p.Inventory().SetItem(1, item.NewStack(item.Sword{Tier: item.ToolTierIron}, 1).WithCustomName(lang.Translatef(u.Lang(), translations.LobbyItemPlayDuelsName)).WithValue(lobbyItemIndexKey, 1))
+	//_ = p.Inventory().SetItem(8, item.NewStack(block.Skull{Type: block.PlayerHead()}, 1).WithCustomName(lang.Translatef(u.Lang(), translations.LobbyItemProfileName)).WithValue(lobbyItemIndexKey, 8))
 }
 
 func (l *Lobby) Spawn(p *player.Player) {

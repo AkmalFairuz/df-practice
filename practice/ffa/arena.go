@@ -6,6 +6,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/kit"
 	"github.com/akmalfairuz/df-practice/practice/kit/customitem"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/block"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/entity"
@@ -13,6 +14,7 @@ import (
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/df-mc/dragonfly/server/world/particle"
+	"github.com/df-mc/dragonfly/server/world/sound"
 	"github.com/go-gl/mathgl/mgl64"
 	"math/rand"
 	"sync"
@@ -49,14 +51,17 @@ type Arena struct {
 }
 
 type placedBlockInfo struct {
-	placedAt time.Time
+	placedAt    time.Time
+	originBlock world.Block
+	isBreaking  bool
 }
 
 func New(w *world.World) *Arena {
 	return &Arena{
 		w:             w,
-		u:             map[string]*Participant{},
+		u:             make(map[string]*Participant),
 		pearlCooldown: 15 * time.Second,
+		placedBlocks:  make(map[cube.Pos]placedBlockInfo),
 	}
 }
 
@@ -144,19 +149,39 @@ func (a *Arena) handleTick(currentTick int64) {
 			}
 		}
 
-		if currentTick%20 == 0 {
+		if currentTick%5 == 0 {
 			if a.allowBuild {
 				a.placedBlocksMu.RLock()
 				placedBlocks := a.placedBlocks
 				a.placedBlocksMu.RUnlock()
 
 				for pos, info := range placedBlocks {
-					if time.Since(info.placedAt) > 45*time.Second {
+					diff := time.Since(info.placedAt)
+					if diff > 15*time.Second {
 						a.removePlacedBlock(pos)
 
-						tx.SetBlock(pos, block.Air{}, nil)
 						tx.AddParticle(pos.Vec3().Add(mgl64.Vec3{0.5, 0.5, 0.5}), particle.BlockBreak{Block: tx.Block(pos)})
+						tx.PlaySound(pos.Vec3(), sound.BlockBreaking{Block: tx.Block(pos)})
+
+						tx.SetBlock(pos, info.originBlock, &world.SetOpts{DisableBlockUpdates: true})
 						continue
+					}
+					if diff > 8*time.Second {
+						viewers := tx.Viewers(pos.Vec3())
+						for _, viewer := range viewers {
+							if info.isBreaking {
+								viewer.ViewBlockAction(pos, block.ContinueCrackAction{
+									BreakTime: time.Second * 7,
+								})
+							} else {
+								viewer.ViewBlockAction(pos, block.StartCrackAction{
+									BreakTime: time.Second * 7,
+								})
+							}
+						}
+						if !info.isBreaking {
+							a.setPlacedBlockBreaking(pos, true)
+						}
 					}
 				}
 			}
@@ -167,16 +192,16 @@ func (a *Arena) handleTick(currentTick int64) {
 func (a *Arena) sendUserScoreboard(p *Participant, tx *world.Tx) {
 	combatInfo := "<empty>"
 	if p.combatTimer.Load() > 0 {
-		combatInfo = p.u.Translatef("ffa.scoreboard.combat.timer", p.combatTimer.Load())
+		combatInfo = p.u.Translatef(translations.FfaScoreboardCombatTimer, p.combatTimer.Load())
 	}
 
 	p.u.SendScoreboard([]string{
-		p.u.Translatef("ffa.scoreboard.your.kills", p.kills.Load()),
-		p.u.Translatef("ffa.scoreboard.your.deaths", p.deaths.Load()),
-		p.u.Translatef("ffa.scoreboard.your.streak", p.killStreak.Load()),
+		p.u.Translatef(translations.FfaScoreboardYourKills, p.kills.Load()),
+		p.u.Translatef(translations.FfaScoreboardYourDeaths, p.deaths.Load()),
+		p.u.Translatef(translations.FfaScoreboardYourStreak, p.killStreak.Load()),
 		"",
-		p.u.Translatef("ffa.scoreboard.players", len(a.u)),
-		p.u.Translatef("scoreboard.your.ping", p.u.Session().Latency().Milliseconds()),
+		p.u.Translatef(translations.FfaScoreboardPlayers, len(a.u)),
+		p.u.Translatef(translations.ScoreboardYourPing, p.u.Session().Latency().Milliseconds()),
 		combatInfo,
 	})
 }
@@ -287,6 +312,10 @@ func (a *Arena) BroadcastMessaget(translationName string, args ...any) {
 }
 
 func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, immunity *time.Duration, src world.DamageSource) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
 	if immune {
 		return
 	}
@@ -341,11 +370,10 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		}
 
 		if death {
-			a.BroadcastMessaget("killed.message.format", ctx.Val().Name(), attacker.Name())
+			a.BroadcastMessaget(translations.KilledMessageFormat, ctx.Val().Name(), attacker.Name())
 			handledDeathMessage = true
 
-			attackerPar.kills.Add(1)
-			attackerPar.killStreak.Add(1)
+			a.OnKill(attacker, attackerPar)
 		} else {
 			par.StoreLastAttackedBy(user.Get(attacker).XUID())
 		}
@@ -371,7 +399,6 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 				handledDeathMessage = true
 				break
 			}
-
 			a.BroadcastMessaget(translations.KilledShotMessageFormat, ctx.Val().Name(), owner.Name())
 			handledDeathMessage = true
 
@@ -393,18 +420,18 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 
 					attacker.kills.Add(1)
 					attacker.killStreak.Add(1)
-					a.BroadcastMessaget("killed.void.message.format", ctx.Val().Name(), attacker.u.Name())
+					a.BroadcastMessaget(translations.KilledVoidMessageFormat, ctx.Val().Name(), attacker.u.Name())
 					handledDeathMessage = true
 					break
 				}
 			}
-			a.BroadcastMessaget("death.void.message.format", ctx.Val().Name())
+			a.BroadcastMessaget(translations.DeathVoidMessageFormat, ctx.Val().Name())
 			handledDeathMessage = true
 		}
 	}
 
 	if !handledDeathMessage && death {
-		a.BroadcastMessaget("death.message.format", ctx.Val().Name())
+		a.BroadcastMessaget(translations.DeathMessageFormat, ctx.Val().Name())
 	}
 
 	if death {
@@ -426,18 +453,41 @@ func (a *Arena) Icon() string {
 }
 
 func (a *Arena) HandleBlockPlace(ctx *player.Context, pos cube.Pos, b world.Block) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
 	if !a.allowBuild {
 		ctx.Cancel()
 		return
 	}
 	if a.hasPlacedBlock(pos) {
 		ctx.Cancel()
+		user.Messaget(ctx.Val(), translations.ErrorPlaceBlock)
 		return
 	}
-	a.addPlacedBlock(pos, b)
+	for _, spawn := range a.spawns {
+		if spawn.ToMgl64Vec3().Sub(pos.Vec3()).Len() < 2 {
+			ctx.Cancel()
+			user.Messaget(ctx.Val(), translations.ErrorPlaceBlock)
+			return
+		}
+	}
+	currentBlock := ctx.Val().Tx().Block(pos)
+	if _, ok := currentBlock.(block.Air); !ok {
+		ctx.Cancel()
+		user.Messaget(ctx.Val(), translations.ErrorPlaceBlock)
+		return
+	}
+
+	a.addPlacedBlock(pos, currentBlock)
 }
 
 func (a *Arena) HandleBlockBreak(ctx *player.Context, pos cube.Pos, drops *[]item.Stack, xp *int) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
 	if !a.allowBuild {
 		ctx.Cancel()
 		return
@@ -459,7 +509,7 @@ func (a *Arena) hasPlacedBlock(pos cube.Pos) bool {
 
 func (a *Arena) addPlacedBlock(pos cube.Pos, b world.Block) {
 	a.placedBlocksMu.Lock()
-	a.placedBlocks[pos] = placedBlockInfo{placedAt: time.Now()}
+	a.placedBlocks[pos] = placedBlockInfo{placedAt: time.Now(), originBlock: b}
 	a.placedBlocksMu.Unlock()
 }
 
@@ -469,7 +519,21 @@ func (a *Arena) removePlacedBlock(pos cube.Pos) {
 	a.placedBlocksMu.Unlock()
 }
 
+func (a *Arena) setPlacedBlockBreaking(pos cube.Pos, breaking bool) {
+	a.placedBlocksMu.Lock()
+	info, ok := a.placedBlocks[pos]
+	if ok {
+		info.isBreaking = breaking
+		a.placedBlocks[pos] = info
+	}
+	a.placedBlocksMu.Unlock()
+}
+
 func (a *Arena) HandleHeal(ctx *player.Context, health *float64, src world.HealingSource) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
 	if ctx.Cancelled() {
 		return
 	}
@@ -480,24 +544,40 @@ func (a *Arena) HandleHeal(ctx *player.Context, health *float64, src world.Heali
 }
 
 func (a *Arena) HandleFoodLoss(ctx *player.Context, from int, to *int) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
 	if a.disableHunger {
 		ctx.Cancel()
 	}
 }
 
 func (a *Arena) HandleItemDrop(ctx *player.Context, s item.Stack) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
 	if !a.dropAllowed {
 		ctx.Cancel()
 	}
 }
 
 func (a *Arena) HandleMove(ctx *player.Context, pos mgl64.Vec3, rot cube.Rotation) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
 	if pos.Y() < float64(a.voidY) {
 		ctx.Val().Hurt(1000, entity.VoidDamageSource{})
 	}
 }
 
 func (a *Arena) HandleItemUse(ctx *player.Context) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
 	par, ok := a.ParticipantByXUID(ctx.Val().XUID())
 	if !ok {
 		return
@@ -508,10 +588,49 @@ func (a *Arena) HandleItemUse(ctx *player.Context) {
 	if mainHand.Comparable(item.NewStack(customitem.NoDamageEnderPearl{}, 1)) && !ctx.Cancelled() {
 		lastPearlThrow := par.lastPearlThrow.Load()
 		if time.Since(lastPearlThrow) < a.pearlCooldown {
-			par.u.Messaget("error.cooldown.pearl", time.Until(lastPearlThrow.Add(a.pearlCooldown)).Seconds())
+			par.u.Messaget(translations.ErrorCooldownPearl, time.Until(lastPearlThrow.Add(a.pearlCooldown)).Seconds())
 			ctx.Cancel()
 			return
 		}
 		par.lastPearlThrow.Store(time.Now())
+	}
+}
+
+func (a *Arena) OnKill(p *player.Player, par *Participant) {
+	par.OnKill()
+	p.PlaySound(sound.Experience{})
+	helper.ClearAllPlayerInv(p)
+	_ = a.sendKit(p)
+}
+
+func (a *Arena) HandleStartBreak(ctx *player.Context, pos cube.Pos) {
+	if helper.InvalidPlayerCtxWorld(ctx, a.w) {
+		return
+	}
+
+	if !a.allowBuild {
+		ctx.Cancel()
+		return
+	}
+
+	a.placedBlocksMu.RLock()
+	info, ok := a.placedBlocks[pos]
+	a.placedBlocksMu.RUnlock()
+
+	if !ok {
+		ctx.Cancel()
+		return
+	}
+
+	if info.isBreaking {
+		a.placedBlocksMu.Lock()
+		a.placedBlocks[pos] = placedBlockInfo{placedAt: time.Now(), originBlock: info.originBlock}
+		a.placedBlocksMu.Unlock()
+
+		for _, viewer := range ctx.Val().Tx().Viewers(pos.Vec3()) {
+			viewer.ViewBlockAction(pos, block.StopCrackAction{})
+		}
+
+		ctx.Cancel()
 	}
 }

@@ -97,3 +97,5 @@ error.command.pardon.target.not.banned: "<red>该玩家未被禁止。</red>"
 error.cooldown.pearl: "<red>请等待 %.1f 秒后再使用末影珍珠。</red>"
 
 pvp.info.tip: "<diamond>CPS: <white>%d</white> | 连击: <white>%d</white> | 距离: <white>%.2f</white></diamond>"
+
+error.place.block: "<red>你不能在这里放置方块。</red>"

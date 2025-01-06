@@ -8,6 +8,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/kit/customitem"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/atomic"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/item"
@@ -25,11 +26,11 @@ import (
 )
 
 func quitItem(p *player.Player) item.Stack {
-	return item.NewStack(item.DragonBreath{}, 1).WithCustomName(lang.Translatef(user.Lang(p), "game.item.quit.name")).WithValue("game_item", "quit")
+	return item.NewStack(item.DragonBreath{}, 1).WithCustomName(lang.Translatef(user.Lang(p), translations.GameItemQuitName)).WithValue("game_item", "quit")
 }
 
 func playAgainItem(p *player.Player) item.Stack {
-	return item.NewStack(item.Paper{}, 1).WithCustomName(lang.Translatef(user.Lang(p), "game.item.play.again.name")).WithValue("game_item", "play_again")
+	return item.NewStack(item.Paper{}, 1).WithCustomName(lang.Translatef(user.Lang(p), translations.GameItemPlayAgainName)).WithValue("game_item", "play_again")
 }
 
 func init() {
@@ -75,6 +76,9 @@ type Game struct {
 	placedBlocks   map[cube.Pos]bool
 
 	pearlCooldown time.Duration
+
+	duelRequestMode    bool
+	duelRequestAborted bool
 }
 
 const charset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
@@ -137,17 +141,34 @@ func (g *Game) OnTick() {
 			g.currentTick.Store(0)
 		}
 
+		if g.duelRequestAborted {
+			g.Messaget(translations.DuelRequestAborted)
+			g.w.Exec(func(tx *world.Tx) {
+				for _, par := range g.Participants() {
+					p, ok := par.User().Player(tx)
+					if !ok {
+						continue
+					}
+
+					_ = g.Quit(p)
+				}
+			})
+
+			g.Stop()
+			break
+		}
+
 		if currentTick%20 == 0 {
 			for _, p := range g.Participants() {
 				u := p.User()
 
 				lines := make([]string, 0)
-				lines = append(lines, u.Translatef("game.waiting.scoreboard.players", len(g.p), g.impl.MaxParticipants()))
+				lines = append(lines, u.Translatef(translations.GameWaitingScoreboardPlayers, len(g.p), g.impl.MaxParticipants()))
 				lines = append(lines, "")
 				if len(g.p) >= g.impl.MinimumParticipants() {
-					lines = append(lines, u.Translatef("game.waiting.scoreboard.starting.in", g.impl.WaitingTime()-int(g.currentTick.Load()/20)))
+					lines = append(lines, u.Translatef(translations.GameWaitingScoreboardStartingIn, g.impl.WaitingTime()-int(g.currentTick.Load()/20)))
 				} else {
-					lines = append(lines, u.Translatef("game.waiting.scoreboard.waiting.for.players"))
+					lines = append(lines, u.Translatef(translations.GameWaitingScoreboardWaitingForPlayers))
 				}
 
 				u.SendScoreboard(lines)
@@ -155,7 +176,7 @@ func (g *Game) OnTick() {
 
 			remaining := g.impl.WaitingTime() - int(g.currentTick.Load()/20)
 			if remaining <= 5 && remaining > 0 {
-				g.Messaget("game.waiting.starting.message", remaining)
+				g.Messaget(translations.GameWaitingStartingMessage, remaining)
 				g.Sound("random.click")
 			}
 		}
@@ -185,7 +206,7 @@ func (g *Game) OnTick() {
 				u := p.User()
 
 				lines := make([]string, 0)
-				lines = append(lines, u.Translatef("game.ending.scoreboard.stopping.in", g.impl.EndingTime()-int(g.currentTick.Load()/20)))
+				lines = append(lines, u.Translatef(translations.GameEndingScoreboardStoppingIn, g.impl.EndingTime()-int(g.currentTick.Load()/20)))
 
 				u.SendScoreboard(lines)
 			}
@@ -201,7 +222,7 @@ func (g *Game) Start() {
 	g.state.Store(StatePlaying)
 	g.currentTick.Store(0)
 	g.Sound("mob.blaze.shoot")
-	g.Messaget("game.started.message")
+	g.Messaget(translations.GameStartedMessage)
 	g.w.Exec(func(tx *world.Tx) {
 		for ent := range tx.Entities() {
 			p, ok := ent.(*player.Player)
@@ -227,7 +248,7 @@ func (g *Game) End() {
 	g.currentTick.Store(0)
 	g.state.Store(StateEnding)
 	g.Sound("random.explode")
-	g.Messaget("game.ended.message")
+	g.Messaget(translations.GameEndedMessage)
 	g.w.Exec(func(tx *world.Tx) {
 		for ent := range tx.Entities() {
 			p, ok := ent.(*player.Player)
@@ -244,7 +265,9 @@ func (g *Game) End() {
 			if par.IsPlaying() {
 				p.SetGameMode(world.GameModeAdventure)
 			}
-			_ = p.Inventory().SetItem(0, playAgainItem(p))
+			if g.playAgainHook != nil {
+				_ = p.Inventory().SetItem(0, playAgainItem(p))
+			}
 			_ = p.Inventory().SetItem(8, quitItem(p))
 			_ = p.SetHeldSlot(1)
 		}
@@ -372,7 +395,7 @@ func (g *Game) Join(p *player.Player) error {
 		p.SetGameMode(world.GameModeAdventure)
 		g.impl.OnJoined(par, newP)
 
-		g.Messaget("game.waiting.join.message", user.Get(newP).Name(), len(g.p), g.impl.MaxParticipants())
+		g.Messaget(translations.GameWaitingJoinMessage, user.Get(newP).Name(), len(g.p), g.impl.MaxParticipants())
 	})
 	return nil
 }
@@ -398,7 +421,7 @@ func (g *Game) doQuit(p *player.Player) error {
 	g.pMu.RUnlock()
 
 	if g.IsWaiting() {
-		g.Messaget("game.waiting.left.message", user.Get(p).Name(), len(g.p)-1, g.impl.MaxParticipants())
+		g.Messaget(translations.GameWaitingLeftMessage, user.Get(p).Name(), len(g.p)-1, g.impl.MaxParticipants())
 	}
 	g.impl.OnQuit(p)
 	helper.ResetPlayer(p)
@@ -414,6 +437,10 @@ func (g *Game) doQuit(p *player.Player) error {
 	}
 
 	user.Get(p).SetCurrentGame(nil)
+
+	if g.duelRequestMode && g.IsWaiting() {
+		g.duelRequestAborted = true
+	}
 	return nil
 }
 
@@ -643,7 +670,7 @@ func (g *Game) SetSpectator(p *player.Player) {
 	_ = p.Inventory().SetItem(8, quitItem(p))
 	_ = p.SetHeldSlot(0)
 
-	p.SendTitle(title.New(lang.Translatef(user.Lang(p), "game.you.died.title")))
+	p.SendTitle(title.New(lang.Translatef(user.Lang(p), translations.GameYouDiedTitle)))
 
 	g.impl.CheckEnd()
 }
@@ -688,4 +715,8 @@ func (g *Game) SetPlayAgainHook(hook func(p *player.Player) error) {
 
 func (g *Game) playAgain(p *player.Player) error {
 	return (g.playAgainHook)(p)
+}
+
+func (g *Game) SetDuelRequestMode(b bool) {
+	g.duelRequestMode = b
 }

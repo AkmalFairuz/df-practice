@@ -5,7 +5,7 @@ go 1.23.3
 require (
 	github.com/bedrock-gophers/intercept v0.2.1-0.20241127002705-553929b05d82
 	github.com/df-mc/atomic v1.10.0
-	github.com/df-mc/dragonfly v0.9.20-0.20241229163702-cc7e4ee0e3ce
+	github.com/df-mc/dragonfly v0.10.0
 	github.com/go-gl/mathgl v1.2.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/jmoiron/sqlx v1.4.0
@@ -36,11 +36,11 @@ require (
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
 	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/exp v0.0.0-20241217172543-b2144cdd0a67 // indirect
+	golang.org/x/exp v0.0.0-20250103183323-7d7fa50e5329 // indirect
 	golang.org/x/image v0.23.0 // indirect
 	golang.org/x/mod v0.22.0 // indirect
 	golang.org/x/net v0.33.0 // indirect
-	golang.org/x/oauth2 v0.24.0 // indirect
+	golang.org/x/oauth2 v0.25.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 )
 

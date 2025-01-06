@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/akmalfairuz/df-practice/internal/meta"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/model"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/atomic"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/player/scoreboard"
@@ -50,6 +52,10 @@ type User struct {
 	lastHitReachDistance         float64
 	lastHitReachDistanceModified time.Time
 	lastHitReachDistanceMu       sync.Mutex
+
+	w atomic.Value[*world.World]
+
+	duelRequestTo atomic.Value[DuelRequestInfo]
 }
 
 func New(p *player.Player) *User {
@@ -151,9 +157,9 @@ func (u *User) SendScoreboard(lines []string) {
 		lines2 = append(lines2, line)
 	}
 	lines2 = append(lines2, "")
-	lines2 = append(lines2, u.Translatef("scoreboard.footer"))
+	lines2 = append(lines2, u.Translatef(translations.ScoreboardFooter))
 
-	u.SendScoreboardRaw(u.Translatef("scoreboard.title"), lines2)
+	u.SendScoreboardRaw(u.Translatef(translations.ScoreboardTitle), lines2)
 }
 
 func (u *User) SendScoreboardRaw(title string, lines []string) {
@@ -213,11 +219,11 @@ func (u *User) EntityRuntimeID() uint64 {
 func (u *User) OnReceiveWhisper(sender *User, message string) {
 	u.lastWhisperFromXUID.Store(sender.XUID())
 
-	u.Messaget("whisper.received", sender.Name(), message)
+	u.Messaget(translations.WhisperReceived, sender.Name(), message)
 }
 
 func (u *User) OnSendWhisper(target *User, message string) {
-	u.Messaget("whisper.sent", target.Name(), message)
+	u.Messaget(translations.WhisperSent, target.Name(), message)
 }
 
 func (u *User) ReplyWhisperToXUID() string {
@@ -246,6 +252,17 @@ func (u *User) Player(tx *world.Tx) (*player.Player, bool) {
 		return nil, false
 	}
 	return ent.(*player.Player), true
+}
+
+func (u *User) ExecutePlayer(f func(p *player.Player, ok bool)) {
+	u.World().Exec(func(tx *world.Tx) {
+		ent, ok := u.EntityHandle().Entity(tx)
+		if !ok {
+			f(nil, false)
+			return
+		}
+		f(ent.(*player.Player), true)
+	})
 }
 
 // RemoveOldClicks removes all clicks that are older than 1 second.
@@ -335,5 +352,37 @@ func (u *User) SendPVPInfoTip() {
 	if cps == 0 && combo == 0 && reach <= 0.1 {
 		return
 	}
-	u.Session().SendTip(u.Translatef("pvp.info.tip", cps, combo, reach))
+	u.Session().SendTip(u.Translatef(translations.PvpInfoTip, cps, combo, reach))
+}
+
+func (u *User) World() *world.World {
+	return u.w.Load()
+}
+
+func (u *User) SetWorld(w *world.World) {
+	u.w.Store(w)
+}
+
+func (u *User) SetDuelRequestTo(xuid string) {
+	u.duelRequestTo.Store(DuelRequestInfo{
+		TargetXUID: xuid,
+		RequestAt:  time.Now(),
+	})
+}
+
+func (u *User) DuelRequestTo() DuelRequestInfo {
+	return u.duelRequestTo.Load()
+}
+
+func (u *User) InLobby() bool {
+	return u.World() == meta.Get("lobby").(interface{ World() *world.World }).World()
+}
+
+func (u *User) OnSendDuelRequest(opponent *User) {
+	u.Messaget(translations.DuelRequestSent, u.Name())
+	u.SetDuelRequestTo(opponent.XUID())
+}
+
+func (u *User) OnReceiveDuelRequest(opponent *User) {
+	u.Messaget(translations.DuelRequestReceived, opponent.Name(), opponent.Name(), 60)
 }

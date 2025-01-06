@@ -4,6 +4,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/repository"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/sandertv/gophertunnel/minecraft/protocol/login"
 	"github.com/unickorn/strutils"
 	"net"
@@ -25,7 +26,7 @@ func (a *Allower) Allow(_ net.Addr, d login.IdentityData, c login.ClientData) (s
 			return "", true
 		}
 		helper.LogErrors(err)
-		return lang.Translatef(l, "error.unknown"), false
+		return lang.Translatef(l, translations.ErrorUnknown), false
 	}
 
 	b, err := repository.BanRepo().FindByPlayerID(u.ID)
@@ -34,13 +35,13 @@ func (a *Allower) Allow(_ net.Addr, d login.IdentityData, c login.ClientData) (s
 			return "", true
 		}
 		helper.LogErrors(err)
-		return lang.Translatef(l, "error.unknown"), false
+		return lang.Translatef(l, translations.ErrorUnknown), false
 	}
 
 	now := time.Now().Unix()
 	if b.ExpireAt > now {
 		daysRemaining, hoursRemaining, minutesRemaining := b.Remaining()
-		return strutils.CenterLine(lang.Translatef(l, "banned.kick.message", b.Reason, lang.Translatef(l, "time.short.dhm", daysRemaining, hoursRemaining, minutesRemaining))), false
+		return strutils.CenterLine(lang.Translatef(l, translations.BannedKickMessage, b.Reason, lang.Translatef(l, translations.TimeShortDhm, daysRemaining, hoursRemaining, minutesRemaining))), false
 	}
 
 	helper.LogErrors(repository.BanRepo().DeleteByPlayerID(u.ID))

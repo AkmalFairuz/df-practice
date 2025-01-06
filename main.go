@@ -64,12 +64,14 @@ func main() {
 
 	meta.Set("server", srv)
 
-	cmd.Register(cmd.New("ban", "", nil, command.Ban{}))
-	cmd.Register(cmd.New("pardon", "", []string{"unban"}, command.Pardon{}))
-	cmd.Register(cmd.New("whisper", "", []string{"w", "msg"}, command.Whisper{}))
-	cmd.Register(cmd.New("reply", "", []string{"r"}, command.Reply{}))
-	cmd.Register(cmd.New("lobby", "", []string{"hub"}, command.Lobby{}))
-	cmd.Register(cmd.New("gamemode", "", []string{"gm"}, command.GameMode{}))
+	cmd.Register(cmd.New("ban", "Ban a player from the server.", nil, command.Ban{}))
+	cmd.Register(cmd.New("pardon", "Pardon a banned player.", []string{"unban"}, command.Pardon{}))
+	cmd.Register(cmd.New("whisper", "Send a private message to a player.", []string{"w", "msg"}, command.Whisper{}))
+	cmd.Register(cmd.New("reply", "Reply to the last private message received.", []string{"r"}, command.Reply{}))
+	cmd.Register(cmd.New("lobby", "Teleport to the lobby.", []string{"hub"}, command.Lobby{}))
+	cmd.Register(cmd.New("gamemode", "Change the game mode of a player.", []string{"gm"}, command.GameMode{}))
+	cmd.Register(cmd.New("teleport", "Teleport to a player or location.", []string{"tp"}, command.TeleportToTarget{}, command.TeleportToPos{}, command.TeleportTargetToTarget{}, command.TeleportTargetToPos{}))
+	cmd.Register(cmd.New("duel", "Send a duel request to a player.", nil, command.Duel{}))
 
 	pr := practice.New(log, srv)
 	pr.Run()

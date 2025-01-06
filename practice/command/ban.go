@@ -5,6 +5,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/model"
 	"github.com/akmalfairuz/df-practice/practice/repository"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/world"
 	"github.com/unickorn/strutils"
@@ -14,33 +15,33 @@ import (
 type Ban struct {
 	onlyAdmin
 
-	Target   string      `cmd:"target"`
-	Duration int         `cmd:"duration"`
-	Reason   cmd.Varargs `cmd:"reason"`
+	Target   OfflineTarget `cmd:"target"`
+	Duration int           `cmd:"duration"`
+	Reason   cmd.Varargs   `cmd:"reason"`
 }
 
 func (b Ban) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 	go func() {
-		u, err := repository.UserRepo().FindByName(b.Target)
+		u, err := repository.UserRepo().FindByName(string(b.Target))
 		if err != nil {
 			if repository.IsNotExists(err) {
-				messaget(s, "error.command.ban.target.not.found")
+				messaget(s, translations.ErrorCommandBanTargetNotFound)
 				return
 			}
 			helper.LogErrors(err)
-			messaget(s, "error.unknown")
+			messaget(s, translations.ErrorUnknown)
 			return
 		}
 
 		currentBan, err := repository.BanRepo().FindByPlayerID(u.ID)
 		if err != nil && !repository.IsNotExists(err) {
 			helper.LogErrors(err)
-			messaget(s, "error.unknown")
+			messaget(s, translations.ErrorUnknown)
 			return
 		}
 
 		if currentBan.ID != 0 {
-			messaget(s, "error.command.ban.target.already.banned")
+			messaget(s, translations.ErrorCommandBanTargetAlreadyBanned)
 			return
 		}
 
@@ -53,16 +54,16 @@ func (b Ban) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 		}
 		if _, err := repository.BanRepo().Create(ba); err != nil {
 			helper.LogErrors(err)
-			messaget(s, "error.unknown")
+			messaget(s, translations.ErrorUnknown)
 			return
 		}
 
-		messaget(s, "command.ban.success", u.Name, b.Reason, expiresAt.Format("2006-01-02 15:04:05"))
+		messaget(s, translations.CommandBanSuccess, u.Name, b.Reason, expiresAt.Format("2006-01-02 15:04:05"))
 
 		t := user.GetByXUID(u.XUID)
 		if t != nil {
 			daysRemaining, hoursRemaining, minutesRemaining := ba.Remaining()
-			t.Disconnect(strutils.CenterLine(t.Translatef("banned.kick.message", b.Reason, t.Translatef("time.short.dhm", daysRemaining, hoursRemaining, minutesRemaining))))
+			t.Disconnect(strutils.CenterLine(t.Translatef(translations.BannedKickMessage, b.Reason, t.Translatef(translations.TimeShortDhm, daysRemaining, hoursRemaining, minutesRemaining))))
 		}
 	}()
 }

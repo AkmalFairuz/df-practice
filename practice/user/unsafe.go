@@ -5,7 +5,6 @@ import (
 	"github.com/df-mc/dragonfly/server/session"
 	"reflect"
 	"unsafe"
-	_ "unsafe"
 )
 
 // noinspection ALL

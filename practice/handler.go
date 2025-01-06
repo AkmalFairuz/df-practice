@@ -6,6 +6,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/block/cube"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/entity"
@@ -68,6 +69,7 @@ func (ph *playerHandler) HandleChangeWorld(p *player.Player, before, after *worl
 	u := user.Get(p)
 	if u != nil {
 		u.ResetComboCounter()
+		u.SetWorld(after)
 	}
 }
 
@@ -83,12 +85,12 @@ func (ph *playerHandler) HandleChat(ctx *player.Context, message *string) {
 	ctx.Cancel() // Prevent chat handled by dragonfly
 
 	if time.Since(ph.lastChatAt) < defaultChatCooldown {
-		ph.u.Messaget("error.cooldown.chat", time.Until(ph.lastChatAt.Add(defaultChatCooldown)).Seconds())
+		ph.u.Messaget(translations.ErrorCooldownChat, time.Until(ph.lastChatAt.Add(defaultChatCooldown)).Seconds())
 		return
 	}
 	ph.lastChatAt = time.Now()
 
-	user.BroadcastMessaget("chat.message", ph.u.Name(), *message)
+	user.BroadcastMessaget(translations.ChatMessage, ph.u.Name(), *message)
 }
 
 func (ph *playerHandler) HandleFoodLoss(ctx *player.Context, from int, to *int) {
@@ -180,7 +182,7 @@ func (ph *playerHandler) HandleRespawn(p *player.Player, pos *mgl64.Vec3, w **wo
 }
 
 func (ph *playerHandler) HandleSkinChange(ctx *player.Context, skin *skin.Skin) {
-	user.Get(ctx.Val()).Messaget("error.skin.change.not.allowed")
+	user.Get(ctx.Val()).Messaget(translations.ErrorSkinChangeNotAllowed)
 	ctx.Cancel()
 }
 
@@ -195,6 +197,10 @@ func (ph *playerHandler) HandleStartBreak(ctx *player.Context, pos cube.Pos) {
 	if lobby.Instance().IsInLobby(ctx.Val()) {
 		ctx.Cancel()
 		return
+	}
+
+	if ffaArena := ph.ffaArena(ctx.Val()); ffaArena != nil {
+		ffaArena.HandleStartBreak(ctx, pos)
 	}
 }
 
@@ -345,7 +351,7 @@ func (ph *playerHandler) HandleTransfer(ctx *player.Context, addr *net.UDPAddr) 
 
 func (ph *playerHandler) HandleCommandExecution(ctx *player.Context, command cmd.Command, args []string) {
 	if time.Since(ph.lastCommandAt) < defaultCommandCooldown {
-		ph.u.Messaget("error.cooldown.command", time.Until(ph.lastCommandAt.Add(defaultCommandCooldown)).Seconds())
+		ph.u.Messaget(translations.ErrorCooldownCommand, time.Until(ph.lastCommandAt.Add(defaultCommandCooldown)).Seconds())
 		ctx.Cancel()
 		return
 	}
@@ -363,7 +369,7 @@ func (ph *playerHandler) HandleQuit(p *player.Player) {
 		helper.LogErrors(g.Quit(p))
 	}
 
-	user.BroadcastMessaget("player.quit.message", p.Name())
+	user.BroadcastMessaget(translations.PlayerQuitMessage, p.Name())
 
 	_ = ph.u.Close()
 	ph.log.Info("player disconnected", "player", p.Name())

@@ -7,15 +7,14 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/lang"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/bedrock-gophers/intercept/intercept"
 	"github.com/df-mc/dragonfly/server"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
 	"log/slog"
-	"reflect"
 	"strconv"
 	"time"
-	"unsafe"
 )
 
 type Practice struct {
@@ -65,17 +64,18 @@ func (pr *Practice) Run() {
 		go func() {
 			u := user.New(p)
 
-			field := reflect.ValueOf(u.Conn()).Elem().FieldByName("cacheEnabled")
-			reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem().SetBool(false)
+			//field := reflect.ValueOf(u.Conn()).Elem().FieldByName("cacheEnabled")
+			//reflect.NewAt(field.Type(), unsafe.Pointer(field.UnsafeAddr())).Elem().SetBool(false)
 
 			if err := u.Load(); err != nil {
 				pr.log.Error("failed to load user data", "error", err)
-				u.Disconnect(lang.Translate(u.Lang(), "user.load.error"))
+				u.Disconnect(lang.Translate(u.Lang(), translations.UserLoadError))
 				return
 			}
-			user.Store(u)
 
 			p.H().ExecWorld(func(tx *world.Tx, e world.Entity) {
+				user.Store(u)
+				u.SetWorld(tx.World())
 				newP := e.(*player.Player)
 
 				intercept.Intercept(newP)
@@ -83,14 +83,14 @@ func (pr *Practice) Run() {
 				newP.Inventory().Handle(newPlayerInvHandler(newP.Inventory()))
 				newP.Inventory().Handle(newPlayerInvHandler(newP.Armour().Inventory()))
 
-				user.BroadcastMessaget("player.join.message", newP.Name())
+				user.BroadcastMessaget(translations.PlayerJoinMessage, newP.Name())
 
 				if err := pr.l.Init(); err != nil {
 					panic(fmt.Errorf("failed to init lobby: %w", err))
 				}
 				pr.l.Spawn(newP)
 
-				u.Messaget("welcome.message", newP.Name())
+				u.Messaget(translations.WelcomeMessage, newP.Name())
 
 				go startPlayerTick(u)
 			})

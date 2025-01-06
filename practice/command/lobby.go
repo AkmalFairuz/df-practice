@@ -6,6 +6,7 @@ import (
 	"github.com/akmalfairuz/df-practice/practice/helper"
 	"github.com/akmalfairuz/df-practice/practice/lobby"
 	"github.com/akmalfairuz/df-practice/practice/user"
+	"github.com/akmalfairuz/df-practice/translations"
 	"github.com/df-mc/dragonfly/server/cmd"
 	"github.com/df-mc/dragonfly/server/player"
 	"github.com/df-mc/dragonfly/server/world"
@@ -23,7 +24,7 @@ func (l Lobby) Run(s cmd.Source, o *cmd.Output, tx *world.Tx) {
 		a := ffaArena.(*ffa.Arena)
 		par, _ := a.ParticipantByXUID(u.XUID())
 		if par.InCombat() {
-			o.Error(u.Translatef("error.lobby.in.combat"))
+			o.Error(u.Translatef(translations.ErrorLobbyInCombat))
 			return
 		}
 		helper.LogErrors(a.Quit(s.(*player.Player)))
