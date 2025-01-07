@@ -99,6 +99,7 @@ func (a *Arena) IsInArena(u *user.User) bool {
 }
 
 func (a *Arena) Init() error {
+	a.w.Handle(arenaWorldHandler{})
 	a.w.SetTime(3000)
 	a.w.StopTime()
 	a.w.StopRaining()
