@@ -24,7 +24,7 @@ func tryAcceptDuelReq(u *user.User, from *user.User, tx *world.Tx) bool {
 	if time.Since(info.RequestAt) > time.Second*60 {
 		return false
 	}
-	if !from.InLobby() || u.CurrentGame() != nil || u.CurrentFFAArena() != nil {
+	if !from.InLobby() || from.CurrentGame() != nil || from.CurrentFFAArena() != nil {
 		return false
 	}
 	if !u.InLobby() || u.CurrentGame() != nil || u.CurrentFFAArena() != nil {

@@ -5,7 +5,7 @@ go 1.23.3
 require (
 	github.com/bedrock-gophers/intercept v0.2.1-0.20241127002705-553929b05d82
 	github.com/df-mc/atomic v1.10.0
-	github.com/df-mc/dragonfly v0.10.0
+	github.com/df-mc/dragonfly v0.10.1
 	github.com/go-gl/mathgl v1.2.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/jmoiron/sqlx v1.4.0
@@ -18,7 +18,7 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/akmalfairuz/legacy-version v0.0.5-0.20250101150813-b93cd3b1e23f // indirect
+	github.com/akmalfairuz/legacy-version v0.0.5-0.20250110131229-1eea0360a5dd // indirect
 	github.com/brentp/intintmap v0.0.0-20190211203843-30dc0ade9af9 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/df-mc/goleveldb v1.1.9 // indirect
@@ -35,13 +35,13 @@ require (
 	github.com/sandertv/go-raknet v1.14.2 // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
-	golang.org/x/crypto v0.31.0 // indirect
-	golang.org/x/exp v0.0.0-20250103183323-7d7fa50e5329 // indirect
+	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8 // indirect
 	golang.org/x/image v0.23.0 // indirect
 	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/net v0.33.0 // indirect
+	golang.org/x/net v0.34.0 // indirect
 	golang.org/x/oauth2 v0.25.0 // indirect
-	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/sys v0.29.0 // indirect
 )
 
 replace github.com/twistedasylummc/inline-forms v0.0.3 => github.com/akmalfairuz/inline-forms v0.0.0-20241223095448-5d66cd480440

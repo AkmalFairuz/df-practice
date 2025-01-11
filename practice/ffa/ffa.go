@@ -20,11 +20,12 @@ func initWorldConfig(log *slog.Logger, path string) world.Config {
 		panic(err)
 	}
 	return world.Config{
-		Log:       log,
-		Entities:  entity.DefaultRegistry,
-		Dim:       world.Overworld,
-		Provider:  prov,
-		ReadOnly:  true,
-		Generator: world.NopGenerator{},
+		RandomTickSpeed: -1,
+		Log:             log,
+		Entities:        entity.DefaultRegistry,
+		Dim:             world.Overworld,
+		Provider:        prov,
+		ReadOnly:        true,
+		Generator:       world.NopGenerator{},
 	}
 }
