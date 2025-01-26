@@ -20,6 +20,8 @@ killed.shot.message.format: "<red>%s</red> <white>が</white> <red>%s</red> <whi
 death.void.message.format: "<red>%s</red> <white>が虚無に落ちました</white>"
 killed.void.knocked.message.format: "<red>%s</red> <white>が</white> <red>%s</red> <white>によって虚無にノックバックされました</white>"
 killed.void.message.format: "<red>%s</red> <white>が</white> <red>%s</red> <white>によって虚無で殺されました</white>"
+killed.self.shot.message.format: "<red>%s</red> <white>自分を撃った</white>"
+killed.self.void.message.format: "<red>%s</red> <white>自分を虚無に突き落とした</white>"
 
 ffa.scoreboard.your.kills: "<diamond>あなたのキル：</diamond> <white>%d</white>"
 ffa.scoreboard.your.deaths: "<diamond>あなたの死亡：</diamond> <white>%d</white>"

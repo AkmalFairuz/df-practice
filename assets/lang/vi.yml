@@ -20,6 +20,8 @@ killed.shot.message.format: "<red>%s</red> <white>đã bị</white> <red>%s</red
 death.void.message.format: "<red>%s</red> <white>rơi vào hư vô</white>"
 killed.void.knocked.message.format: "<red>%s</red> <white>đã bị</white> <red>%s</red> <white>đẩy vào hư vô</white>"
 killed.void.message.format: "<red>%s</red> <white>đã bị</white> <red>%s</red> <white>giết vào hư vô</white>"
+killed.self.shot.message.format: "<red>%s</red> <white>tự bắn vào mình</white>"
+killed.self.void.message.format: "<red>%s</red> <white>tự đẩy mình vào hư không</white>"
 
 ffa.scoreboard.your.kills: "<diamond>Kills của bạn:</diamond> <white>%d</white>"
 ffa.scoreboard.your.deaths: "<diamond>Deaths của bạn:</diamond> <white>%d</white>"

@@ -395,6 +395,11 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 		}
 
 		if death {
+			if ctx.Val().H() == owner.H() {
+				a.BroadcastMessaget(translations.KilledSelfShotMessageFormat, ctx.Val().Name())
+				handledDeathMessage = true
+				break
+			}
 			a.BroadcastMessaget(translations.KilledShotMessageFormat, ctx.Val().Name(), owner.Name())
 			handledDeathMessage = true
 
@@ -407,6 +412,13 @@ func (a *Arena) HandleHurt(ctx *player.Context, damage *float64, immune bool, im
 			if lastAttackedBy := par.LastAttackedBy(); lastAttackedBy != "" {
 				attacker, ok := a.u[lastAttackedBy]
 				if ok {
+					if ctx.Val().Name() == attacker.u.Name() {
+						a.BroadcastMessaget(translations.KilledSelfVoidMessageFormat, ctx.Val().Name())
+						handledDeathMessage = true
+						break
+					}
+					// Should using EntityHandle later
+
 					attacker.kills.Add(1)
 					attacker.killStreak.Add(1)
 					a.BroadcastMessaget(translations.KilledVoidMessageFormat, ctx.Val().Name(), attacker.u.Name())

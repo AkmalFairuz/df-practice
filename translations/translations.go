@@ -126,7 +126,11 @@ const (
 
 	KilledShotMessageFormat = "killed.shot.message.format"
 
+	KilledSelfShotMessageFormat = "killed.self.shot.message.format"
+
 	KilledVoidKnockedMessageFormat = "killed.void.knocked.message.format"
+
+	KilledSelfVoidMessageFormat = "killed.self.void.message.format"
 
 	KilledVoidMessageFormat = "killed.void.message.format"
 

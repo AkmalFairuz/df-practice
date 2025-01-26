@@ -20,6 +20,8 @@ killed.shot.message.format: "<red>%s</red> <white>被</white> <red>%s</red> <whi
 death.void.message.format: "<red>%s</red> <white>掉入虚空</white>"
 killed.void.knocked.message.format: "<red>%s</red> <white>被</white> <red>%s</red> <white>击入虚空</white>"
 killed.void.message.format: "<red>%s</red> <white>被</white> <red>%s</red> <white>杀入虚空</white>"
+killed.self.shot.message.format: "<red>%s</red> <white>射中了自己</white>"
+killed.self.void.message.format: "<red>%s</red> <white>跳入虚空</white>"
 
 ffa.scoreboard.your.kills: "<diamond>你的击杀：</diamond> <white>%d</white>"
 ffa.scoreboard.your.deaths: "<diamond>你的死亡：</diamond> <white>%d</white>"
